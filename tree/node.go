@@ -1,4 +1,4 @@
-package atarimontecarlo
+package tree
 
 // Node ...
 type Node struct {

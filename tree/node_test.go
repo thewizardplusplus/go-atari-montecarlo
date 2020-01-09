@@ -1,4 +1,4 @@
-package atarimontecarlo
+package tree
 
 import (
 	"reflect"
