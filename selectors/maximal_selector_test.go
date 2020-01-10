@@ -1,58 +1,65 @@
 package selectors
 
 import (
-	"math/rand"
 	"reflect"
 	"testing"
 
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-func TestRandomSelectorSelectNode(
+type MockNodeScorer struct{}
+
+func (scorer MockNodeScorer) ScoreNode(
+	node *tree.Node,
+	siblings []*tree.Node,
+) float64 {
+	return float64(node.State.WinCount) /
+		float64(node.State.GameCount)
+}
+
+func TestMaximalSelectorSelectNode(
 	test *testing.T,
 ) {
-	// make the random generator deterministic
-	// for test reproducibility
-	rand.Seed(1)
-
-	var selector RandomSelector
+	selector := MaximalSelector{
+		NodeScorer: MockNodeScorer{},
+	}
 	got := selector.SelectNode([]*tree.Node{
 		&tree.Node{
 			State: tree.NodeState{
-				GameCount: 2,
+				GameCount: 10,
 				WinCount:  1,
 			},
 		},
 		&tree.Node{
 			State: tree.NodeState{
-				GameCount: 4,
+				GameCount: 10,
 				WinCount:  3,
 			},
 		},
 		&tree.Node{
 			State: tree.NodeState{
-				GameCount: 6,
+				GameCount: 10,
 				WinCount:  5,
 			},
 		},
 		&tree.Node{
 			State: tree.NodeState{
-				GameCount: 8,
-				WinCount:  9,
+				GameCount: 10,
+				WinCount:  4,
 			},
 		},
 		&tree.Node{
 			State: tree.NodeState{
 				GameCount: 10,
-				WinCount:  9,
+				WinCount:  2,
 			},
 		},
 	})
 
 	want := &tree.Node{
 		State: tree.NodeState{
-			GameCount: 4,
-			WinCount:  3,
+			GameCount: 10,
+			WinCount:  5,
 		},
 	}
 	if !reflect.DeepEqual(got, want) {
