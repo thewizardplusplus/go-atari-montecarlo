@@ -22,6 +22,8 @@ func (selector MockMoveSelector) SelectMove(
 	return selector.selectMove(moves)
 }
 
-func TestSimulatorSimulate(test *testing.T) {
+func TestRolloutSimulatorSimulate(
+	test *testing.T,
+) {
 
 }

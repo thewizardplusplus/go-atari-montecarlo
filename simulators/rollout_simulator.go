@@ -10,13 +10,13 @@ type MoveSelector interface {
 	SelectMove(moves []models.Move) models.Move
 }
 
-// Simulator ...
-type Simulator struct {
+// RolloutSimulator ...
+type RolloutSimulator struct {
 	MoveSelector MoveSelector
 }
 
 // Simulate ...
-func (simulator Simulator) Simulate(
+func (simulator RolloutSimulator) Simulate(
 	board models.Board,
 	color models.Color,
 ) tree.GameResult {
