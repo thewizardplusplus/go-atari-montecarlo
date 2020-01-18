@@ -44,6 +44,13 @@ func TestRolloutSimulatorSimulate(
 	for _, data := range []data{
 		data{
 			fields: fields{
+				// +--+--+--+
+				// |B0|W1|B2|
+				// +--+--+--+
+				// |W3|  |  |
+				// +--+--+--+
+				// |  |  |  |
+				// +--+--+--+
 				moveSelector: MockMoveSelector{
 					selectMove: func(
 						moves []models.Move,
@@ -60,8 +67,8 @@ func TestRolloutSimulatorSimulate(
 				board: func() models.Board {
 					board := models.NewBoard(
 						models.Size{
-							Width:  5,
-							Height: 5,
+							Width:  3,
+							Height: 3,
 						},
 					)
 
@@ -69,15 +76,8 @@ func TestRolloutSimulatorSimulate(
 						models.Move{
 							Color: models.Black,
 							Point: models.Point{
-								Column: 2,
-								Row:    3,
-							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 3,
-								Row:    2,
+								Column: 0,
+								Row:    0,
 							},
 						},
 					}
@@ -90,7 +90,42 @@ func TestRolloutSimulatorSimulate(
 				color: models.White,
 			},
 			wantResult: tree.Win,
-			wantCount:  5,
+			wantCount:  3,
+		},
+		data{
+			fields: fields{
+				// +--+--+--+
+				// |W1|B2|W3|
+				// +--+--+--+
+				// |B4|  |  |
+				// +--+--+--+
+				// |  |  |  |
+				// +--+--+--+
+				moveSelector: MockMoveSelector{
+					selectMove: func(
+						moves []models.Move,
+					) models.Move {
+						defer func() {
+							iterationCount++
+						}()
+
+						return moves[0]
+					},
+				},
+			},
+			args: args{
+				board: func() models.Board {
+					return models.NewBoard(
+						models.Size{
+							Width:  3,
+							Height: 3,
+						},
+					)
+				}(),
+				color: models.White,
+			},
+			wantResult: tree.Loss,
+			wantCount:  4,
 		},
 	} {
 		iterationCount = 0
