@@ -1,8 +1,13 @@
 package tree
 
+import (
+	models "github.com/thewizardplusplus/go-atari-models"
+)
+
 // Node ...
 type Node struct {
 	Parent *Node
+	Move   models.Move
 	State  NodeState
 }
 
