@@ -1,14 +1,5 @@
 package tree
 
-// GameResult ...
-type GameResult int
-
-// ...
-const (
-	Loss GameResult = iota
-	Win
-)
-
 // NodeState ...
 type NodeState struct {
 	GameCount int
