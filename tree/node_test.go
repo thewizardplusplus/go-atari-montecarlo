@@ -69,7 +69,7 @@ func TestNodeAddResult(test *testing.T) {
 					},
 					State: NodeState{
 						GameCount: 4,
-						WinCount:  3,
+						WinCount:  2,
 					},
 				},
 				State: NodeState{

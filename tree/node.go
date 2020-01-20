@@ -1,22 +1,22 @@
 package tree
 
 import (
-  models "github.com/thewizardplusplus/go-atari-models"
+	models "github.com/thewizardplusplus/go-atari-models"
 )
 
 // Node ...
 type Node struct {
-  Parent *Node
-  Move   models.Move
-  State  NodeState
+	Parent *Node
+	Move   models.Move
+	State  NodeState
 }
 
 // AddResult ...
 func (node *Node) AddResult(
-  result GameResult,
+	result GameResult,
 ) {
-  node.State.AddResult(result)
-  if node.Parent != nil {
-    node.Parent.AddResult(result)
-  }
+	node.State.AddResult(result)
+	if node.Parent != nil {
+		node.Parent.AddResult(result.Invert())
+	}
 }
