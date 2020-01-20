@@ -25,7 +25,7 @@ func (selector MoveSelector) SelectMove(
 		nodes = append(nodes, node)
 	}
 
-	node := selector.NodeSelector.
-		SelectNode(nodes)
+	node :=
+		selector.NodeSelector.SelectNode(nodes)
 	return node.Move
 }

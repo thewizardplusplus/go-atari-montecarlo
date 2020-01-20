@@ -10,30 +10,14 @@ func TestWinRateScorerScoreNode(
 	test *testing.T,
 ) {
 	var scorer WinRateScorer
-	score := scorer.ScoreNode(
-		&tree.Node{
-			State: tree.NodeState{
-				GameCount: 10,
-				WinCount:  1,
-			},
+	score := scorer.ScoreNode(&tree.Node{
+		State: tree.NodeState{
+			GameCount: 10,
+			WinCount:  2,
 		},
-		[]*tree.Node{
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 10,
-					WinCount:  1,
-				},
-			},
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 10,
-					WinCount:  2,
-				},
-			},
-		},
-	)
+	})
 
-	if score != 0.1 {
+	if score != 0.2 {
 		test.Fail()
 	}
 }

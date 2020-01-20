@@ -6,9 +6,10 @@ import (
 
 // Node ...
 type Node struct {
-	Parent *Node
-	Move   models.Move
-	State  NodeState
+	Parent   *Node
+	Move     models.Move
+	State    NodeState
+	Children NodeGroup
 }
 
 // AddResult ...
@@ -20,3 +21,6 @@ func (node *Node) AddResult(
 		node.Parent.AddResult(result.Invert())
 	}
 }
+
+// NodeGroup ...
+type NodeGroup []*Node

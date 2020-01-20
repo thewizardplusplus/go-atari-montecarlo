@@ -11,10 +11,8 @@ type MockNodeScorer struct{}
 
 func (scorer MockNodeScorer) ScoreNode(
 	node *tree.Node,
-	siblings []*tree.Node,
 ) float64 {
-	return float64(node.State.WinCount) /
-		float64(node.State.GameCount)
+	return node.State.WinRate()
 }
 
 func TestMaximalSelectorSelectNode(
