@@ -10,33 +10,32 @@ import (
 func TestUCBScorerScoreNode(
 	test *testing.T,
 ) {
-	scorer := UCBScorer{Factor: 2}
-	score := scorer.ScoreNode(
-		&tree.Node{
-			State: tree.NodeState{
-				GameCount: 10,
-				WinCount:  1,
-			},
-		},
-		[]*tree.Node{
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 10,
-					WinCount:  1,
+	scorer := UCBScorer{Factor: 3}
+	score := scorer.ScoreNode(&tree.Node{
+		Parent: &tree.Node{
+			Children: tree.NodeGroup{
+				&tree.Node{
+					State: tree.NodeState{
+						GameCount: 10,
+						WinCount:  1,
+					},
 				},
-			},
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 10,
-					WinCount:  2,
+				&tree.Node{
+					State: tree.NodeState{
+						GameCount: 10,
+						WinCount:  2,
+					},
 				},
 			},
 		},
-	)
+		State: tree.NodeState{
+			GameCount: 10,
+			WinCount:  2,
+		},
+	})
 
 	roundedScore := math.Floor(score*100) / 100
-	if roundedScore != 1.19 {
-		test.Log(score)
+	if roundedScore != 1.84 {
 		test.Fail()
 	}
 }
@@ -46,7 +45,7 @@ func TestUCBScorerTotalGameCount(
 ) {
 	var scorer UCBScorer
 	count :=
-		scorer.totalGameCount([]*tree.Node{
+		scorer.totalGameCount(tree.NodeGroup{
 			&tree.Node{
 				State: tree.NodeState{
 					GameCount: 10,

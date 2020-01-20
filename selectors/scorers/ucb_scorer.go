@@ -17,10 +17,10 @@ type UCBScorer struct {
 // ScoreNode ...
 func (scorer UCBScorer) ScoreNode(
 	node *tree.Node,
-	siblings []*tree.Node,
 ) float64 {
 	x := node.State.WinRate()
-	n := scorer.totalGameCount(siblings)
+	n := scorer.
+		totalGameCount(node.Parent.Children)
 	shift := scorer.Factor * math.Sqrt(
 		math.Log(float64(n))/
 			float64(node.State.GameCount),
@@ -29,11 +29,11 @@ func (scorer UCBScorer) ScoreNode(
 }
 
 func (scorer UCBScorer) totalGameCount(
-	siblings []*tree.Node,
+	nodes tree.NodeGroup,
 ) int {
 	var count int
-	for _, sibling := range siblings {
-		count += sibling.State.GameCount
+	for _, node := range nodes {
+		count += node.State.GameCount
 	}
 
 	return count
