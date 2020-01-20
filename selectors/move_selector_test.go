@@ -10,12 +10,12 @@ import (
 
 type MockNodeSelector struct {
 	selectNode func(
-		nodes []*tree.Node,
+		nodes tree.NodeGroup,
 	) *tree.Node
 }
 
 func (selector MockNodeSelector) SelectNode(
-	nodes []*tree.Node,
+	nodes tree.NodeGroup,
 ) *tree.Node {
 	if selector.selectNode == nil {
 		panic("not implemented")
@@ -44,9 +44,9 @@ func TestMoveSelectorSelectMove(
 			fields: fields{
 				nodeSelector: MockNodeSelector{
 					selectNode: func(
-						nodes []*tree.Node,
+						nodes tree.NodeGroup,
 					) *tree.Node {
-						expectedNodes := []*tree.Node{
+						expectedNodes := tree.NodeGroup{
 							&tree.Node{
 								Move: models.Move{
 									Color: models.White,

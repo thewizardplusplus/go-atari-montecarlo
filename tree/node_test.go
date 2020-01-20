@@ -5,6 +5,51 @@ import (
 	"testing"
 )
 
+type MockNodeSelector struct {
+	selectNode func(nodes NodeGroup) *Node
+}
+
+func (selector MockNodeSelector) SelectNode(
+	nodes NodeGroup,
+) *Node {
+	if selector.selectNode == nil {
+		panic("not implemented")
+	}
+
+	return selector.selectNode(nodes)
+}
+
+func TestNodeSelectLeaf(test *testing.T) {
+	type fields struct {
+		state    NodeState
+		children NodeGroup
+	}
+	type args struct {
+		selector NodeSelector
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   *Node
+	}
+
+	for _, data := range []data{} {
+		node := &Node{
+			State:    data.fields.state,
+			Children: data.fields.children,
+		}
+		got :=
+			node.SelectLeaf(data.args.selector)
+
+		if !reflect.DeepEqual(
+			got,
+			data.want,
+		) {
+			test.Fail()
+		}
+	}
+}
+
 func TestNodeAddResult(test *testing.T) {
 	type fields struct {
 		parent *Node

@@ -16,7 +16,7 @@ func TestRandomSelectorSelectNode(
 	rand.Seed(1)
 
 	var selector RandomSelector
-	got := selector.SelectNode([]*tree.Node{
+	got := selector.SelectNode(tree.NodeGroup{
 		&tree.Node{
 			State: tree.NodeState{
 				GameCount: 2,

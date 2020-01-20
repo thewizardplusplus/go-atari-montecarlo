@@ -18,7 +18,7 @@ type MaximalSelector struct {
 
 // SelectNode ...
 func (selector MaximalSelector) SelectNode(
-	nodes []*tree.Node,
+	nodes tree.NodeGroup,
 ) *tree.Node {
 	var maximum *tree.Node
 	maximumScore := math.Inf(-1)

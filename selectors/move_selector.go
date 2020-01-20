@@ -7,7 +7,7 @@ import (
 
 // NodeSelector ...
 type NodeSelector interface {
-	SelectNode(nodes []*tree.Node) *tree.Node
+	SelectNode(nodes tree.NodeGroup) *tree.Node
 }
 
 // MoveSelector ...

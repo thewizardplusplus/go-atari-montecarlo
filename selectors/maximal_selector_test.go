@@ -21,7 +21,7 @@ func TestMaximalSelectorSelectNode(
 	selector := MaximalSelector{
 		NodeScorer: MockNodeScorer{},
 	}
-	got := selector.SelectNode([]*tree.Node{
+	got := selector.SelectNode(tree.NodeGroup{
 		&tree.Node{
 			State: tree.NodeState{
 				GameCount: 10,
