@@ -11,8 +11,6 @@ import (
 // It implements
 // the Upper Confidence Bound algorithm.
 type UCBScorer struct {
-	WinRateScorer
-
 	Factor float64
 }
 
@@ -21,8 +19,7 @@ func (scorer UCBScorer) ScoreNode(
 	node *tree.Node,
 	siblings []*tree.Node,
 ) float64 {
-	x := scorer.WinRateScorer.
-		ScoreNode(node, siblings)
+	x := node.State.WinRate()
 	n := scorer.totalGameCount(siblings)
 	shift := scorer.Factor * math.Sqrt(
 		math.Log(float64(n))/
