@@ -6,6 +6,12 @@ type NodeState struct {
 	WinCount  int
 }
 
+// WinRate ...
+func (state NodeState) WinRate() float64 {
+	return float64(state.WinCount) /
+		float64(state.GameCount)
+}
+
 // AddResult ...
 func (state *NodeState) AddResult(
 	result GameResult,

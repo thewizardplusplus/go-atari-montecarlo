@@ -5,6 +5,18 @@ import (
 	"testing"
 )
 
+func TestNodeStateWinRate(test *testing.T) {
+	state := NodeState{
+		GameCount: 10,
+		WinCount:  2,
+	}
+	score := state.WinRate()
+
+	if score != 0.2 {
+		test.Fail()
+	}
+}
+
 func TestNodeStateAddResult(
 	test *testing.T,
 ) {
