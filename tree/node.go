@@ -21,6 +21,3 @@ func (node *Node) AddResult(
 		node.Parent.AddResult(result.Invert())
 	}
 }
-
-// NodeGroup ...
-type NodeGroup []*Node

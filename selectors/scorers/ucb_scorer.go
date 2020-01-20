@@ -19,22 +19,10 @@ func (scorer UCBScorer) ScoreNode(
 	node *tree.Node,
 ) float64 {
 	x := node.State.WinRate()
-	n := scorer.
-		totalGameCount(node.Parent.Children)
+	n := node.Parent.Children.TotalGameCount()
 	shift := scorer.Factor * math.Sqrt(
 		math.Log(float64(n))/
 			float64(node.State.GameCount),
 	)
 	return x + shift
-}
-
-func (scorer UCBScorer) totalGameCount(
-	nodes tree.NodeGroup,
-) int {
-	var count int
-	for _, node := range nodes {
-		count += node.State.GameCount
-	}
-
-	return count
 }
