@@ -1,7 +1,14 @@
 package tree
 
 import (
+	"errors"
+
 	models "github.com/thewizardplusplus/go-atari-models"
+)
+
+// ...
+var (
+	ErrNoMoves = errors.New("no moves")
 )
 
 // NodeSelector ...
@@ -13,6 +20,7 @@ type NodeSelector interface {
 type Node struct {
 	Parent   *Node
 	Move     models.Move
+	Board    models.Board
 	State    NodeState
 	Children NodeGroup
 }
@@ -37,4 +45,32 @@ func (node *Node) SelectLeaf(
 	}
 
 	return node
+}
+
+// ExpandLeaf ...
+func (
+	node *Node,
+) ExpandLeaf() (*Node, error) {
+	if node.State.GameCount == 0 {
+		return node, nil
+	}
+
+	nextColor := node.Move.Color.Negative()
+	moves := node.Board.Moves(nextColor)
+	if len(moves) == 0 {
+		return nil, ErrNoMoves
+	}
+
+	var children NodeGroup
+	for _, move := range moves {
+		nextBoard := node.Board.ApplyMove(move)
+		child := &Node{
+			Parent: node,
+			Move:   move,
+			Board:  nextBoard,
+		}
+		children = append(children, child)
+	}
+
+	return children[0], nil
 }
