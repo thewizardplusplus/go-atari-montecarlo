@@ -33,7 +33,129 @@ func TestNodeSelectLeaf(test *testing.T) {
 		want   *Node
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			fields: fields{
+				state: NodeState{
+					GameCount: 1,
+					WinCount:  2,
+				},
+				children: NodeGroup{
+					&Node{
+						State: NodeState{
+							GameCount: 3,
+							WinCount:  4,
+						},
+						Children: NodeGroup{
+							&Node{
+								State: NodeState{
+									GameCount: 5,
+									WinCount:  6,
+								},
+							},
+							&Node{
+								State: NodeState{
+									GameCount: 7,
+									WinCount:  8,
+								},
+							},
+						},
+					},
+					&Node{
+						State: NodeState{
+							GameCount: 9,
+							WinCount:  10,
+						},
+					},
+				},
+			},
+			args: args{
+				selector: MockNodeSelector{
+					selectNode: func(
+						nodes NodeGroup,
+					) *Node {
+						checkOne := reflect.DeepEqual(
+							nodes,
+							NodeGroup{
+								&Node{
+									State: NodeState{
+										GameCount: 3,
+										WinCount:  4,
+									},
+									Children: NodeGroup{
+										&Node{
+											State: NodeState{
+												GameCount: 5,
+												WinCount:  6,
+											},
+										},
+										&Node{
+											State: NodeState{
+												GameCount: 7,
+												WinCount:  8,
+											},
+										},
+									},
+								},
+								&Node{
+									State: NodeState{
+										GameCount: 9,
+										WinCount:  10,
+									},
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							nodes,
+							NodeGroup{
+								&Node{
+									State: NodeState{
+										GameCount: 5,
+										WinCount:  6,
+									},
+								},
+								&Node{
+									State: NodeState{
+										GameCount: 7,
+										WinCount:  8,
+									},
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
+							test.Fail()
+						}
+
+						return nodes[0]
+					},
+				},
+			},
+			want: &Node{
+				State: NodeState{
+					GameCount: 5,
+					WinCount:  6,
+				},
+			},
+		},
+		data{
+			fields: fields{
+				state: NodeState{
+					GameCount: 1,
+					WinCount:  2,
+				},
+				children: nil,
+			},
+			args: args{
+				selector: nil,
+			},
+			want: &Node{
+				State: NodeState{
+					GameCount: 1,
+					WinCount:  2,
+				},
+			},
+		},
+	} {
 		node := &Node{
 			State:    data.fields.state,
 			Children: data.fields.children,
