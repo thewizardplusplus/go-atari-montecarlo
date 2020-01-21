@@ -72,5 +72,7 @@ func (
 		children = append(children, child)
 	}
 
+	node.Children = children
+
 	return children[0], nil
 }
