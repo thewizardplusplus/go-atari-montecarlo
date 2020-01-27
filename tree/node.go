@@ -61,18 +61,11 @@ func (
 		return nil, ErrNoMoves
 	}
 
-	var children NodeGroup
-	for _, move := range moves {
-		nextBoard := node.Board.ApplyMove(move)
-		child := &Node{
-			Parent: node,
-			Move:   move,
-			Board:  nextBoard,
-		}
-		children = append(children, child)
-	}
+	node.Children = NewNodeGroup(
+		moves,
+		WithParent(node),
+		WithBoard(node.Board),
+	)
 
-	node.Children = children
-
-	return children[0], nil
+	return node.Children[0], nil
 }

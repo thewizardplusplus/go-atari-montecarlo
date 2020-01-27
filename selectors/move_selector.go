@@ -19,12 +19,7 @@ type MoveSelector struct {
 func (selector MoveSelector) SelectMove(
 	moves []models.Move,
 ) models.Move {
-	var nodes []*tree.Node
-	for _, move := range moves {
-		node := &tree.Node{Move: move}
-		nodes = append(nodes, node)
-	}
-
+	nodes := tree.NewNodeGroup(moves)
 	node :=
 		selector.NodeSelector.SelectNode(nodes)
 	return node.Move
