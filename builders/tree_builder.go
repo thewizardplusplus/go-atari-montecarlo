@@ -36,7 +36,7 @@ func (builder TreeBuilder) Pass(
 		leaf.Board,
 		nextColor,
 	)
-	leaf.AddResult(result)
+	leaf.AddResult(result.Invert())
 
 	return nil
 }
