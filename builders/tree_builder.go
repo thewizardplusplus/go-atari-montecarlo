@@ -22,21 +22,14 @@ type TreeBuilder struct {
 // Pass ...
 func (builder TreeBuilder) Pass(
 	root *tree.Node,
-) error {
-	var err error
-	leaf :=
-		root.SelectLeaf(builder.NodeSelector)
-	leaf, err = leaf.ExpandLeaf()
-	if err != nil {
-		return err
-	}
-
+) {
+	leaf := root.
+		SelectLeaf(builder.NodeSelector).
+		ExpandLeaf()
 	nextColor := leaf.Move.Color.Negative()
 	result := builder.Simulator.Simulate(
 		leaf.Board,
 		nextColor,
 	)
 	leaf.AddResult(result.Invert())
-
-	return nil
 }

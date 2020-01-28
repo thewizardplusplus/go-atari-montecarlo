@@ -1,14 +1,7 @@
 package tree
 
 import (
-	"errors"
-
 	models "github.com/thewizardplusplus/go-atari-models"
-)
-
-// ...
-var (
-	ErrNoMoves = errors.New("no moves")
 )
 
 // NodeSelector ...
@@ -48,17 +41,15 @@ func (node *Node) SelectLeaf(
 }
 
 // ExpandLeaf ...
-func (
-	node *Node,
-) ExpandLeaf() (*Node, error) {
+func (node *Node) ExpandLeaf() *Node {
 	if node.State.GameCount == 0 {
-		return node, nil
+		return node
 	}
 
 	nextColor := node.Move.Color.Negative()
 	moves := node.Board.Moves(nextColor)
 	if len(moves) == 0 {
-		return nil, ErrNoMoves
+		return node
 	}
 
 	node.Children = NewNodeGroup(
@@ -67,5 +58,5 @@ func (
 		WithBoard(node.Board),
 	)
 
-	return node.Children[0], nil
+	return node.Children[0]
 }
