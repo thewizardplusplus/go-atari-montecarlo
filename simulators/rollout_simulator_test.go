@@ -1,6 +1,7 @@
 package simulators
 
 import (
+	"reflect"
 	"testing"
 
 	models "github.com/thewizardplusplus/go-atari-models"
@@ -59,6 +60,33 @@ func TestRolloutSimulatorSimulate(
 							iterationCount++
 						}()
 
+						var color models.Color
+						if iterationCount%2 == 0 {
+							color = models.White
+						} else {
+							color = models.Black
+						}
+
+						var expectedMoves []models.Move
+						points := models.Size{
+							Width:  3,
+							Height: 3,
+						}.Points()[iterationCount+1:]
+						for _, point := range points {
+							move := models.Move{
+								Color: color,
+								Point: point,
+							}
+							expectedMoves =
+								append(expectedMoves, move)
+						}
+						if !reflect.DeepEqual(
+							moves,
+							expectedMoves,
+						) {
+							test.Fail()
+						}
+
 						return moves[0]
 					},
 				},
@@ -109,6 +137,33 @@ func TestRolloutSimulatorSimulate(
 							iterationCount++
 						}()
 
+						var color models.Color
+						if iterationCount%2 == 0 {
+							color = models.White
+						} else {
+							color = models.Black
+						}
+
+						var expectedMoves []models.Move
+						points := models.Size{
+							Width:  3,
+							Height: 3,
+						}.Points()[iterationCount:]
+						for _, point := range points {
+							move := models.Move{
+								Color: color,
+								Point: point,
+							}
+							expectedMoves =
+								append(expectedMoves, move)
+						}
+						if !reflect.DeepEqual(
+							moves,
+							expectedMoves,
+						) {
+							test.Fail()
+						}
+
 						return moves[0]
 					},
 				},
@@ -126,6 +181,35 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantResult: tree.Loss,
 			wantCount:  4,
+		},
+		data{
+			fields: fields{
+				moveSelector: nil,
+			},
+			args: args{
+				board: func() models.Board {
+					board := models.NewBoard(
+						models.Size{
+							Width:  3,
+							Height: 3,
+						},
+					)
+
+					points := board.Size().Points()
+					for _, point := range points {
+						move := models.Move{
+							Color: models.White,
+							Point: point,
+						}
+						board = board.ApplyMove(move)
+					}
+
+					return board
+				}(),
+				color: models.White,
+			},
+			wantResult: tree.Loss,
+			wantCount:  0,
 		},
 	} {
 		iterationCount = 0
