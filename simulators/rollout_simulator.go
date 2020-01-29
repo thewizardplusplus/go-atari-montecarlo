@@ -23,6 +23,10 @@ func (simulator RolloutSimulator) Simulate(
 	startColor := color
 	for !board.HasCapture(color) {
 		moves := board.Moves(color)
+		if len(moves) == 0 {
+			break
+		}
+
 		move := simulator.MoveSelector.
 			SelectMove(moves)
 
