@@ -5,14 +5,9 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-// NodeSelector ...
-type NodeSelector interface {
-	SelectNode(nodes tree.NodeGroup) *tree.Node
-}
-
 // MoveSelector ...
 type MoveSelector struct {
-	NodeSelector NodeSelector
+	NodeSelector tree.NodeSelector
 }
 
 // SelectMove ...

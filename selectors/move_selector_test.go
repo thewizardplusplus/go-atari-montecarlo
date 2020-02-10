@@ -28,7 +28,7 @@ func TestMoveSelectorSelectMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		nodeSelector NodeSelector
+		nodeSelector tree.NodeSelector
 	}
 	type args struct {
 		moves []models.Move
