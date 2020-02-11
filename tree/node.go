@@ -18,6 +18,19 @@ type Node struct {
 	Children NodeGroup
 }
 
+// NewNode ...
+func NewNode(
+	board models.Board,
+	color models.Color,
+) *Node {
+	return &Node{
+		Move: models.Move{
+			Color: color.Negative(),
+		},
+		Board: board,
+	}
+}
+
 // AddResult ...
 func (node *Node) AddResult(
 	result GameResult,
