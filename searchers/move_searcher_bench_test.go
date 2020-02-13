@@ -77,8 +77,7 @@ func search(
 	color models.Color,
 	passCount int,
 ) (move models.Move, ok bool) {
-	root :=
-		tree.NewNode(board, color.Negative())
+	root := tree.NewNode(board, color)
 	var randomSelector selectors.RandomSelector
 	maximalSelector :=
 		selectors.MaximalSelector{
