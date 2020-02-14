@@ -1,6 +1,7 @@
 package searchers_test
 
 import (
+	"log"
 	"reflect"
 	"testing"
 
@@ -8,6 +9,8 @@ import (
 )
 
 func TestSearch(test *testing.T) {
+	test.Skip()
+
 	type args struct {
 		board     models.Board
 		color     models.Color
@@ -19,7 +22,7 @@ func TestSearch(test *testing.T) {
 		wantOk   bool
 	}
 
-	for _, data := range []data{
+	for index, data := range []data{
 		data{
 			args: args{
 				board: func() models.Board {
@@ -111,59 +114,74 @@ func TestSearch(test *testing.T) {
 			},
 			wantOk: true,
 		},
-		/*data{
-		  args: args{
-		    board: func() models.Board {
-		      board := models.NewBoard(
-		        models.Size{
-		          Width:  3,
-		          Height: 3,
-		        },
-		      )
+		data{
+			args: args{
+				board: func() models.Board {
+					board := models.NewBoard(
+						models.Size{
+							Width:  3,
+							Height: 3,
+						},
+					)
 
-		      moves := []models.Move{
-		        models.Move{
-		          Color: models.White,
-		          Point: models.Point{
-		            Column: 1,
-		            Row:    1,
-		          },
-		        },
-		        models.Move{
-		          Color: models.Black,
-		          Point: models.Point{
-		            Column: 0,
-		            Row:    1,
-		          },
-		        },
-		        models.Move{
-		          Color: models.Black,
-		          Point: models.Point{
-		            Column: 2,
-		            Row:    1,
-		          },
-		        },
-		        models.Move{
-		          Color: models.Black,
-		          Point: models.Point{
-		            Column: 1,
-		            Row:    2,
-		          },
-		        },
-		      }
-		      for _, move := range moves {
-		        board = board.ApplyMove(move)
-		      }
+					moves := []models.Move{
+						models.Move{
+							Color: models.Black,
+							Point: models.Point{
+								Column: 0,
+								Row:    1,
+							},
+						},
+						models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 1,
+								Row:    1,
+							},
+						},
+						models.Move{
+							Color: models.Black,
+							Point: models.Point{
+								Column: 2,
+								Row:    1,
+							},
+						},
+						models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    2,
+							},
+						},
+						models.Move{
+							Color: models.Black,
+							Point: models.Point{
+								Column: 1,
+								Row:    2,
+							},
+						},
+					}
+					for _, move := range moves {
+						board = board.ApplyMove(move)
+					}
 
-		      return board
-		    }(),
-		    color:     models.Black,
-		    passCount: 1,
-		  },
-		  wantMove: models.Move{},
-		  wantOk:   false,
-		},*/
+					return board
+				}(),
+				color:     models.Black,
+				passCount: 1000,
+			},
+			wantMove: models.Move{
+				Color: models.Black,
+				Point: models.Point{
+					Column: 1,
+					Row:    0,
+				},
+			},
+			wantOk: true,
+		},
 	} {
+		log.Printf("run #%d", index)
+
 		gotMove, gotOk := search(
 			data.args.board,
 			data.args.color,

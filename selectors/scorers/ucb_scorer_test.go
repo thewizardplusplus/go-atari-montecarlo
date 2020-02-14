@@ -10,32 +10,118 @@ import (
 func TestUCBScorerScoreNode(
 	test *testing.T,
 ) {
-	scorer := UCBScorer{Factor: 3}
-	score := scorer.ScoreNode(&tree.Node{
-		Parent: &tree.Node{
-			Children: tree.NodeGroup{
-				&tree.Node{
-					State: tree.NodeState{
-						GameCount: 10,
-						WinCount:  1,
+	type fields struct {
+		factor float64
+	}
+	type args struct {
+		node *tree.Node
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   float64
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				factor: 2,
+			},
+			args: args{
+				node: &tree.Node{
+					Parent: &tree.Node{
+						Children: tree.NodeGroup{
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 4,
+									WinCount:  2,
+								},
+							},
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 5,
+									WinCount:  3,
+								},
+							},
+						},
 					},
-				},
-				&tree.Node{
 					State: tree.NodeState{
-						GameCount: 10,
+						GameCount: 4,
 						WinCount:  2,
 					},
 				},
 			},
+			want: 1.98,
 		},
-		State: tree.NodeState{
-			GameCount: 10,
-			WinCount:  2,
+		data{
+			fields: fields{
+				factor: 2,
+			},
+			args: args{
+				node: &tree.Node{
+					Parent: &tree.Node{
+						Children: tree.NodeGroup{
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 0,
+									WinCount:  0,
+								},
+							},
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 5,
+									WinCount:  3,
+								},
+							},
+						},
+					},
+					State: tree.NodeState{
+						GameCount: 0,
+						WinCount:  0,
+					},
+				},
+			},
+			want: math.Inf(+1),
 		},
-	})
+		data{
+			fields: fields{
+				factor: 2,
+			},
+			args: args{
+				node: &tree.Node{
+					Parent: &tree.Node{
+						Children: tree.NodeGroup{
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 0,
+									WinCount:  0,
+								},
+							},
+							&tree.Node{
+								State: tree.NodeState{
+									GameCount: 0,
+									WinCount:  0,
+								},
+							},
+						},
+					},
+					State: tree.NodeState{
+						GameCount: 0,
+						WinCount:  0,
+					},
+				},
+			},
+			want: math.Inf(+1),
+		},
+	} {
+		scorer := UCBScorer{
+			Factor: data.fields.factor,
+		}
+		got := scorer.ScoreNode(data.args.node)
 
-	roundedScore := math.Floor(score*100) / 100
-	if roundedScore != 1.84 {
-		test.Fail()
+		roundedGot := math.Floor(got*100) / 100
+		if roundedGot != data.want {
+			test.Fail()
+		}
 	}
 }

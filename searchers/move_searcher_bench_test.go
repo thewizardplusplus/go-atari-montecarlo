@@ -78,11 +78,12 @@ func search(
 	passCount int,
 ) (move models.Move, ok bool) {
 	root := tree.NewNode(board, color)
-	var randomSelector selectors.RandomSelector
+	randomSelector :=
+		selectors.RandomSelector{}
 	maximalSelector :=
 		selectors.MaximalSelector{
 			NodeScorer: scorers.UCBScorer{
-				Factor: 1,
+				Factor: 1000,
 			},
 		}
 	simulator := simulators.RolloutSimulator{

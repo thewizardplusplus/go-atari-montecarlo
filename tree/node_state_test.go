@@ -1,19 +1,46 @@
 package tree
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
 
 func TestNodeStateWinRate(test *testing.T) {
-	state := NodeState{
-		GameCount: 10,
-		WinCount:  2,
+	type fields struct {
+		gameCount int
+		winCount  int
 	}
-	score := state.WinRate()
+	type data struct {
+		fields fields
+		want   float64
+	}
 
-	if score != 0.2 {
-		test.Fail()
+	for _, data := range []data{
+		data{
+			fields: fields{
+				gameCount: 4,
+				winCount:  2,
+			},
+			want: 0.5,
+		},
+		data{
+			fields: fields{
+				gameCount: 0,
+				winCount:  0,
+			},
+			want: math.Inf(+1),
+		},
+	} {
+		state := NodeState{
+			GameCount: data.fields.gameCount,
+			WinCount:  data.fields.winCount,
+		}
+		got := state.WinRate()
+
+		if got != data.want {
+			test.Fail()
+		}
 	}
 }
 
