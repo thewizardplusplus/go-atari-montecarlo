@@ -60,7 +60,8 @@ func (node *Node) ExpandLeaf() *Node {
 	}
 
 	nextColor := node.Move.Color.Negative()
-	moves := node.Board.Moves(nextColor)
+	moves := node.Board.
+		PseudolegalMoves(nextColor)
 	if len(moves) == 0 {
 		return node
 	}

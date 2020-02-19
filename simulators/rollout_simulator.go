@@ -21,8 +21,12 @@ func (simulator RolloutSimulator) Simulate(
 	color models.Color,
 ) tree.GameResult {
 	startColor := color
-	for !board.HasCapture(color) {
-		moves := board.Moves(color)
+	for {
+		if _, ok := board.HasCapture(color); ok {
+			break
+		}
+
+		moves := board.PseudolegalMoves(color)
 		if len(moves) == 0 {
 			break
 		}

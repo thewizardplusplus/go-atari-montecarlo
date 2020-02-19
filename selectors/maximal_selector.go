@@ -1,35 +1,35 @@
 package selectors
 
 import (
-  "math"
+	"math"
 
-  "github.com/thewizardplusplus/go-atari-montecarlo/tree"
+	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
 // NodeScorer ...
 type NodeScorer interface {
-  ScoreNode(node *tree.Node) float64
+	ScoreNode(node *tree.Node) float64
 }
 
 // MaximalSelector ...
 type MaximalSelector struct {
-  NodeScorer NodeScorer
+	NodeScorer NodeScorer
 }
 
 // SelectNode ...
 func (selector MaximalSelector) SelectNode(
-  nodes tree.NodeGroup,
+	nodes tree.NodeGroup,
 ) *tree.Node {
-  var maximum *tree.Node
-  maximumScore := math.Inf(-1)
-  for _, node := range nodes {
-    nodeScore :=
-      selector.NodeScorer.ScoreNode(node)
-    if nodeScore > maximumScore {
-      maximum = node
-      maximumScore = nodeScore
-    }
-  }
+	var maximum *tree.Node
+	maximumScore := math.Inf(-1)
+	for _, node := range nodes {
+		nodeScore :=
+			selector.NodeScorer.ScoreNode(node)
+		if nodeScore > maximumScore {
+			maximum = node
+			maximumScore = nodeScore
+		}
+	}
 
-  return maximum
+	return maximum
 }

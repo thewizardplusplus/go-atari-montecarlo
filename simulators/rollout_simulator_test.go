@@ -68,10 +68,13 @@ func TestRolloutSimulatorSimulate(
 						}
 
 						var expectedMoves []models.Move
-						points := models.Size{
+						size := models.Size{
 							Width:  3,
 							Height: 3,
-						}.Points()[iterationCount+1:]
+						}
+						points := size.Points()
+						points =
+							points[iterationCount+1:]
 						for _, point := range points {
 							move := models.Move{
 								Color: color,
@@ -145,10 +148,12 @@ func TestRolloutSimulatorSimulate(
 						}
 
 						var expectedMoves []models.Move
-						points := models.Size{
+						size := models.Size{
 							Width:  3,
 							Height: 3,
-						}.Points()[iterationCount:]
+						}
+						points := size.Points()
+						points = points[iterationCount:]
 						for _, point := range points {
 							move := models.Move{
 								Color: color,
@@ -184,7 +189,13 @@ func TestRolloutSimulatorSimulate(
 		},
 		data{
 			fields: fields{
-				moveSelector: nil,
+				moveSelector: MockMoveSelector{
+					selectMove: func(
+						moves []models.Move,
+					) models.Move {
+						panic("not implemented")
+					},
+				},
 			},
 			args: args{
 				board: func() models.Board {
@@ -207,6 +218,126 @@ func TestRolloutSimulatorSimulate(
 					return board
 				}(),
 				color: models.White,
+			},
+			wantResult: tree.Loss,
+			wantCount:  0,
+		},
+		/*data{
+		  fields: fields{
+		    // +--+--+--+
+		    // |B0|W0|  |
+		    // +--+--+--+
+		    // |W0|  |  |
+		    // +--+--+--+
+		    // |  |  |  |
+		    // +--+--+--+
+		    moveSelector: MockMoveSelector{
+		      selectMove: func(
+		        moves []models.Move,
+		      ) models.Move {
+		        panic("not implemented")
+		      },
+		    },
+		  },
+		  args: args{
+		    board: func() models.Board {
+		      board := models.NewBoard(
+		        models.Size{
+		          Width:  3,
+		          Height: 3,
+		        },
+		      )
+
+		      moves := []models.Move{
+		        models.Move{
+		          Color: models.Black,
+		          Point: models.Point{
+		            Column: 0,
+		            Row:    0,
+		          },
+		        },
+		        models.Move{
+		          Color: models.White,
+		          Point: models.Point{
+		            Column: 1,
+		            Row:    0,
+		          },
+		        },
+		        models.Move{
+		          Color: models.White,
+		          Point: models.Point{
+		            Column: 0,
+		            Row:    1,
+		          },
+		        },
+		      }
+		      for _, move := range moves {
+		        board = board.ApplyMove(move)
+		      }
+
+		      return board
+		    }(),
+		    color: models.White,
+		  },
+		  wantResult: tree.Win,
+		  wantCount:  0,
+		},*/
+		data{
+			fields: fields{
+				// +--+--+--+
+				// |B0|W0|  |
+				// +--+--+--+
+				// |W0|  |  |
+				// +--+--+--+
+				// |  |  |  |
+				// +--+--+--+
+				moveSelector: MockMoveSelector{
+					selectMove: func(
+						moves []models.Move,
+					) models.Move {
+						panic("not implemented")
+					},
+				},
+			},
+			args: args{
+				board: func() models.Board {
+					board := models.NewBoard(
+						models.Size{
+							Width:  3,
+							Height: 3,
+						},
+					)
+
+					moves := []models.Move{
+						models.Move{
+							Color: models.Black,
+							Point: models.Point{
+								Column: 0,
+								Row:    0,
+							},
+						},
+						models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 1,
+								Row:    0,
+							},
+						},
+						models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    1,
+							},
+						},
+					}
+					for _, move := range moves {
+						board = board.ApplyMove(move)
+					}
+
+					return board
+				}(),
+				color: models.Black,
 			},
 			wantResult: tree.Loss,
 			wantCount:  0,

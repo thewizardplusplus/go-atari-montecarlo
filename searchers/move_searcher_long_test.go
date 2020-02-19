@@ -14,6 +14,7 @@ func TestSearch(test *testing.T) {
 	type args struct {
 		board     models.Board
 		color     models.Color
+		ucbFactor float64
 		passCount int
 	}
 	type data struct {
@@ -45,6 +46,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
+				ucbFactor: 2,
 				passCount: 2,
 			},
 			wantMove: models.Move{},
@@ -74,6 +76,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
+				ucbFactor: 2,
 				passCount: 1,
 			},
 			wantMove: models.Move{},
@@ -103,6 +106,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
+				ucbFactor: 2,
 				passCount: 2,
 			},
 			wantMove: models.Move{
@@ -168,6 +172,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
+				ucbFactor: 0.001,
 				passCount: 1000,
 			},
 			wantMove: models.Move{
@@ -185,6 +190,7 @@ func TestSearch(test *testing.T) {
 		gotMove, gotOk := search(
 			data.args.board,
 			data.args.color,
+			data.args.ucbFactor,
 			data.args.passCount,
 		)
 

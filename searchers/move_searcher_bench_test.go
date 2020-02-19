@@ -23,7 +23,7 @@ func BenchmarkSearch_10PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 10)
+		search(board, models.Black, 2, 10)
 	}
 }
 
@@ -38,7 +38,7 @@ func BenchmarkSearch_100PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 100)
+		search(board, models.Black, 2, 100)
 	}
 }
 
@@ -53,7 +53,7 @@ func BenchmarkSearch_1000PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 1000)
+		search(board, models.Black, 2, 1000)
 	}
 }
 
@@ -68,13 +68,14 @@ func BenchmarkSearch_10000PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 10000)
+		search(board, models.Black, 2, 10000)
 	}
 }
 
 func search(
 	board models.Board,
 	color models.Color,
+	ucbFactor float64,
 	passCount int,
 ) (move models.Move, ok bool) {
 	root := tree.NewNode(board, color)
@@ -83,7 +84,7 @@ func search(
 	maximalSelector :=
 		selectors.MaximalSelector{
 			NodeScorer: scorers.UCBScorer{
-				Factor: 1000,
+				Factor: ucbFactor,
 			},
 		}
 	simulator := simulators.RolloutSimulator{
