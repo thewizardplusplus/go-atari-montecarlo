@@ -60,9 +60,10 @@ func (node *Node) ExpandLeaf() *Node {
 	}
 
 	nextColor := node.Move.Color.Negative()
-	moves := node.Board.
-		PseudolegalMoves(nextColor)
-	if len(moves) == 0 {
+	moves, err := node.Board.
+		LegalMoves(nextColor)
+	if err != nil {
+		// no moves or an already finished game
 		return node
 	}
 
