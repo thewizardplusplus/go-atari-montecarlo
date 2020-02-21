@@ -22,13 +22,15 @@ func (simulator RolloutSimulator) Simulate(
 ) tree.GameResult {
 	startColor := color
 	for {
-		if _, ok := board.HasCapture(color); ok {
-			break
-		}
+		moves, err := board.LegalMoves(color)
+		if err != nil {
+			// no moves or an already finished game
+			result := tree.NewGameResult(err)
+			if color != startColor {
+				result = result.Invert()
+			}
 
-		moves := board.PseudolegalMoves(color)
-		if len(moves) == 0 {
-			break
+			return result
 		}
 
 		move := simulator.MoveSelector.
@@ -37,13 +39,4 @@ func (simulator RolloutSimulator) Simulate(
 		board = board.ApplyMove(move)
 		color = color.Negative()
 	}
-
-	var result tree.GameResult
-	if color == startColor {
-		result = tree.Loss
-	} else {
-		result = tree.Win
-	}
-
-	return result
 }
