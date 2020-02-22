@@ -1,7 +1,6 @@
 package searchers_test
 
 import (
-	"log"
 	"reflect"
 	"testing"
 
@@ -9,8 +8,6 @@ import (
 )
 
 func TestSearch(test *testing.T) {
-	test.Skip()
-
 	type args struct {
 		board     models.Board
 		color     models.Color
@@ -23,7 +20,7 @@ func TestSearch(test *testing.T) {
 		wantOk   bool
 	}
 
-	for index, data := range []data{
+	for _, data := range []data{
 		data{
 			args: args{
 				board: func() models.Board {
@@ -46,7 +43,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
-				ucbFactor: 2,
+				ucbFactor: 1,
 				passCount: 2,
 			},
 			wantMove: models.Move{},
@@ -76,7 +73,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
-				ucbFactor: 2,
+				ucbFactor: 1,
 				passCount: 1,
 			},
 			wantMove: models.Move{},
@@ -106,7 +103,7 @@ func TestSearch(test *testing.T) {
 					return board
 				}(),
 				color:     models.Black,
-				ucbFactor: 2,
+				ucbFactor: 1,
 				passCount: 2,
 			},
 			wantMove: models.Move{
@@ -128,65 +125,39 @@ func TestSearch(test *testing.T) {
 						},
 					)
 
-					moves := []models.Move{
-						models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 0,
-								Row:    1,
-							},
-						},
-						models.Move{
+					points := board.Size().Points()
+					opponentIndex := len(points) - 3
+					board =
+						board.ApplyMove(models.Move{
 							Color: models.White,
-							Point: models.Point{
-								Column: 1,
-								Row:    1,
-							},
-						},
-						models.Move{
+							Point: points[opponentIndex],
+						})
+
+					points = points[:opponentIndex]
+					for _, point := range points {
+						move := models.Move{
 							Color: models.Black,
-							Point: models.Point{
-								Column: 2,
-								Row:    1,
-							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 0,
-								Row:    2,
-							},
-						},
-						models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 1,
-								Row:    2,
-							},
-						},
-					}
-					for _, move := range moves {
+							Point: point,
+						}
 						board = board.ApplyMove(move)
 					}
 
 					return board
 				}(),
 				color:     models.Black,
-				ucbFactor: 0.001,
+				ucbFactor: 1,
 				passCount: 1000,
 			},
 			wantMove: models.Move{
 				Color: models.Black,
 				Point: models.Point{
 					Column: 1,
-					Row:    0,
+					Row:    2,
 				},
 			},
 			wantOk: true,
 		},
 	} {
-		log.Printf("run #%d", index)
-
 		gotMove, gotOk := search(
 			data.args.board,
 			data.args.color,
@@ -198,13 +169,9 @@ func TestSearch(test *testing.T) {
 			gotMove,
 			data.wantMove,
 		) {
-			test.Log(gotMove)
-			test.Log(data.wantMove)
 			test.Fail()
 		}
 		if gotOk != data.wantOk {
-			test.Log(gotOk)
-			test.Log(data.wantOk)
 			test.Fail()
 		}
 	}
