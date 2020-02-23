@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	models "github.com/thewizardplusplus/go-atari-models"
+	"github.com/thewizardplusplus/go-atari-montecarlo/searchers"
 )
 
 func TestSearch(test *testing.T) {
@@ -17,7 +18,7 @@ func TestSearch(test *testing.T) {
 	type data struct {
 		args     args
 		wantMove models.Move
-		wantOk   bool
+		wantErr  error
 	}
 
 	for _, data := range []data{
@@ -47,7 +48,7 @@ func TestSearch(test *testing.T) {
 				passCount: 2,
 			},
 			wantMove: models.Move{},
-			wantOk:   false,
+			wantErr:  models.ErrAlreadyLoss,
 		},
 		data{
 			args: args{
@@ -77,7 +78,7 @@ func TestSearch(test *testing.T) {
 				passCount: 1,
 			},
 			wantMove: models.Move{},
-			wantOk:   false,
+			wantErr:  searchers.ErrFailedBuilding,
 		},
 		data{
 			args: args{
@@ -113,7 +114,7 @@ func TestSearch(test *testing.T) {
 					Row:    2,
 				},
 			},
-			wantOk: true,
+			wantErr: nil,
 		},
 		data{
 			args: args{
@@ -155,10 +156,10 @@ func TestSearch(test *testing.T) {
 					Row:    2,
 				},
 			},
-			wantOk: true,
+			wantErr: nil,
 		},
 	} {
-		gotMove, gotOk := search(
+		gotMove, gotErr := search(
 			data.args.board,
 			data.args.color,
 			data.args.ucbFactor,
@@ -171,7 +172,7 @@ func TestSearch(test *testing.T) {
 		) {
 			test.Fail()
 		}
-		if gotOk != data.wantOk {
+		if gotErr != data.wantErr {
 			test.Fail()
 		}
 	}

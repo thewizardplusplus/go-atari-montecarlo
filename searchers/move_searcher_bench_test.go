@@ -77,7 +77,7 @@ func search(
 	color models.Color,
 	ucbFactor float64,
 	passCount int,
-) (move models.Move, ok bool) {
+) (models.Move, error) {
 	root := tree.NewNode(board, color)
 	randomSelector :=
 		selectors.RandomSelector{}
@@ -103,10 +103,10 @@ func search(
 		Builder:      builder,
 		NodeSelector: maximalSelector,
 	}
-	node, ok := searcher.SearchMove(root)
-	if !ok {
-		return models.Move{}, false
+	node, err := searcher.SearchMove(root)
+	if err != nil {
+		return models.Move{}, err
 	}
 
-	return node.Move, true
+	return node.Move, nil
 }

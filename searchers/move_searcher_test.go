@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
@@ -52,7 +53,7 @@ func TestMoveSearcherSearchMove(
 		fields   fields
 		args     args
 		wantNode *tree.Node
-		wantOk   bool
+		wantErr  error
 	}
 
 	for _, data := range []data{
@@ -60,7 +61,66 @@ func TestMoveSearcherSearchMove(
 			fields: fields{
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
+						panic("not implemented")
+					},
+				},
+				nodeSelector: MockNodeSelector{
+					selectNode: func(
+						nodes tree.NodeGroup,
+					) *tree.Node {
+						panic("not implemented")
+					},
+				},
+			},
+			args: args{
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+					},
+					Board: func() models.Board {
+						board := models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
+
+						points := board.Size().Points()
+						for _, point := range points {
+							move := models.Move{
+								Color: models.White,
+								Point: point,
+							}
+							board = board.ApplyMove(move)
+						}
+
+						return board
+					}(),
+					State: tree.NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				},
+			},
+			wantNode: nil,
+			wantErr:  models.ErrAlreadyLoss,
+		},
+		data{
+			fields: fields{
+				builder: MockBuilder{
+					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
+							Move: models.Move{
+								Color: models.White,
+							},
+							Board: func() models.Board {
+								return models.NewBoard(
+									models.Size{
+										Width:  3,
+										Height: 3,
+									},
+								)
+							}(),
 							State: tree.NodeState{
 								GameCount: 2,
 								WinCount:  1,
@@ -76,9 +136,27 @@ func TestMoveSearcherSearchMove(
 						// don't change the passed node
 					},
 				},
+				nodeSelector: MockNodeSelector{
+					selectNode: func(
+						nodes tree.NodeGroup,
+					) *tree.Node {
+						panic("not implemented")
+					},
+				},
 			},
 			args: args{
 				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+					},
+					Board: func() models.Board {
+						return models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
+					}(),
 					State: tree.NodeState{
 						GameCount: 2,
 						WinCount:  1,
@@ -86,13 +164,24 @@ func TestMoveSearcherSearchMove(
 				},
 			},
 			wantNode: nil,
-			wantOk:   false,
+			wantErr:  ErrFailedBuilding,
 		},
 		data{
 			fields: fields{
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
+							Move: models.Move{
+								Color: models.White,
+							},
+							Board: func() models.Board {
+								return models.NewBoard(
+									models.Size{
+										Width:  3,
+										Height: 3,
+									},
+								)
+							}(),
 							State: tree.NodeState{
 								GameCount: 2,
 								WinCount:  1,
@@ -154,6 +243,17 @@ func TestMoveSearcherSearchMove(
 			},
 			args: args{
 				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+					},
+					Board: func() models.Board {
+						return models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
+					}(),
 					State: tree.NodeState{
 						GameCount: 2,
 						WinCount:  1,
@@ -166,7 +266,7 @@ func TestMoveSearcherSearchMove(
 					WinCount:  3,
 				},
 			},
-			wantOk: true,
+			wantErr: nil,
 		},
 	} {
 		searcher := MoveSearcher{
@@ -174,7 +274,7 @@ func TestMoveSearcherSearchMove(
 			NodeSelector: data.fields.
 				nodeSelector,
 		}
-		gotNode, gotOk :=
+		gotNode, gotErr :=
 			searcher.SearchMove(data.args.root)
 
 		if !reflect.DeepEqual(
@@ -183,7 +283,7 @@ func TestMoveSearcherSearchMove(
 		) {
 			test.Fail()
 		}
-		if gotOk != data.wantOk {
+		if gotErr != data.wantErr {
 			test.Fail()
 		}
 	}
