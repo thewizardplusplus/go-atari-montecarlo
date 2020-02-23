@@ -16,9 +16,9 @@ func TestSearch(test *testing.T) {
 		passCount int
 	}
 	type data struct {
-		args     args
-		wantMove models.Move
-		wantErr  error
+		args      args
+		wantMoves []models.Move
+		wantErr   error
 	}
 
 	for _, data := range []data{
@@ -47,8 +47,10 @@ func TestSearch(test *testing.T) {
 				ucbFactor: 1,
 				passCount: 2,
 			},
-			wantMove: models.Move{},
-			wantErr:  models.ErrAlreadyLoss,
+			wantMoves: []models.Move{
+				models.Move{},
+			},
+			wantErr: models.ErrAlreadyLoss,
 		},
 		data{
 			args: args{
@@ -77,8 +79,10 @@ func TestSearch(test *testing.T) {
 				ucbFactor: 1,
 				passCount: 1,
 			},
-			wantMove: models.Move{},
-			wantErr:  searchers.ErrFailedBuilding,
+			wantMoves: []models.Move{
+				models.Move{},
+			},
+			wantErr: searchers.ErrFailedBuilding,
 		},
 		data{
 			args: args{
@@ -107,11 +111,13 @@ func TestSearch(test *testing.T) {
 				ucbFactor: 1,
 				passCount: 2,
 			},
-			wantMove: models.Move{
-				Color: models.Black,
-				Point: models.Point{
-					Column: 2,
-					Row:    2,
+			wantMoves: []models.Move{
+				models.Move{
+					Color: models.Black,
+					Point: models.Point{
+						Column: 2,
+						Row:    2,
+					},
 				},
 			},
 			wantErr: nil,
@@ -149,11 +155,13 @@ func TestSearch(test *testing.T) {
 				ucbFactor: 1,
 				passCount: 1000,
 			},
-			wantMove: models.Move{
-				Color: models.Black,
-				Point: models.Point{
-					Column: 1,
-					Row:    2,
+			wantMoves: []models.Move{
+				models.Move{
+					Color: models.Black,
+					Point: models.Point{
+						Column: 1,
+						Row:    2,
+					},
 				},
 			},
 			wantErr: nil,
@@ -166,12 +174,17 @@ func TestSearch(test *testing.T) {
 			data.args.passCount,
 		)
 
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		var hasMatch bool
+		for _, move := range data.wantMoves {
+			if reflect.DeepEqual(gotMove, move) {
+				hasMatch = true
+				break
+			}
+		}
+		if !hasMatch {
 			test.Fail()
 		}
+
 		if gotErr != data.wantErr {
 			test.Fail()
 		}
