@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-atari-montecarlo/builders/terminators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -21,12 +22,27 @@ func (builder MockBuilder) Pass(
 	builder.pass(root)
 }
 
+type MockBuildingTerminator struct {
+	isSearchTerminated func(pass int) bool
+}
+
+func (
+	terminator MockBuildingTerminator,
+) IsSearchTerminated(pass int) bool {
+	if terminator.isSearchTerminated == nil {
+		panic("not implemented")
+	}
+
+	return terminator.isSearchTerminated(pass)
+}
+
 func TestIterativeBuilderPass(
 	test *testing.T,
 ) {
 	type fields struct {
-		builder   Builder
-		passCount int
+		builder    Builder
+		terminator terminators.
+				BuildingTerminator
 	}
 	type args struct {
 		root *tree.Node
@@ -59,7 +75,17 @@ func TestIterativeBuilderPass(
 						}
 					},
 				},
-				passCount: 0,
+				terminator: MockBuildingTerminator{
+					isSearchTerminated: func(
+						pass int,
+					) bool {
+						if pass != passCount {
+							test.Fail()
+						}
+
+						return pass >= 0
+					},
+				},
 			},
 			args: args{
 				root: &tree.Node{
@@ -91,7 +117,17 @@ func TestIterativeBuilderPass(
 						}
 					},
 				},
-				passCount: 5,
+				terminator: MockBuildingTerminator{
+					isSearchTerminated: func(
+						pass int,
+					) bool {
+						if pass != passCount {
+							test.Fail()
+						}
+
+						return pass >= 5
+					},
+				},
 			},
 			args: args{
 				root: &tree.Node{
@@ -107,8 +143,8 @@ func TestIterativeBuilderPass(
 		passCount = 0
 
 		builder := IterativeBuilder{
-			Builder:   data.fields.builder,
-			PassCount: data.fields.passCount,
+			Builder:    data.fields.builder,
+			Terminator: data.fields.terminator,
 		}
 		builder.Pass(data.args.root)
 

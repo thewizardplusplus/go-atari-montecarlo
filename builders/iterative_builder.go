@@ -13,7 +13,6 @@ type Builder interface {
 // IterativeBuilder ...
 type IterativeBuilder struct {
 	Builder    Builder
-	PassCount  int
 	Terminator terminators.BuildingTerminator
 }
 
@@ -21,7 +20,8 @@ type IterativeBuilder struct {
 func (builder IterativeBuilder) Pass(
 	root *tree.Node,
 ) {
-	for i := 0; i < builder.PassCount; i++ {
+	for pass := 0; !builder.Terminator.
+		IsSearchTerminated(pass); pass++ {
 		builder.Builder.Pass(root)
 	}
 }

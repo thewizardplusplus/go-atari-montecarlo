@@ -5,6 +5,7 @@ import (
 
 	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
+	"github.com/thewizardplusplus/go-atari-montecarlo/builders/terminators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/searchers"
 	"github.com/thewizardplusplus/go-atari-montecarlo/selectors"
 	"github.com/thewizardplusplus/go-atari-montecarlo/selectors/scorers"
@@ -76,7 +77,7 @@ func search(
 	board models.Board,
 	color models.Color,
 	ucbFactor float64,
-	passCount int,
+	maximalPass int,
 ) (models.Move, error) {
 	root := tree.NewNode(board, color)
 	randomSelector :=
@@ -97,7 +98,8 @@ func search(
 			NodeSelector: maximalSelector,
 			Simulator:    simulator,
 		},
-		PassCount: passCount,
+		Terminator: terminators.
+			NewPassTerminator(maximalPass),
 	}
 	searcher := searchers.MoveSearcher{
 		Builder:      builder,

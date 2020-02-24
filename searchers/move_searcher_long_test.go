@@ -12,10 +12,10 @@ import (
 
 func TestSearch(test *testing.T) {
 	type args struct {
-		board     models.Board
-		color     models.Color
-		ucbFactor float64
-		passCount int
+		board       models.Board
+		color       models.Color
+		ucbFactor   float64
+		maximalPass int
 	}
 	type data struct {
 		args      args
@@ -45,9 +45,9 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:     models.Black,
-				ucbFactor: 1,
-				passCount: 2,
+				color:       models.Black,
+				ucbFactor:   1,
+				maximalPass: 2,
 			},
 			wantMoves: []models.Move{
 				models.Move{},
@@ -77,9 +77,9 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:     models.Black,
-				ucbFactor: 1,
-				passCount: 1,
+				color:       models.Black,
+				ucbFactor:   1,
+				maximalPass: 1,
 			},
 			wantMoves: []models.Move{
 				models.Move{},
@@ -109,9 +109,9 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:     models.Black,
-				ucbFactor: 1,
-				passCount: 2,
+				color:       models.Black,
+				ucbFactor:   1,
+				maximalPass: 2,
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -153,9 +153,9 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:     models.Black,
-				ucbFactor: 1,
-				passCount: 1000,
+				color:       models.Black,
+				ucbFactor:   1,
+				maximalPass: 1000,
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -228,9 +228,9 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:     models.Black,
-				ucbFactor: 1,
-				passCount: 1000,
+				color:       models.Black,
+				ucbFactor:   1,
+				maximalPass: 1000,
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -262,7 +262,7 @@ func TestSearch(test *testing.T) {
 			data.args.board,
 			data.args.color,
 			data.args.ucbFactor,
-			data.args.passCount,
+			data.args.maximalPass,
 		)
 
 		var hasMatch bool
