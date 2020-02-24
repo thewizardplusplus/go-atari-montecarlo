@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-type MockSearchTerminator struct {
+type MockBuildingTerminator struct {
 	isSearchTerminated func(pass int) bool
 }
 
 func (
-	terminator MockSearchTerminator,
+	terminator MockBuildingTerminator,
 ) IsSearchTerminated(pass int) bool {
 	if terminator.isSearchTerminated == nil {
 		panic("not implemented")
@@ -23,7 +23,7 @@ func TestNewGroupTerminator(
 	test *testing.T,
 ) {
 	type args struct {
-		terminators []SearchTerminator
+		terminators []BuildingTerminator
 	}
 	type data struct {
 		args args
@@ -35,15 +35,15 @@ func TestNewGroupTerminator(
 		},
 		data{
 			args: args{
-				terminators: []SearchTerminator{
-					MockSearchTerminator{
+				terminators: []BuildingTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {
 							panic("not implemented")
 						},
 					},
-					MockSearchTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {
@@ -71,7 +71,7 @@ func TestGroupTerminatorIsSearchTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
-		terminators []SearchTerminator
+		terminators []BuildingTerminator
 	}
 	type args struct {
 		pass int
@@ -90,8 +90,8 @@ func TestGroupTerminatorIsSearchTerminated(
 		},
 		data{
 			fields: fields{
-				terminators: []SearchTerminator{
-					MockSearchTerminator{
+				terminators: []BuildingTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {
@@ -102,7 +102,7 @@ func TestGroupTerminatorIsSearchTerminated(
 							return false
 						},
 					},
-					MockSearchTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {
@@ -120,8 +120,8 @@ func TestGroupTerminatorIsSearchTerminated(
 		},
 		data{
 			fields: fields{
-				terminators: []SearchTerminator{
-					MockSearchTerminator{
+				terminators: []BuildingTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {
@@ -132,7 +132,7 @@ func TestGroupTerminatorIsSearchTerminated(
 							return true
 						},
 					},
-					MockSearchTerminator{
+					MockBuildingTerminator{
 						isSearchTerminated: func(
 							pass int,
 						) bool {

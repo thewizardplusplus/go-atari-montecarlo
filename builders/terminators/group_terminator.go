@@ -1,13 +1,18 @@
 package terminators
 
+// BuildingTerminator ...
+type BuildingTerminator interface {
+	IsSearchTerminated(pass int) bool
+}
+
 // GroupTerminator ...
 type GroupTerminator struct {
-	terminators []SearchTerminator
+	terminators []BuildingTerminator
 }
 
 // NewGroupTerminator ...
 func NewGroupTerminator(
-	terminators ...SearchTerminator,
+	terminators ...BuildingTerminator,
 ) GroupTerminator {
 	return GroupTerminator{terminators}
 }

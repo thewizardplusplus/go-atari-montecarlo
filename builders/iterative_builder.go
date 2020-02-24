@@ -1,6 +1,7 @@
 package builders
 
 import (
+	"github.com/thewizardplusplus/go-atari-montecarlo/builders/terminators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -11,8 +12,9 @@ type Builder interface {
 
 // IterativeBuilder ...
 type IterativeBuilder struct {
-	Builder   Builder
-	PassCount int
+	Builder    Builder
+	PassCount  int
+	Terminator terminators.BuildingTerminator
 }
 
 // Pass ...
