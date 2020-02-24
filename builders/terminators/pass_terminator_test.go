@@ -14,7 +14,7 @@ func TestNewPassTerminator(
 	}
 }
 
-func TestPassTerminatorIsSearchTerminated(
+func TestPassTerminatorIsBuildingTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -49,7 +49,7 @@ func TestPassTerminatorIsSearchTerminated(
 		terminator := PassTerminator{
 			maximalPass: data.fields.maximalPass,
 		}
-		got := terminator.IsSearchTerminated(
+		got := terminator.IsBuildingTerminated(
 			data.args.pass,
 		)
 

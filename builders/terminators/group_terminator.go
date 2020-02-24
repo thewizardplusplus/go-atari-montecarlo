@@ -2,7 +2,7 @@ package terminators
 
 // BuildingTerminator ...
 type BuildingTerminator interface {
-	IsSearchTerminated(pass int) bool
+	IsBuildingTerminated(pass int) bool
 }
 
 // GroupTerminator ...
@@ -17,13 +17,14 @@ func NewGroupTerminator(
 	return GroupTerminator{terminators}
 }
 
-// IsSearchTerminated ...
+// IsBuildingTerminated ...
 func (
 	group GroupTerminator,
-) IsSearchTerminated(pass int) bool {
+) IsBuildingTerminated(pass int) bool {
 	terminators := group.terminators
 	for _, terminator := range terminators {
-		if terminator.IsSearchTerminated(pass) {
+		if terminator.
+			IsBuildingTerminated(pass) {
 			return true
 		}
 	}

@@ -23,17 +23,19 @@ func (builder MockBuilder) Pass(
 }
 
 type MockBuildingTerminator struct {
-	isSearchTerminated func(pass int) bool
+	isBuildingTerminated func(pass int) bool
 }
 
 func (
 	terminator MockBuildingTerminator,
-) IsSearchTerminated(pass int) bool {
-	if terminator.isSearchTerminated == nil {
+) IsBuildingTerminated(pass int) bool {
+	if terminator.
+		isBuildingTerminated == nil {
 		panic("not implemented")
 	}
 
-	return terminator.isSearchTerminated(pass)
+	return terminator.
+		isBuildingTerminated(pass)
 }
 
 func TestIterativeBuilderPass(
@@ -76,7 +78,7 @@ func TestIterativeBuilderPass(
 					},
 				},
 				terminator: MockBuildingTerminator{
-					isSearchTerminated: func(
+					isBuildingTerminated: func(
 						pass int,
 					) bool {
 						if pass != passCount {
@@ -118,7 +120,7 @@ func TestIterativeBuilderPass(
 					},
 				},
 				terminator: MockBuildingTerminator{
-					isSearchTerminated: func(
+					isBuildingTerminated: func(
 						pass int,
 					) bool {
 						if pass != passCount {

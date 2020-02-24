@@ -12,9 +12,9 @@ func NewPassTerminator(
 	return PassTerminator{maximalPass}
 }
 
-// IsSearchTerminated ...
+// IsBuildingTerminated ...
 func (
 	terminator PassTerminator,
-) IsSearchTerminated(pass int) bool {
+) IsBuildingTerminated(pass int) bool {
 	return pass >= terminator.maximalPass
 }

@@ -37,7 +37,7 @@ func TestNewTimeTerminator(
 	}
 }
 
-func TestTimeTerminatorIsSearchTerminated(
+func TestTimeTerminatorIsBuildingTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -95,7 +95,7 @@ func TestTimeTerminatorIsSearchTerminated(
 				maximalDuration,
 			startTime: data.fields.startTime,
 		}
-		got := terminator.IsSearchTerminated(
+		got := terminator.IsBuildingTerminated(
 			data.args.pass,
 		)
 

@@ -26,10 +26,10 @@ func NewTimeTerminator(
 	}
 }
 
-// IsSearchTerminated ...
+// IsBuildingTerminated ...
 func (
 	terminator TimeTerminator,
-) IsSearchTerminated(pass int) bool {
+) IsBuildingTerminated(pass int) bool {
 	currentTime := terminator.clock()
 	elapsedTime :=
 		currentTime.Sub(terminator.startTime)

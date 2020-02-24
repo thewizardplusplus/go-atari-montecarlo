@@ -21,7 +21,7 @@ func (builder IterativeBuilder) Pass(
 	root *tree.Node,
 ) {
 	for pass := 0; !builder.Terminator.
-		IsSearchTerminated(pass); pass++ {
+		IsBuildingTerminated(pass); pass++ {
 		builder.Builder.Pass(root)
 	}
 }
