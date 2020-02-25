@@ -24,7 +24,7 @@ func BenchmarkSearch_10PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 2, 10)
+		search(board, models.Black, 1, 10)
 	}
 }
 
@@ -39,37 +39,7 @@ func BenchmarkSearch_100PassCount(
 	)
 
 	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 2, 100)
-	}
-}
-
-func BenchmarkSearch_1000PassCount(
-	benchmark *testing.B,
-) {
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 2, 1000)
-	}
-}
-
-func BenchmarkSearch_10000PassCount(
-	benchmark *testing.B,
-) {
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		search(board, models.Black, 2, 10000)
+		search(board, models.Black, 1, 100)
 	}
 }
 
@@ -93,13 +63,16 @@ func search(
 			NodeSelector: randomSelector,
 		},
 	}
+	terminator :=
+		terminators.NewPassTerminator(
+			maximalPass,
+		)
 	builder := builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
 			NodeSelector: maximalSelector,
 			Simulator:    simulator,
 		},
-		Terminator: terminators.
-			NewPassTerminator(maximalPass),
+		Terminator: terminator,
 	}
 	searcher := searchers.MoveSearcher{
 		Builder:      builder,
