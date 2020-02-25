@@ -12,10 +12,9 @@ import (
 
 func TestSearch(test *testing.T) {
 	type args struct {
-		board       models.Board
-		color       models.Color
-		ucbFactor   float64
-		maximalPass int
+		board    models.Board
+		color    models.Color
+		settings searchingSettings
 	}
 	type data struct {
 		args      args
@@ -45,9 +44,12 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:       models.Black,
-				ucbFactor:   1,
-				maximalPass: 2,
+				color: models.Black,
+				settings: searchingSettings{
+					selectorType: ucbSelector,
+					ucbFactor:    1,
+					maximalPass:  2,
+				},
 			},
 			wantMoves: []models.Move{
 				models.Move{},
@@ -77,9 +79,12 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:       models.Black,
-				ucbFactor:   1,
-				maximalPass: 1,
+				color: models.Black,
+				settings: searchingSettings{
+					selectorType: ucbSelector,
+					ucbFactor:    1,
+					maximalPass:  1,
+				},
 			},
 			wantMoves: []models.Move{
 				models.Move{},
@@ -109,9 +114,12 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:       models.Black,
-				ucbFactor:   1,
-				maximalPass: 2,
+				color: models.Black,
+				settings: searchingSettings{
+					selectorType: ucbSelector,
+					ucbFactor:    1,
+					maximalPass:  2,
+				},
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -153,9 +161,12 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:       models.Black,
-				ucbFactor:   1,
-				maximalPass: 1000,
+				color: models.Black,
+				settings: searchingSettings{
+					selectorType: ucbSelector,
+					ucbFactor:    1,
+					maximalPass:  1000,
+				},
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -228,9 +239,12 @@ func TestSearch(test *testing.T) {
 
 					return board
 				}(),
-				color:       models.Black,
-				ucbFactor:   1,
-				maximalPass: 1000,
+				color: models.Black,
+				settings: searchingSettings{
+					selectorType: ucbSelector,
+					ucbFactor:    1,
+					maximalPass:  1000,
+				},
 			},
 			wantMoves: []models.Move{
 				models.Move{
@@ -261,8 +275,7 @@ func TestSearch(test *testing.T) {
 		gotMove, gotErr := search(
 			data.args.board,
 			data.args.color,
-			data.args.ucbFactor,
-			data.args.maximalPass,
+			data.args.settings,
 		)
 
 		var hasMatch bool

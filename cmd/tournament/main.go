@@ -14,28 +14,35 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-type settings struct {
-	// random, winRate or ucb
-	selectorType string
+type selectorType int
+
+const (
+	randomSelector selectorType = iota
+	winRateSelector
+	ucbSelector
+)
+
+type searchingSettings struct {
+	selectorType selectorType
 	ucbFactor    float64
 	maximalPass  int
 }
 
 func search(
 	root *tree.Node,
-	settings settings,
+	settings searchingSettings,
 ) (*tree.Node, error) {
-	var randomSelector selectors.RandomSelector
 	var generalSelector tree.NodeSelector
 	switch settings.selectorType {
-	case "random":
-		generalSelector = randomSelector
-	case "winRate":
+	case randomSelector:
+		generalSelector =
+			selectors.RandomSelector{}
+	case winRateSelector:
 		generalSelector =
 			selectors.MaximalSelector{
 				NodeScorer: scorers.WinRateScorer{},
 			}
-	case "ucb":
+	case ucbSelector:
 		generalSelector =
 			selectors.MaximalSelector{
 				NodeScorer: scorers.UCBScorer{
@@ -47,6 +54,8 @@ func search(
 			errors.New("unknown selector type")
 	}
 
+	randomSelector :=
+		selectors.RandomSelector{}
 	simulator := simulators.RolloutSimulator{
 		MoveSelector: selectors.MoveSelector{
 			NodeSelector: randomSelector,
@@ -71,8 +80,8 @@ func search(
 }
 
 func main() {
-	settings := settings{
-		selectorType: "ucb",
+	settings := searchingSettings{
+		selectorType: ucbSelector,
 		ucbFactor:    1,
 		maximalPass:  100,
 	}
