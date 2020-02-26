@@ -28,6 +28,48 @@ type searchingSettings struct {
 	maximalPass  int
 }
 
+type gameSettings struct {
+	firstSearchingSettings  searchingSettings
+	secondSearchingSettings searchingSettings
+	reuseSearchingTree      bool
+}
+
+func game(
+	root *tree.Node,
+	gameSettings gameSettings,
+) (models.Color, error) {
+	for ply := 0; ; ply++ {
+		if ply%5 == 0 {
+			fmt.Print(".")
+		}
+
+		var searchingSettings searchingSettings
+		if ply%2 == 0 {
+			searchingSettings =
+				gameSettings.firstSearchingSettings
+		} else {
+			searchingSettings =
+				gameSettings.secondSearchingSettings
+		}
+
+		node, err :=
+			search(root, searchingSettings)
+		if err != nil {
+			errColor := root.Move.Color.Negative()
+			return errColor, err
+		}
+
+		if gameSettings.reuseSearchingTree {
+			root = node
+		} else {
+			root = tree.NewNode(
+				node.Board,
+				node.Move.Color.Negative(),
+			)
+		}
+	}
+}
+
 func search(
 	root *tree.Node,
 	settings searchingSettings,
@@ -80,10 +122,15 @@ func search(
 }
 
 func main() {
-	settings := searchingSettings{
+	searchingSettings := searchingSettings{
 		selectorType: ucbSelector,
 		ucbFactor:    1,
-		maximalPass:  100,
+		maximalPass:  10,
+	}
+	gameSettings := gameSettings{
+		firstSearchingSettings:  searchingSettings,
+		secondSearchingSettings: searchingSettings,
+		reuseSearchingTree:      true,
 	}
 
 	board := models.NewBoard(
@@ -93,7 +140,8 @@ func main() {
 		},
 	)
 	root := tree.NewNode(board, models.Black)
-	node, err := search(root, settings)
+	errColor, err := game(root, gameSettings)
 
-	fmt.Println(node, err)
+	fmt.Println()
+	fmt.Println(errColor, err)
 }
