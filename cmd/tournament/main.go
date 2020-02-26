@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"runtime"
+	"sync"
 
 	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
@@ -13,6 +15,29 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
+
+const (
+	gameCount  = 10
+	firstColor = models.Black
+)
+
+var (
+	settings = gameSettings{
+		firstSearchingSettings: searchingSettings{
+			selectorType: ucbSelector,
+			ucbFactor:    1,
+			maximalPass:  10,
+		},
+		secondSearchingSettings: searchingSettings{
+			selectorType: ucbSelector,
+			ucbFactor:    1,
+			maximalPass:  10,
+		},
+		reuseSearchingTree: true,
+	}
+)
+
+type taskInbox chan func()
 
 type selectorType int
 
@@ -32,6 +57,28 @@ type gameSettings struct {
 	firstSearchingSettings  searchingSettings
 	secondSearchingSettings searchingSettings
 	reuseSearchingTree      bool
+}
+
+func pool() (tasks taskInbox, wait func()) {
+	threadCount := runtime.NumCPU()
+
+	var waiter sync.WaitGroup
+	waiter.Add(threadCount)
+
+	tasks = make(taskInbox)
+	for i := 0; i < threadCount; i++ {
+		go func() {
+			defer waiter.Done()
+			fmt.Print("#")
+
+			for task := range tasks {
+				fmt.Print("%")
+				task()
+			}
+		}()
+	}
+
+	return tasks, func() { waiter.Wait() }
 }
 
 func game(
@@ -121,27 +168,46 @@ func search(
 	return searcher.SearchMove(root)
 }
 
-func main() {
-	searchingSettings := searchingSettings{
-		selectorType: ucbSelector,
-		ucbFactor:    1,
-		maximalPass:  10,
-	}
-	gameSettings := gameSettings{
-		firstSearchingSettings:  searchingSettings,
-		secondSearchingSettings: searchingSettings,
-		reuseSearchingTree:      true,
+func markWinner(
+	errColor models.Color,
+	err error,
+) {
+	switch err {
+	case models.ErrAlreadyWin:
+	case models.ErrAlreadyLoss:
+		errColor = errColor.Negative()
+	default:
+		fmt.Print("E")
 	}
 
+	if errColor == firstColor {
+		fmt.Print("F")
+	} else {
+		fmt.Print("S")
+	}
+}
+
+func main() {
 	board := models.NewBoard(
 		models.Size{
 			Width:  5,
 			Height: 5,
 		},
 	)
-	root := tree.NewNode(board, models.Black)
-	errColor, err := game(root, gameSettings)
+
+	tasks, wait := pool()
+	for i := 0; i < gameCount; i++ {
+		tasks <- func() {
+			root :=
+				tree.NewNode(board, firstColor)
+			errColor, err := game(root, settings)
+			markWinner(errColor, err)
+		}
+	}
+
+	close(tasks)
+	wait()
 
 	fmt.Println()
-	fmt.Println(errColor, err)
+	fmt.Println("done")
 }
