@@ -20,10 +20,17 @@ import (
 
 const (
 	gameCount  = 10
-	firstColor = models.Black
+	startColor = models.Black
 )
 
 var (
+	startBoard = models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
 	settings = gameSettings{
 		firstSearcher: searcherSettings{
 			selectorType: randomSelector,
@@ -104,7 +111,7 @@ func (scores *scores) addGame(
 		return
 	}
 
-	if errColor == firstColor {
+	if errColor == startColor {
 		scores.firstSearcher.win()
 	} else {
 		scores.secondSearcher.win()
@@ -246,7 +253,7 @@ func markWinner(
 		fmt.Print("E")
 	}
 
-	if errColor == firstColor {
+	if errColor == startColor {
 		fmt.Print("F")
 	} else {
 		fmt.Print("S")
@@ -254,19 +261,12 @@ func markWinner(
 }
 
 func main() {
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	var scores scores
 	tasks, wait := pool()
 	for i := 0; i < gameCount; i++ {
 		tasks <- func() {
 			root :=
-				tree.NewNode(board, firstColor)
+				tree.NewNode(startBoard, startColor)
 			errColor, err := game(root, settings)
 			scores.addGame(errColor, err)
 			markWinner(errColor, err)
