@@ -3,8 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"runtime"
 	"sync"
+	"sync/atomic"
 
 	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
@@ -23,17 +25,17 @@ const (
 
 var (
 	settings = gameSettings{
-		firstSearchingSettings: searchingSettings{
+		firstSearcher: searcherSettings{
+			selectorType: randomSelector,
+			ucbFactor:    1,
+			maximalPass:  10,
+		},
+		secondSearcher: searcherSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
 			maximalPass:  10,
 		},
-		secondSearchingSettings: searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
-		},
-		reuseSearchingTree: true,
+		reuseTree: false,
 	}
 )
 
@@ -47,16 +49,80 @@ const (
 	ucbSelector
 )
 
-type searchingSettings struct {
+type searcherSettings struct {
 	selectorType selectorType
 	ucbFactor    float64
 	maximalPass  int
 }
 
 type gameSettings struct {
-	firstSearchingSettings  searchingSettings
-	secondSearchingSettings searchingSettings
-	reuseSearchingTree      bool
+	firstSearcher  searcherSettings
+	secondSearcher searcherSettings
+	reuseTree      bool
+}
+
+type score struct {
+	winCount uint64
+}
+
+func (score *score) wins() uint64 {
+	return atomic.LoadUint64(&score.winCount)
+}
+
+func (score *score) elo(
+	gameCount uint64,
+) float64 {
+	winPercent := float64(score.wins()) /
+		float64(gameCount)
+	return 400 *
+		math.Log10(winPercent/(1-winPercent))
+}
+
+func (score *score) win() {
+	atomic.AddUint64(&score.winCount, 1)
+}
+
+type scores struct {
+	firstSearcher  score
+	secondSearcher score
+}
+
+func (scores *scores) games() uint64 {
+	return scores.firstSearcher.wins() +
+		scores.secondSearcher.wins()
+}
+
+func (scores *scores) addGame(
+	errColor models.Color,
+	err error,
+) {
+	switch err {
+	case models.ErrAlreadyWin:
+	case models.ErrAlreadyLoss:
+		errColor = errColor.Negative()
+	default:
+		return
+	}
+
+	if errColor == firstColor {
+		scores.firstSearcher.win()
+	} else {
+		scores.secondSearcher.win()
+	}
+}
+
+func (scores *scores) String() string {
+	games := scores.games()
+	return fmt.Sprintf(
+		"Games: %d\n"+
+			"First Searcher: %d\n"+
+			"Second Searcher: %d\n"+
+			"Second Searcher Elo Delta: %.2f",
+		games,
+		scores.firstSearcher.wins(),
+		scores.secondSearcher.wins(),
+		scores.secondSearcher.elo(games),
+	)
 }
 
 func pool() (tasks taskInbox, wait func()) {
@@ -83,30 +149,30 @@ func pool() (tasks taskInbox, wait func()) {
 
 func game(
 	root *tree.Node,
-	gameSettings gameSettings,
+	settings gameSettings,
 ) (models.Color, error) {
 	for ply := 0; ; ply++ {
 		if ply%5 == 0 {
 			fmt.Print(".")
 		}
 
-		var searchingSettings searchingSettings
+		var searcherSettings searcherSettings
 		if ply%2 == 0 {
-			searchingSettings =
-				gameSettings.firstSearchingSettings
+			searcherSettings =
+				settings.firstSearcher
 		} else {
-			searchingSettings =
-				gameSettings.secondSearchingSettings
+			searcherSettings =
+				settings.secondSearcher
 		}
 
 		node, err :=
-			search(root, searchingSettings)
+			search(root, searcherSettings)
 		if err != nil {
 			errColor := root.Move.Color.Negative()
 			return errColor, err
 		}
 
-		if gameSettings.reuseSearchingTree {
+		if settings.reuseTree {
 			root = node
 		} else {
 			root = tree.NewNode(
@@ -119,7 +185,7 @@ func game(
 
 func search(
 	root *tree.Node,
-	settings searchingSettings,
+	settings searcherSettings,
 ) (*tree.Node, error) {
 	var generalSelector tree.NodeSelector
 	switch settings.selectorType {
@@ -195,12 +261,14 @@ func main() {
 		},
 	)
 
+	var scores scores
 	tasks, wait := pool()
 	for i := 0; i < gameCount; i++ {
 		tasks <- func() {
 			root :=
 				tree.NewNode(board, firstColor)
 			errColor, err := game(root, settings)
+			scores.addGame(errColor, err)
 			markWinner(errColor, err)
 		}
 	}
@@ -209,5 +277,5 @@ func main() {
 	wait()
 
 	fmt.Println()
-	fmt.Println("done")
+	fmt.Println(scores.String())
 }
