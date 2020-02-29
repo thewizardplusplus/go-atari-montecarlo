@@ -42,6 +42,47 @@ func TestNewReusedSearcher(
 	}
 }
 
+func TestReusedSearcherSearchMove(
+	test *testing.T,
+) {
+	type fields struct {
+		searcher     Searcher
+		previousMove *tree.Node
+	}
+	type args struct {
+		root *tree.Node
+	}
+	type data struct {
+		fields   fields
+		args     args
+		wantNode *tree.Node
+		wantErr  error
+	}
+
+	for _, data := range []data{} {
+		searcher := ReusedSearcher{
+			searcher: data.fields.searcher,
+			previousMove: data.fields.
+				previousMove,
+		}
+		gotNode, gotErr :=
+			searcher.SearchMove(data.args.root)
+
+		if !reflect.DeepEqual(
+			gotNode,
+			data.wantNode,
+		) {
+			test.Fail()
+		}
+		if !reflect.DeepEqual(
+			gotErr,
+			data.wantErr,
+		) {
+			test.Fail()
+		}
+	}
+}
+
 func TestReusedSearcherSearchPreviousMove(
 	test *testing.T,
 ) {
