@@ -1,6 +1,7 @@
 package searchers
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -53,13 +54,103 @@ func TestReusedSearcherSearchMove(
 		root *tree.Node
 	}
 	type data struct {
-		fields   fields
-		args     args
-		wantNode *tree.Node
-		wantErr  error
+		fields           fields
+		args             args
+		wantPreviousMove *tree.Node
+		wantNode         *tree.Node
+		wantErr          error
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			fields: fields{
+				searcher: MockSearcher{
+					searchMove: func(
+						root *tree.Node,
+					) (*tree.Node, error) {
+						expectedRoot := &tree.Node{
+							State: tree.NodeState{
+								GameCount: 2,
+								WinCount:  1,
+							},
+						}
+						if !reflect.DeepEqual(
+							root,
+							expectedRoot,
+						) {
+							test.Fail()
+						}
+
+						node := &tree.Node{
+							State: tree.NodeState{
+								GameCount: 4,
+								WinCount:  3,
+							},
+						}
+						return node, nil
+					},
+				},
+				previousMove: nil,
+			},
+			args: args{
+				root: &tree.Node{
+					State: tree.NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				},
+			},
+			wantPreviousMove: &tree.Node{
+				State: tree.NodeState{
+					GameCount: 4,
+					WinCount:  3,
+				},
+			},
+			wantNode: &tree.Node{
+				State: tree.NodeState{
+					GameCount: 4,
+					WinCount:  3,
+				},
+			},
+			wantErr: nil,
+		},
+		data{
+			fields: fields{
+				searcher: MockSearcher{
+					searchMove: func(
+						root *tree.Node,
+					) (*tree.Node, error) {
+						expectedRoot := &tree.Node{
+							State: tree.NodeState{
+								GameCount: 2,
+								WinCount:  1,
+							},
+						}
+						if !reflect.DeepEqual(
+							root,
+							expectedRoot,
+						) {
+							test.Fail()
+						}
+
+						return nil, errors.New("dummy")
+					},
+				},
+				previousMove: nil,
+			},
+			args: args{
+				root: &tree.Node{
+					State: tree.NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				},
+			},
+			wantPreviousMove: nil,
+			wantNode:         nil,
+			wantErr:          errors.New("dummy"),
+		},
+	} {
 		searcher := ReusedSearcher{
 			searcher: data.fields.searcher,
 			previousMove: data.fields.
@@ -68,6 +159,12 @@ func TestReusedSearcherSearchMove(
 		gotNode, gotErr :=
 			searcher.SearchMove(data.args.root)
 
+		if !reflect.DeepEqual(
+			searcher.previousMove,
+			data.wantPreviousMove,
+		) {
+			test.Fail()
+		}
 		if !reflect.DeepEqual(
 			gotNode,
 			data.wantNode,

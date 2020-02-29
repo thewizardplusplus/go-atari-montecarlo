@@ -29,12 +29,12 @@ type ReusedSearcher struct {
 // NewReusedSearcher ...
 func NewReusedSearcher(
 	searcher Searcher,
-) ReusedSearcher {
-	return ReusedSearcher{searcher: searcher}
+) *ReusedSearcher {
+	return &ReusedSearcher{searcher: searcher}
 }
 
 // SearchMove ...
-func (searcher ReusedSearcher) SearchMove(
+func (searcher *ReusedSearcher) SearchMove(
 	root *tree.Node,
 ) (*tree.Node, error) {
 	if searcher.previousMove != nil {
