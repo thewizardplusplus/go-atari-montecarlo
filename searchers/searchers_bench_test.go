@@ -26,6 +26,7 @@ type searchingSettings struct {
 	selectorType selectorType
 	ucbFactor    float64
 	maximalPass  int
+	reuseTree    bool
 }
 
 func BenchmarkSearch_randomSelectorAnd10Passes(
@@ -166,6 +167,150 @@ func BenchmarkSearch_ucbSelectorAnd100Passes(
 	}
 }
 
+func BenchmarkSearch_randomSelectorAnd10PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: randomSelector,
+				ucbFactor:    1,
+				maximalPass:  10,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
+func BenchmarkSearch_randomSelectorAnd100PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: randomSelector,
+				ucbFactor:    1,
+				maximalPass:  100,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
+func BenchmarkSearch_winRateSelectorAnd10PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: winRateSelector,
+				ucbFactor:    1,
+				maximalPass:  10,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
+func BenchmarkSearch_winRateSelectorAnd100PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: winRateSelector,
+				ucbFactor:    1,
+				maximalPass:  100,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorAnd10PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: ucbSelector,
+				ucbFactor:    1,
+				maximalPass:  10,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorAnd100PassesAndReusedTree(
+	benchmark *testing.B,
+) {
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		search(
+			board,
+			models.Black,
+			searchingSettings{
+				selectorType: ucbSelector,
+				ucbFactor:    1,
+				maximalPass:  100,
+				reuseTree:    true,
+			},
+		)
+	}
+}
+
 func search(
 	board models.Board,
 	color models.Color,
@@ -212,10 +357,21 @@ func search(
 		},
 		Terminator: terminator,
 	}
-	searcher := searchers.MoveSearcher{
+
+	var searcher interface {
+		SearchMove(
+			root *tree.Node,
+		) (*tree.Node, error)
+	}
+	searcher = searchers.MoveSearcher{
 		Builder:      builder,
 		NodeSelector: generalSelector,
 	}
+	if settings.reuseTree {
+		searcher =
+			searchers.NewReusedSearcher(searcher)
+	}
+
 	node, err := searcher.SearchMove(root)
 	if err != nil {
 		return models.Move{}, err
