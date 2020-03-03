@@ -150,6 +150,220 @@ func TestReusedSearcherSearchMove(
 			wantNode:         nil,
 			wantErr:          errors.New("dummy"),
 		},
+		data{
+			fields: fields{
+				searcher: MockSearcher{
+					searchMove: func(
+						root *tree.Node,
+					) (*tree.Node, error) {
+						expectedRoot := &tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 4,
+								WinCount:  3,
+							},
+						}
+						if !reflect.DeepEqual(
+							root,
+							expectedRoot,
+						) {
+							test.Fail()
+						}
+
+						node := &tree.Node{
+							State: tree.NodeState{
+								GameCount: 8,
+								WinCount:  7,
+							},
+						}
+						return node, nil
+					},
+				},
+				previousMove: &tree.Node{
+					Children: tree.NodeGroup{
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 2,
+								WinCount:  1,
+							},
+						},
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 4,
+								WinCount:  3,
+							},
+						},
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 6,
+								WinCount:  5,
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+						Point: models.Point{
+							Column: 1,
+							Row:    2,
+						},
+					},
+				},
+			},
+			wantPreviousMove: &tree.Node{
+				State: tree.NodeState{
+					GameCount: 8,
+					WinCount:  7,
+				},
+			},
+			wantNode: &tree.Node{
+				State: tree.NodeState{
+					GameCount: 8,
+					WinCount:  7,
+				},
+			},
+			wantErr: nil,
+		},
+		data{
+			fields: fields{
+				searcher: MockSearcher{
+					searchMove: func(
+						root *tree.Node,
+					) (*tree.Node, error) {
+						panic("not implemented")
+					},
+				},
+				previousMove: &tree.Node{
+					Children: tree.NodeGroup{
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 2,
+								WinCount:  1,
+							},
+						},
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 4,
+								WinCount:  3,
+							},
+						},
+						&tree.Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    2,
+								},
+							},
+							State: tree.NodeState{
+								GameCount: 6,
+								WinCount:  5,
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+						Point: models.Point{
+							Column: 2,
+							Row:    3,
+						},
+					},
+				},
+			},
+			wantPreviousMove: &tree.Node{
+				Children: tree.NodeGroup{
+					&tree.Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    2,
+							},
+						},
+						State: tree.NodeState{
+							GameCount: 2,
+							WinCount:  1,
+						},
+					},
+					&tree.Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 1,
+								Row:    2,
+							},
+						},
+						State: tree.NodeState{
+							GameCount: 4,
+							WinCount:  3,
+						},
+					},
+					&tree.Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 2,
+								Row:    2,
+							},
+						},
+						State: tree.NodeState{
+							GameCount: 6,
+							WinCount:  5,
+						},
+					},
+				},
+			},
+			wantNode: nil,
+			wantErr:  ErrNotFoundPreviousMove,
+		},
 	} {
 		searcher := ReusedSearcher{
 			searcher: data.fields.searcher,
