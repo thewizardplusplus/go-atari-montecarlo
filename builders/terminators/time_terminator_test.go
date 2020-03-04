@@ -105,6 +105,40 @@ func TestTimeTerminatorIsBuildingTerminated(
 	}
 }
 
+func TestTimeTerminatorReset(
+	test *testing.T,
+) {
+	maximalDuration := 5 * time.Second
+	terminator := NewTimeTerminator(
+		clock,
+		maximalDuration,
+	)
+	terminator.startTime =
+		clock().Add(-5 * time.Second)
+	terminator.Reset()
+
+	gotClock := reflect.
+		ValueOf(terminator.clock).
+		Pointer()
+	wantClock := reflect.
+		ValueOf(clock).
+		Pointer()
+	if gotClock != wantClock {
+		test.Fail()
+	}
+
+	if terminator.maximalDuration !=
+		maximalDuration {
+		test.Fail()
+	}
+
+	startTime := clock()
+	if !terminator.startTime.
+		Equal(startTime) {
+		test.Fail()
+	}
+}
+
 func clock() time.Time {
 	year, month, day := 2006, time.January, 2
 	hour, minute, second := 15, 4, 5

@@ -38,6 +38,12 @@ func (
 		isBuildingTerminated(pass)
 }
 
+func (
+	terminator MockBuildingTerminator,
+) Reset() {
+	panic("not implemented")
+}
+
 func TestIterativeBuilderPass(
 	test *testing.T,
 ) {

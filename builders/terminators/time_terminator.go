@@ -18,8 +18,8 @@ type TimeTerminator struct {
 func NewTimeTerminator(
 	clock Clock,
 	maximalDuration time.Duration,
-) TimeTerminator {
-	return TimeTerminator{
+) *TimeTerminator {
+	return &TimeTerminator{
 		clock:           clock,
 		maximalDuration: maximalDuration,
 		startTime:       clock(),
@@ -35,4 +35,9 @@ func (
 		currentTime.Sub(terminator.startTime)
 	return elapsedTime >=
 		terminator.maximalDuration
+}
+
+// Reset ...
+func (terminator *TimeTerminator) Reset() {
+	terminator.startTime = terminator.clock()
 }

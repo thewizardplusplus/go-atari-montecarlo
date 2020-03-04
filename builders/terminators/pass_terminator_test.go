@@ -58,3 +58,14 @@ func TestPassTerminatorIsBuildingTerminated(
 		}
 	}
 }
+
+func TestPassTerminatorReset(
+	test *testing.T,
+) {
+	terminator := NewPassTerminator(5)
+	terminator.Reset()
+
+	if terminator.maximalPass != 5 {
+		test.Fail()
+	}
+}
