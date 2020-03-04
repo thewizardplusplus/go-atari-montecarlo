@@ -49,6 +49,7 @@ func TestSearch(test *testing.T) {
 					selectorType: ucbSelector,
 					ucbFactor:    1,
 					maximalPass:  2,
+					reuseTree:    false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -84,6 +85,7 @@ func TestSearch(test *testing.T) {
 					selectorType: ucbSelector,
 					ucbFactor:    1,
 					maximalPass:  1,
+					reuseTree:    false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -119,6 +121,7 @@ func TestSearch(test *testing.T) {
 					selectorType: ucbSelector,
 					ucbFactor:    1,
 					maximalPass:  2,
+					reuseTree:    false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -166,6 +169,7 @@ func TestSearch(test *testing.T) {
 					selectorType: ucbSelector,
 					ucbFactor:    1,
 					maximalPass:  1000,
+					reuseTree:    false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -244,6 +248,7 @@ func TestSearch(test *testing.T) {
 					selectorType: ucbSelector,
 					ucbFactor:    1,
 					maximalPass:  1000,
+					reuseTree:    false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -272,10 +277,17 @@ func TestSearch(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		gotMove, gotErr := search(
+		searcher, err := newIntegratedSearcher(
+			data.args.settings,
+		)
+		if err != nil {
+			test.Fail()
+			continue
+		}
+
+		gotMove, gotErr := searcher.search(
 			data.args.board,
 			data.args.color,
-			data.args.settings,
 		)
 
 		var hasMatch bool
