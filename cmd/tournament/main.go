@@ -3,10 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
@@ -32,17 +34,20 @@ var (
 	)
 
 	settings = gameSettings{
-		firstSearcher: searcherSettings{
-			selectorType: randomSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
-		},
-		secondSearcher: searcherSettings{
+		firstSearcher: searchingSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
-			maximalPass:  10,
+			maximalDuration: 1000 *
+				time.Millisecond,
+			reuseTree: false,
 		},
-		reuseTree: false,
+		secondSearcher: searchingSettings{
+			selectorType: ucbSelector,
+			ucbFactor:    1,
+			maximalDuration: 1000 *
+				time.Millisecond,
+			reuseTree: false,
+		},
 	}
 )
 
@@ -56,16 +61,101 @@ const (
 	ucbSelector
 )
 
-type searcherSettings struct {
-	selectorType selectorType
-	ucbFactor    float64
-	maximalPass  int
+type searchingSettings struct {
+	selectorType    selectorType
+	ucbFactor       float64
+	maximalDuration time.Duration
+	reuseTree       bool
+}
+
+type integratedSearcher struct {
+	terminator terminators.BuildingTerminator
+	searcher   searchers.Searcher
+}
+
+func newIntegratedSearcher(
+	settings searchingSettings,
+) (integratedSearcher, error) {
+	var generalSelector tree.NodeSelector
+	switch settings.selectorType {
+	case randomSelector:
+		generalSelector =
+			selectors.RandomSelector{}
+	case winRateSelector:
+		generalSelector =
+			selectors.MaximalSelector{
+				NodeScorer: scorers.WinRateScorer{},
+			}
+	case ucbSelector:
+		generalSelector =
+			selectors.MaximalSelector{
+				NodeScorer: scorers.UCBScorer{
+					Factor: settings.ucbFactor,
+				},
+			}
+	default:
+		return integratedSearcher{},
+			errors.New("unknown selector type")
+	}
+
+	randomSelector :=
+		selectors.RandomSelector{}
+	simulator := simulators.RolloutSimulator{
+		MoveSelector: selectors.MoveSelector{
+			NodeSelector: randomSelector,
+		},
+	}
+	terminator :=
+		terminators.NewTimeTerminator(
+			time.Now,
+			settings.maximalDuration,
+		)
+	builder := builders.IterativeBuilder{
+		Builder: builders.TreeBuilder{
+			NodeSelector: generalSelector,
+			Simulator:    simulator,
+		},
+		Terminator: terminator,
+	}
+
+	var innerSearcher searchers.Searcher
+	innerSearcher = searchers.MoveSearcher{
+		Builder:      builder,
+		NodeSelector: generalSelector,
+	}
+	if settings.reuseTree {
+		innerSearcher =
+			searchers.NewReusedSearcher(
+				innerSearcher,
+			)
+	}
+
+	searcher := integratedSearcher{
+		terminator: terminator,
+		searcher:   innerSearcher,
+	}
+	return searcher, nil
+}
+
+func (searcher integratedSearcher) search(
+	board models.Board,
+	color models.Color,
+) (models.Move, error) {
+	searcher.terminator.Reset()
+
+	root := tree.NewNode(board, color)
+	node, err :=
+		searcher.searcher.SearchMove(root)
+	if err != nil {
+		return models.Move{}, err
+	}
+
+	return node.Move, nil
 }
 
 type gameSettings struct {
-	firstSearcher  searcherSettings
-	secondSearcher searcherSettings
-	reuseTree      bool
+	firstSearcher  searchingSettings
+	secondSearcher searchingSettings
 }
 
 type score struct {
@@ -155,90 +245,47 @@ func pool() (tasks taskInbox, wait func()) {
 }
 
 func game(
-	root *tree.Node,
+	board models.Board,
+	color models.Color,
 	settings gameSettings,
 ) (models.Color, error) {
+	firstSearcher, err :=
+		newIntegratedSearcher(
+			settings.firstSearcher,
+		)
+	if err != nil {
+		return 0, err
+	}
+
+	secondSearcher, err :=
+		newIntegratedSearcher(
+			settings.secondSearcher,
+		)
+	if err != nil {
+		return 0, err
+	}
+
 	for ply := 0; ; ply++ {
 		if ply%5 == 0 {
 			fmt.Print(".")
 		}
 
-		var searcherSettings searcherSettings
+		var move models.Move
 		if ply%2 == 0 {
-			searcherSettings =
-				settings.firstSearcher
+			move, err =
+				firstSearcher.search(board, color)
 		} else {
-			searcherSettings =
-				settings.secondSearcher
+			move, err =
+				secondSearcher.search(board, color)
 		}
-
-		node, err :=
-			search(root, searcherSettings)
 		if err != nil {
-			errColor := root.Move.Color.Negative()
+			errColor := move.Color.Negative()
 			return errColor, err
 		}
 
-		if settings.reuseTree {
-			root = node
-		} else {
-			root = tree.NewNode(
-				node.Board,
-				node.Move.Color.Negative(),
-			)
-		}
+		board = board.ApplyMove(move)
+		color = color.Negative()
 	}
-}
-
-func search(
-	root *tree.Node,
-	settings searcherSettings,
-) (*tree.Node, error) {
-	var generalSelector tree.NodeSelector
-	switch settings.selectorType {
-	case randomSelector:
-		generalSelector =
-			selectors.RandomSelector{}
-	case winRateSelector:
-		generalSelector =
-			selectors.MaximalSelector{
-				NodeScorer: scorers.WinRateScorer{},
-			}
-	case ucbSelector:
-		generalSelector =
-			selectors.MaximalSelector{
-				NodeScorer: scorers.UCBScorer{
-					Factor: settings.ucbFactor,
-				},
-			}
-	default:
-		return nil,
-			errors.New("unknown selector type")
-	}
-
-	randomSelector :=
-		selectors.RandomSelector{}
-	simulator := simulators.RolloutSimulator{
-		MoveSelector: selectors.MoveSelector{
-			NodeSelector: randomSelector,
-		},
-	}
-	terminator :=
-		terminators.NewPassTerminator(
-			settings.maximalPass,
-		)
-	builder := builders.IterativeBuilder{
-		Builder: builders.TreeBuilder{
-			NodeSelector: generalSelector,
-			Simulator:    simulator,
-		},
-		Terminator: terminator,
-	}
-	searcher := searchers.MoveSearcher{
-		Builder:      builder,
-		NodeSelector: generalSelector,
-	}
-	return searcher.SearchMove(root)
 }
 
 func markWinner(
@@ -250,7 +297,10 @@ func markWinner(
 	case models.ErrAlreadyLoss:
 		errColor = errColor.Negative()
 	default:
-		fmt.Print("E")
+		fmt.Println()
+		log.Println(err)
+
+		return
 	}
 
 	if errColor == startColor {
@@ -265,9 +315,11 @@ func main() {
 	tasks, wait := pool()
 	for i := 0; i < gameCount; i++ {
 		tasks <- func() {
-			root :=
-				tree.NewNode(startBoard, startColor)
-			errColor, err := game(root, settings)
+			errColor, err := game(
+				startBoard,
+				startColor,
+				settings,
+			)
 			scores.addGame(errColor, err)
 			markWinner(errColor, err)
 		}
