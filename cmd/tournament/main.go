@@ -37,16 +37,16 @@ var (
 		firstSearcher: searchingSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
-			maximalDuration: 1000 *
+			maximalDuration: 500 *
 				time.Millisecond,
-			reuseTree: false,
+			reuseTree: true,
 		},
 		secondSearcher: searchingSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
-			maximalDuration: 1000 *
+			maximalDuration: 500 *
 				time.Millisecond,
-			reuseTree: false,
+			reuseTree: true,
 		},
 	}
 )
@@ -139,11 +139,14 @@ func newIntegratedSearcher(
 
 func (searcher integratedSearcher) search(
 	board models.Board,
-	color models.Color,
+	previousMove models.Move,
 ) (models.Move, error) {
 	searcher.terminator.Reset()
 
-	root := tree.NewNode(board, color)
+	root := &tree.Node{
+		Move:  previousMove,
+		Board: board,
+	}
 	node, err :=
 		searcher.searcher.SearchMove(root)
 	if err != nil {
@@ -265,6 +268,9 @@ func game(
 		return 0, err
 	}
 
+	previousMove := models.Move{
+		Color: color.Negative(),
+	}
 	for ply := 0; ; ply++ {
 		if ply%5 == 0 {
 			fmt.Print(".")
@@ -272,11 +278,15 @@ func game(
 
 		var move models.Move
 		if ply%2 == 0 {
-			move, err =
-				firstSearcher.search(board, color)
+			move, err = firstSearcher.search(
+				board,
+				previousMove,
+			)
 		} else {
-			move, err =
-				secondSearcher.search(board, color)
+			move, err = secondSearcher.search(
+				board,
+				previousMove,
+			)
 		}
 		if err != nil {
 			errColor := move.Color.Negative()
@@ -284,7 +294,7 @@ func game(
 		}
 
 		board = board.ApplyMove(move)
-		color = color.Negative()
+		previousMove = move
 	}
 }
 
@@ -297,9 +307,7 @@ func markWinner(
 	case models.ErrAlreadyLoss:
 		errColor = errColor.Negative()
 	default:
-		fmt.Println()
 		log.Println(err)
-
 		return
 	}
 
