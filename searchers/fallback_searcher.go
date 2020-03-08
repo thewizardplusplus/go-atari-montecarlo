@@ -1,6 +1,7 @@
 package searchers
 
 import (
+	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -16,9 +17,14 @@ func (searcher FallbackSearcher) SearchMove(
 ) (*tree.Node, error) {
 	node, err := searcher.PrimarySearcher.
 		SearchMove(root)
-	if err != nil {
-		node, err = searcher.FallbackSearcher.
-			SearchMove(root)
+	switch err {
+	case nil:
+		return node, nil
+	case models.ErrAlreadyWin,
+		models.ErrAlreadyLoss:
+		return nil, err
 	}
-	return node, err
+
+	return searcher.FallbackSearcher.
+		SearchMove(root)
 }
