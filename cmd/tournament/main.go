@@ -37,14 +37,14 @@ var (
 		firstSearcher: searchingSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
-			maximalDuration: 500 *
+			maximalDuration: 1000 *
 				time.Millisecond,
 			reuseTree: true,
 		},
 		secondSearcher: searchingSettings{
 			selectorType: ucbSelector,
 			ucbFactor:    1,
-			maximalDuration: 500 *
+			maximalDuration: 1000 *
 				time.Millisecond,
 			reuseTree: true,
 		},
@@ -117,23 +117,25 @@ func newIntegratedSearcher(
 		},
 		Terminator: terminator,
 	}
-
-	var innerSearcher searchers.Searcher
-	innerSearcher = searchers.MoveSearcher{
+	baseSearcher := searchers.MoveSearcher{
 		Builder:      builder,
 		NodeSelector: generalSelector,
-	}
-	if settings.reuseTree {
-		innerSearcher =
-			searchers.NewReusedSearcher(
-				innerSearcher,
-			)
 	}
 
 	searcher := integratedSearcher{
 		terminator: terminator,
-		searcher:   innerSearcher,
 	}
+	if !settings.reuseTree {
+		searcher.searcher = baseSearcher
+	} else {
+		searcher.searcher =
+			searchers.FallbackSearcher{
+				PrimarySearcher: searchers.
+					NewReusedSearcher(baseSearcher),
+				FallbackSearcher: baseSearcher,
+			}
+	}
+
 	return searcher, nil
 }
 

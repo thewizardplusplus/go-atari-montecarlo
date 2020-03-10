@@ -76,21 +76,24 @@ func newIntegratedSearcher(
 		},
 		Terminator: terminator,
 	}
-
-	var innerSearcher searchers.Searcher
-	innerSearcher = searchers.MoveSearcher{
+	baseSearcher := searchers.MoveSearcher{
 		Builder:      builder,
 		NodeSelector: generalSelector,
 	}
-	if settings.reuseTree {
-		innerSearcher =
-			searchers.NewReusedSearcher(
-				innerSearcher,
-			)
+
+	var searcher integratedSearcher
+	if !settings.reuseTree {
+		searcher.searcher = baseSearcher
+	} else {
+		searcher.searcher =
+			searchers.FallbackSearcher{
+				PrimarySearcher: searchers.
+					NewReusedSearcher(baseSearcher),
+				FallbackSearcher: baseSearcher,
+			}
 	}
 
-	return integratedSearcher{innerSearcher},
-		nil
+	return searcher, nil
 }
 
 func (searcher integratedSearcher) search(
