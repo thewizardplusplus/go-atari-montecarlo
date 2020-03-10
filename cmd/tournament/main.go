@@ -21,8 +21,10 @@ import (
 )
 
 const (
-	gameCount  = 10
-	startColor = models.Black
+	defaultUCBFactor = 1
+	defaultDuration  = 1 * time.Second
+	gameCount        = 10
+	startColor       = models.Black
 )
 
 var (
@@ -33,20 +35,60 @@ var (
 		},
 	)
 
-	settings = gameSettings{
+	randomVsWinRateSettings = gameSettings{
 		firstSearcher: searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalDuration: 1000 *
-				time.Millisecond,
-			reuseTree: true,
+			selectorType:    randomSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
 		},
 		secondSearcher: searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalDuration: 1000 *
-				time.Millisecond,
-			reuseTree: true,
+			selectorType:    winRateSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+	}
+	winRateVsUCBSettings = gameSettings{
+		firstSearcher: searchingSettings{
+			selectorType:    winRateSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+		secondSearcher: searchingSettings{
+			selectorType:    ucbSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+	}
+	lowVsHighUCBSettings = gameSettings{
+		firstSearcher: searchingSettings{
+			selectorType:    ucbSelector,
+			ucbFactor:       0.1,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+		secondSearcher: searchingSettings{
+			selectorType:    ucbSelector,
+			ucbFactor:       10,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+	}
+	uniqueVsReusedTreeSettings = gameSettings{
+		firstSearcher: searchingSettings{
+			selectorType:    ucbSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       false,
+		},
+		secondSearcher: searchingSettings{
+			selectorType:    ucbSelector,
+			ucbFactor:       defaultUCBFactor,
+			maximalDuration: defaultDuration,
+			reuseTree:       true,
 		},
 	}
 )
@@ -321,6 +363,11 @@ func markWinner(
 }
 
 func main() {
+	//settings := randomVsWinRateSettings
+	//settings := winRateVsUCBSettings
+	//settings := lowVsHighUCBSettings
+	settings := uniqueVsReusedTreeSettings
+
 	var scores scores
 	tasks, wait := pool()
 	for i := 0; i < gameCount; i++ {
