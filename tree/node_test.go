@@ -21,7 +21,9 @@ func (selector MockNodeSelector) SelectNode(
 	return selector.selectNode(nodes)
 }
 
-func TestNewNode(test *testing.T) {
+func TestNewPreliminaryNode(
+	test *testing.T,
+) {
 	board := models.NewBoard(
 		models.Size{
 			Width:  3,
@@ -49,7 +51,8 @@ func TestNewNode(test *testing.T) {
 		board = board.ApplyMove(move)
 	}
 
-	got := NewNode(board, models.Black)
+	got :=
+		NewPreliminaryNode(board, models.Black)
 
 	want := &Node{
 		Move:  models.Move{Color: models.White},

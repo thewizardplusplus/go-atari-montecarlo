@@ -312,7 +312,8 @@ func game(
 		return 0, err
 	}
 
-	previousMove := models.NewMove(color)
+	previousMove :=
+		models.NewPreliminaryMove(color)
 	for ply := 0; ; ply++ {
 		if ply%5 == 0 {
 			fmt.Print(".")

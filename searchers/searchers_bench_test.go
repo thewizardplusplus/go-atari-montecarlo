@@ -100,7 +100,8 @@ func (searcher integratedSearcher) search(
 	board models.Board,
 	color models.Color,
 ) (models.Move, error) {
-	root := tree.NewNode(board, color)
+	root :=
+		tree.NewPreliminaryNode(board, color)
 	node, err :=
 		searcher.searcher.SearchMove(root)
 	if err != nil {

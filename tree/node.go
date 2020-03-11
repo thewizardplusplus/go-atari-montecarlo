@@ -18,13 +18,17 @@ type Node struct {
 	Children NodeGroup
 }
 
-// NewNode ...
-func NewNode(
+// NewPreliminaryNode ...
+//
+// It creates the node
+// from only the passed board and
+// the negated passed color.
+func NewPreliminaryNode(
 	board models.Board,
 	color models.Color,
 ) *Node {
 	return &Node{
-		Move:  models.NewMove(color),
+		Move:  models.NewPreliminaryMove(color),
 		Board: board,
 	}
 }
