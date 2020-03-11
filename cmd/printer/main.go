@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	models "github.com/thewizardplusplus/go-atari-models"
@@ -199,6 +200,44 @@ type gameSettings struct {
 }
 
 type history []models.Move
+
+func (history history) String() string {
+	commands := []string{";FF[4]"}
+	for _, move := range history {
+		command := newMoveCommand(move)
+		commands = append(commands, command)
+	}
+
+	result := strings.Join(commands, "")
+	return fmt.Sprintf("(%s)", result)
+}
+
+func newMoveCommand(
+	move models.Move,
+) string {
+	var color string
+	switch move.Color {
+	case models.Black:
+		color = "B"
+	case models.White:
+		color = "W"
+	}
+
+	column :=
+		convertPointAxis(move.Point.Column)
+	row := convertPointAxis(move.Point.Row)
+
+	return fmt.Sprintf(
+		";%s[%s%s]",
+		color,
+		column,
+		row,
+	)
+}
+
+func convertPointAxis(axis int) string {
+	return string(axis + 97)
+}
 
 func game(
 	board models.Board,
