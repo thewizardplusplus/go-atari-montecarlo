@@ -332,7 +332,8 @@ func game(
 			)
 		}
 		if err != nil {
-			errColor := move.Color.Negative()
+			errColor :=
+				previousMove.Color.Negative()
 			return errColor, err
 		}
 
