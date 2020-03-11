@@ -312,9 +312,7 @@ func game(
 		return 0, err
 	}
 
-	previousMove := models.Move{
-		Color: color.Negative(),
-	}
+	previousMove := models.NewMove(color)
 	for ply := 0; ; ply++ {
 		if ply%5 == 0 {
 			fmt.Print(".")

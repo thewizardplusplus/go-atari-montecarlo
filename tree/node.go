@@ -24,9 +24,7 @@ func NewNode(
 	color models.Color,
 ) *Node {
 	return &Node{
-		Move: models.Move{
-			Color: color.Negative(),
-		},
+		Move:  models.NewMove(color),
 		Board: board,
 	}
 }
