@@ -198,17 +198,19 @@ type gameSettings struct {
 	secondSearcher searchingSettings
 }
 
+type history []models.Move
+
 func game(
 	board models.Board,
 	color models.Color,
 	settings gameSettings,
-) (models.Color, error) {
+) (history, models.Color, error) {
 	firstSearcher, err :=
 		newIntegratedSearcher(
 			settings.firstSearcher,
 		)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	secondSearcher, err :=
@@ -216,9 +218,10 @@ func game(
 			settings.secondSearcher,
 		)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
+	var history history
 	previousMove :=
 		models.NewPreliminaryMove(color)
 	for ply := 0; ; ply++ {
@@ -240,10 +243,11 @@ func game(
 		}
 		if err != nil {
 			errColor := move.Color.Negative()
-			return errColor, err
+			return history, errColor, err
 		}
 
 		board = board.ApplyMove(move)
+		history = append(history, move)
 		previousMove = move
 	}
 }
@@ -274,10 +278,11 @@ func main() {
 	//settings := lowVsHighUCBSettings
 	settings := uniqueVsReusedTreeSettings
 
-	errColor, err := game(
+	history, errColor, err := game(
 		startBoard,
 		startColor,
 		settings,
 	)
 	markWinner(errColor, err)
+	fmt.Println(history)
 }
