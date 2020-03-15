@@ -20,6 +20,15 @@ func (state NodeState) WinRate() float64 {
 		float64(state.GameCount)
 }
 
+// Invert ...
+func (state NodeState) Invert() NodeState {
+	return NodeState{
+		GameCount: state.GameCount,
+		WinCount: state.GameCount -
+			state.WinCount,
+	}
+}
+
 // AddResult ...
 func (state *NodeState) AddResult(
 	result GameResult,
@@ -28,4 +37,12 @@ func (state *NodeState) AddResult(
 	if result == Win {
 		state.WinCount++
 	}
+}
+
+// Update ...
+func (state *NodeState) Update(
+	another NodeState,
+) {
+	state.GameCount += another.GameCount
+	state.WinCount += another.WinCount
 }

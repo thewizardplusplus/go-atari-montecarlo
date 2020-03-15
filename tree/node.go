@@ -44,6 +44,15 @@ func (node *Node) AddResult(
 	}
 }
 
+// Update ...
+func (node *Node) Update(state NodeState) {
+	node.State.Update(state)
+	if node.Parent != nil {
+		parentState := state.Invert()
+		node.Parent.Update(parentState)
+	}
+}
+
 // SelectLeaf ...
 func (node *Node) SelectLeaf(
 	selector NodeSelector,
