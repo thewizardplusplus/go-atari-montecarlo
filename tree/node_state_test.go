@@ -44,6 +44,22 @@ func TestNodeStateWinRate(test *testing.T) {
 	}
 }
 
+func TestNodeStateInvert(test *testing.T) {
+	state := NodeState{
+		GameCount: 5,
+		WinCount:  2,
+	}
+	got := state.Invert()
+
+	want := NodeState{
+		GameCount: 5,
+		WinCount:  3,
+	}
+	if !reflect.DeepEqual(got, want) {
+		test.Fail()
+	}
+}
+
 func TestNodeStateAddResult(
 	test *testing.T,
 ) {
@@ -96,5 +112,25 @@ func TestNodeStateAddResult(
 		) {
 			test.Fail()
 		}
+	}
+}
+
+func TestNodeStateUpdate(test *testing.T) {
+	update := NodeState{
+		GameCount: 2,
+		WinCount:  1,
+	}
+	state := NodeState{
+		GameCount: 3,
+		WinCount:  2,
+	}
+	state.Update(update)
+
+	want := NodeState{
+		GameCount: 5,
+		WinCount:  3,
+	}
+	if !reflect.DeepEqual(state, want) {
+		test.Fail()
 	}
 }
