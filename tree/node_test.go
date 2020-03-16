@@ -55,7 +55,9 @@ func TestNewPreliminaryNode(
 		NewPreliminaryNode(board, models.Black)
 
 	want := &Node{
-		Move:  models.Move{Color: models.White},
+		Move: models.Move{
+			Color: models.White,
+		},
 		Board: board,
 	}
 	if !reflect.DeepEqual(got, want) {
@@ -142,6 +144,105 @@ func TestNodeAddResult(test *testing.T) {
 			State:  data.fields.state,
 		}
 		node.AddResult(data.args.result)
+
+		if !reflect.DeepEqual(
+			node,
+			data.wantNode,
+		) {
+			test.Fail()
+		}
+	}
+}
+
+func TestNodeUpdate(test *testing.T) {
+	type fields struct {
+		parent *Node
+		state  NodeState
+	}
+	type args struct {
+		state NodeState
+	}
+	type data struct {
+		fields   fields
+		args     args
+		wantNode *Node
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				parent: nil,
+				state: NodeState{
+					GameCount: 4,
+					WinCount:  2,
+				},
+			},
+			args: args{
+				state: NodeState{
+					GameCount: 3,
+					WinCount:  2,
+				},
+			},
+			wantNode: &Node{
+				Parent: nil,
+				State: NodeState{
+					GameCount: 7,
+					WinCount:  4,
+				},
+			},
+		},
+		data{
+			fields: fields{
+				parent: &Node{
+					Parent: &Node{
+						Parent: nil,
+						State: NodeState{
+							GameCount: 2,
+							WinCount:  1,
+						},
+					},
+					State: NodeState{
+						GameCount: 3,
+						WinCount:  2,
+					},
+				},
+				state: NodeState{
+					GameCount: 4,
+					WinCount:  2,
+				},
+			},
+			args: args{
+				state: NodeState{
+					GameCount: 3,
+					WinCount:  2,
+				},
+			},
+			wantNode: &Node{
+				Parent: &Node{
+					Parent: &Node{
+						Parent: nil,
+						State: NodeState{
+							GameCount: 5,
+							WinCount:  3,
+						},
+					},
+					State: NodeState{
+						GameCount: 6,
+						WinCount:  3,
+					},
+				},
+				State: NodeState{
+					GameCount: 7,
+					WinCount:  4,
+				},
+			},
+		},
+	} {
+		node := &Node{
+			Parent: data.fields.parent,
+			State:  data.fields.state,
+		}
+		node.Update(data.args.state)
 
 		if !reflect.DeepEqual(
 			node,
