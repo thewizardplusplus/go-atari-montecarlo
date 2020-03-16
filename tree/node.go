@@ -44,12 +44,14 @@ func (node *Node) AddResult(
 	}
 }
 
-// Update ...
-func (node *Node) Update(state NodeState) {
+// UpdateState ...
+func (node *Node) UpdateState(
+	state NodeState,
+) {
 	node.State.Update(state)
 	if node.Parent != nil {
 		parentState := state.Invert()
-		node.Parent.Update(parentState)
+		node.Parent.UpdateState(parentState)
 	}
 }
 

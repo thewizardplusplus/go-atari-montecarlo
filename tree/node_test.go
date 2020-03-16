@@ -154,7 +154,7 @@ func TestNodeAddResult(test *testing.T) {
 	}
 }
 
-func TestNodeUpdate(test *testing.T) {
+func TestNodeUpdateState(test *testing.T) {
 	type fields struct {
 		parent *Node
 		state  NodeState
@@ -242,7 +242,7 @@ func TestNodeUpdate(test *testing.T) {
 			Parent: data.fields.parent,
 			State:  data.fields.state,
 		}
-		node.Update(data.args.state)
+		node.UpdateState(data.args.state)
 
 		if !reflect.DeepEqual(
 			node,
