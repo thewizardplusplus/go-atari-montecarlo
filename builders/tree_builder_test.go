@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	models "github.com/thewizardplusplus/go-atari-models"
+	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -45,7 +46,7 @@ func (simulator MockSimulator) Simulate(
 func TestTreeBuilderPass(test *testing.T) {
 	type fields struct {
 		nodeSelector tree.NodeSelector
-		simulator    Simulator
+		simulator    simulators.Simulator
 	}
 	type args struct {
 		root *tree.Node

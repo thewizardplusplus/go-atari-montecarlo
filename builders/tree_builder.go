@@ -1,22 +1,14 @@
 package builders
 
 import (
-	models "github.com/thewizardplusplus/go-atari-models"
+	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
-
-// Simulator ...
-type Simulator interface {
-	Simulate(
-		board models.Board,
-		color models.Color,
-	) tree.NodeState
-}
 
 // TreeBuilder ...
 type TreeBuilder struct {
 	NodeSelector tree.NodeSelector
-	Simulator    Simulator
+	Simulator    simulators.Simulator
 }
 
 // Pass ...
