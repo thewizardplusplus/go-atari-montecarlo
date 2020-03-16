@@ -19,7 +19,7 @@ type RolloutSimulator struct {
 func (simulator RolloutSimulator) Simulate(
 	board models.Board,
 	color models.Color,
-) tree.GameResult {
+) tree.NodeState {
 	startColor := color
 	for {
 		moves, err := board.LegalMoves(color)
@@ -30,7 +30,10 @@ func (simulator RolloutSimulator) Simulate(
 				result = result.Invert()
 			}
 
-			return result
+			var state tree.NodeState
+			state.AddResult(result)
+
+			return state
 		}
 
 		move := simulator.MoveSelector.
