@@ -10,7 +10,7 @@ type Simulator interface {
 	Simulate(
 		board models.Board,
 		color models.Color,
-	) tree.GameResult
+	) tree.NodeState
 }
 
 // TreeBuilder ...
@@ -27,9 +27,9 @@ func (builder TreeBuilder) Pass(
 		SelectLeaf(builder.NodeSelector).
 		ExpandLeaf()
 	nextColor := leaf.Move.Color.Negative()
-	result := builder.Simulator.Simulate(
+	state := builder.Simulator.Simulate(
 		leaf.Board,
 		nextColor,
 	)
-	leaf.AddResult(result.Invert())
+	leaf.UpdateState(state.Invert())
 }

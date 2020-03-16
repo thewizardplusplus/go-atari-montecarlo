@@ -28,13 +28,13 @@ type MockSimulator struct {
 	simulate func(
 		board models.Board,
 		color models.Color,
-	) tree.GameResult
+	) tree.NodeState
 }
 
 func (simulator MockSimulator) Simulate(
 	board models.Board,
 	color models.Color,
-) tree.GameResult {
+) tree.NodeState {
 	if simulator.simulate == nil {
 		panic("not implemented")
 	}
@@ -70,8 +70,11 @@ func TestTreeBuilderPass(test *testing.T) {
 					simulate: func(
 						board models.Board,
 						color models.Color,
-					) tree.GameResult {
-						return tree.Win
+					) tree.NodeState {
+						return tree.NodeState{
+							GameCount: 1,
+							WinCount:  1,
+						}
 					},
 				},
 			},
