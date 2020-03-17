@@ -33,17 +33,6 @@ func NewPreliminaryNode(
 	}
 }
 
-// AddResult ...
-func (node *Node) AddResult(
-	result GameResult,
-) {
-	node.State.AddResult(result)
-	if node.Parent != nil {
-		parentResult := result.Invert()
-		node.Parent.AddResult(parentResult)
-	}
-}
-
 // UpdateState ...
 func (node *Node) UpdateState(
 	state NodeState,

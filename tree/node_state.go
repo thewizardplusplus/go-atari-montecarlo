@@ -43,16 +43,6 @@ func (state NodeState) Invert() NodeState {
 	}
 }
 
-// AddResult ...
-func (state *NodeState) AddResult(
-	result GameResult,
-) {
-	state.GameCount++
-	if result == Win {
-		state.WinCount++
-	}
-}
-
 // Update ...
 func (state *NodeState) Update(
 	another NodeState,
