@@ -8,38 +8,76 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
+type MockSimulator struct {
+	simulate func(
+		board models.Board,
+		color models.Color,
+	) tree.NodeState
+}
+
+func (simulator MockSimulator) Simulate(
+	board models.Board,
+	color models.Color,
+) tree.NodeState {
+	if simulator.simulate == nil {
+		panic("not implemented")
+	}
+
+	return simulator.simulate(board, color)
+}
+
 func TestParallelSimulatorSimulate(
 	test *testing.T,
 ) {
-	type fields struct {
-		simulator   Simulator
-		concurrency int
-	}
-	type args struct {
-		board models.Board
-		color models.Color
-	}
-	type data struct {
-		fields    fields
-		args      args
-		wantState tree.NodeState
-	}
+	board := models.NewBoard(
+		models.Size{
+			Width:  3,
+			Height: 3,
+		},
+	)
+	innerSimulator := MockSimulator{
+		simulate: func(
+			board models.Board,
+			color models.Color,
+		) tree.NodeState {
+			expectedBoard := models.NewBoard(
+				models.Size{
+					Width:  3,
+					Height: 3,
+				},
+			)
+			if !reflect.DeepEqual(
+				board,
+				expectedBoard,
+			) {
+				test.Fail()
+			}
 
-	for _, data := range []data{} {
-		simulator := ParallelSimulator{
-			Simulator:   data.fields.simulator,
-			Concurrency: data.fields.concurrency,
-		}
-		gotState := simulator.Simulate(
-			data.args.board,
-			data.args.color,
-		)
+			if color != models.White {
+				test.Fail()
+			}
 
-		if !reflect.DeepEqual(
-			gotState,
-			data.wantState,
-		) {
-			test.Fail()
-		}
+			return tree.NodeState{
+				GameCount: 3,
+				WinCount:  2,
+			}
+		},
+	}
+	simulator := ParallelSimulator{
+		Simulator:   innerSimulator,
+		Concurrency: 10,
+	}
+	gotState :=
+		simulator.Simulate(board, models.White)
+
+	wantState := tree.NodeState{
+		GameCount: 30,
+		WinCount:  20,
+	}
+	if !reflect.DeepEqual(
+		gotState,
+		wantState,
+	) {
+		test.Fail()
 	}
 }
