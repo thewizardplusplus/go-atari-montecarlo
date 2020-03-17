@@ -35,10 +35,10 @@ func TestRolloutSimulatorSimulate(
 		color models.Color
 	}
 	type data struct {
-		fields     fields
-		args       args
-		wantResult tree.NodeState
-		wantCount  int
+		fields    fields
+		args      args
+		wantState tree.NodeState
+		wantCount int
 	}
 
 	var iterationCount int
@@ -120,7 +120,7 @@ func TestRolloutSimulatorSimulate(
 				}(),
 				color: models.White,
 			},
-			wantResult: tree.NodeState{
+			wantState: tree.NodeState{
 				GameCount: 1,
 				WinCount:  1,
 			},
@@ -187,7 +187,7 @@ func TestRolloutSimulatorSimulate(
 				}(),
 				color: models.White,
 			},
-			wantResult: tree.NodeState{
+			wantState: tree.NodeState{
 				GameCount: 1,
 				WinCount:  0,
 			},
@@ -225,7 +225,7 @@ func TestRolloutSimulatorSimulate(
 				}(),
 				color: models.White,
 			},
-			wantResult: tree.NodeState{
+			wantState: tree.NodeState{
 				GameCount: 1,
 				WinCount:  0,
 			},
@@ -288,7 +288,7 @@ func TestRolloutSimulatorSimulate(
 				}(),
 				color: models.White,
 			},
-			wantResult: tree.NodeState{
+			wantState: tree.NodeState{
 				GameCount: 1,
 				WinCount:  1,
 			},
@@ -351,7 +351,7 @@ func TestRolloutSimulatorSimulate(
 				}(),
 				color: models.Black,
 			},
-			wantResult: tree.NodeState{
+			wantState: tree.NodeState{
 				GameCount: 1,
 				WinCount:  0,
 			},
@@ -364,12 +364,15 @@ func TestRolloutSimulatorSimulate(
 			MoveSelector: data.fields.
 				moveSelector,
 		}
-		gotResult := simulator.Simulate(
+		gotState := simulator.Simulate(
 			data.args.board,
 			data.args.color,
 		)
 
-		if gotResult != data.wantResult {
+		if !reflect.DeepEqual(
+			gotState,
+			data.wantState,
+		) {
 			test.Fail()
 		}
 		if iterationCount != data.wantCount {
