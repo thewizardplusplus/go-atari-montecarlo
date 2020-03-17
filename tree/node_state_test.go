@@ -6,6 +6,42 @@ import (
 	"testing"
 )
 
+func TestNewNodeState(test *testing.T) {
+	type args struct {
+		result GameResult
+	}
+	type data struct {
+		args args
+		want NodeState
+	}
+
+	for _, data := range []data{
+		data{
+			args: args{Loss},
+			want: NodeState{
+				GameCount: 1,
+				WinCount:  0,
+			},
+		},
+		data{
+			args: args{Win},
+			want: NodeState{
+				GameCount: 1,
+				WinCount:  1,
+			},
+		},
+	} {
+		got := NewNodeState(data.args.result)
+
+		if !reflect.DeepEqual(
+			got,
+			data.want,
+		) {
+			test.Fail()
+		}
+	}
+}
+
 func TestNodeStateWinRate(test *testing.T) {
 	type fields struct {
 		gameCount int

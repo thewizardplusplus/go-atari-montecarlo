@@ -10,6 +10,20 @@ type NodeState struct {
 	WinCount  int
 }
 
+// NewNodeState ...
+func NewNodeState(
+	result GameResult,
+) NodeState {
+	state := NodeState{
+		GameCount: 1,
+	}
+	if result == Win {
+		state.WinCount = 1
+	}
+
+	return state
+}
+
 // WinRate ...
 func (state NodeState) WinRate() float64 {
 	if state.GameCount == 0 {

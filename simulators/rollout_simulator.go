@@ -30,10 +30,7 @@ func (simulator RolloutSimulator) Simulate(
 				result = result.Invert()
 			}
 
-			var state tree.NodeState
-			state.AddResult(result)
-
-			return state
+			return tree.NewNodeState(result)
 		}
 
 		move := simulator.MoveSelector.
