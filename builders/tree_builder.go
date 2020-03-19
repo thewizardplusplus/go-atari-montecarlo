@@ -17,7 +17,7 @@ func (builder TreeBuilder) Pass(
 ) {
 	leaf := root.
 		SelectLeaf(builder.NodeSelector).
-		ExpandLeaf()
+		ExpandLeaf()[0]
 	nextColor := leaf.Move.Color.Negative()
 	state := builder.Simulator.Simulate(
 		leaf.Board,
