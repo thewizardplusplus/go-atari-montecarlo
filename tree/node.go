@@ -56,9 +56,9 @@ func (node *Node) SelectLeaf(
 }
 
 // ExpandLeaf ...
-func (node *Node) ExpandLeaf() *Node {
+func (node *Node) ExpandLeaf() NodeGroup {
 	if node.State.GameCount == 0 {
-		return node
+		return NodeGroup{node}
 	}
 
 	nextColor := node.Move.Color.Negative()
@@ -66,7 +66,7 @@ func (node *Node) ExpandLeaf() *Node {
 		LegalMoves(nextColor)
 	if err != nil {
 		// no moves or an already finished game
-		return node
+		return NodeGroup{node}
 	}
 
 	node.Children = NewNodeGroup(
@@ -75,5 +75,5 @@ func (node *Node) ExpandLeaf() *Node {
 		WithBoard(node.Board),
 	)
 
-	return node.Children[0]
+	return node.Children
 }
