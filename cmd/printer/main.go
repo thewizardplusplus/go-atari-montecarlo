@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"runtime"
 	"strings"
 	"time"
 
@@ -33,58 +34,82 @@ var (
 
 	randomVsWinRateSettings = gameSettings{
 		firstSearcher: searchingSettings{
-			selectorType:    randomSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      randomSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 		secondSearcher: searchingSettings{
-			selectorType:    winRateSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      winRateSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	}
 	winRateVsUCBSettings = gameSettings{
 		firstSearcher: searchingSettings{
-			selectorType:    winRateSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      winRateSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 		secondSearcher: searchingSettings{
-			selectorType:    ucbSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      ucbSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	}
 	lowVsHighUCBSettings = gameSettings{
 		firstSearcher: searchingSettings{
-			selectorType:    ucbSelector,
-			ucbFactor:       0.1,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      ucbSelector,
+			ucbFactor:         0.1,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 		secondSearcher: searchingSettings{
-			selectorType:    ucbSelector,
-			ucbFactor:       10,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      ucbSelector,
+			ucbFactor:         10,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	}
 	uniqueVsReusedTreeSettings = gameSettings{
 		firstSearcher: searchingSettings{
-			selectorType:    ucbSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       false,
+			selectorType:      ucbSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 		secondSearcher: searchingSettings{
-			selectorType:    ucbSelector,
-			ucbFactor:       defaultUCBFactor,
-			maximalDuration: defaultDuration,
-			reuseTree:       true,
+			selectorType:      ucbSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         true,
+			parallelSimulator: false,
+		},
+	}
+	reusedTreeVsParallelSimulatorSettings = gameSettings{
+		firstSearcher: searchingSettings{
+			selectorType:      ucbSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         true,
+			parallelSimulator: false,
+		},
+		secondSearcher: searchingSettings{
+			selectorType:      ucbSelector,
+			ucbFactor:         defaultUCBFactor,
+			maximalDuration:   defaultDuration,
+			reuseTree:         true,
+			parallelSimulator: true,
 		},
 	}
 )
@@ -98,10 +123,11 @@ const (
 )
 
 type searchingSettings struct {
-	selectorType    selectorType
-	ucbFactor       float64
-	maximalDuration time.Duration
-	reuseTree       bool
+	selectorType      selectorType
+	ucbFactor         float64
+	maximalDuration   time.Duration
+	reuseTree         bool
+	parallelSimulator bool
 }
 
 type integratedSearcher struct {
@@ -134,13 +160,21 @@ func newIntegratedSearcher(
 			errors.New("unknown selector type")
 	}
 
-	randomSelector :=
-		selectors.RandomSelector{}
-	simulator := simulators.RolloutSimulator{
+	var simulator simulators.Simulator
+	simulator = simulators.RolloutSimulator{
 		MoveSelector: selectors.MoveSelector{
-			NodeSelector: randomSelector,
+			NodeSelector: selectors.
+				RandomSelector{},
 		},
 	}
+	if settings.parallelSimulator {
+		simulator =
+			simulators.ParallelSimulator{
+				Simulator:   simulator,
+				Concurrency: runtime.NumCPU(),
+			}
+	}
+
 	terminator :=
 		terminators.NewTimeTerminator(
 			time.Now,
@@ -316,7 +350,9 @@ func main() {
 	//settings := randomVsWinRateSettings
 	//settings := winRateVsUCBSettings
 	//settings := lowVsHighUCBSettings
-	settings := uniqueVsReusedTreeSettings
+	//settings := uniqueVsReusedTreeSettings
+	settings :=
+		reusedTreeVsParallelSimulatorSettings
 
 	history, errColor, err := game(
 		startBoard,

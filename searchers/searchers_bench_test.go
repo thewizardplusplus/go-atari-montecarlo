@@ -126,9 +126,11 @@ func BenchmarkSearch_randomSelectorAnd10Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: randomSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
+			selectorType:      randomSelector,
+			ucbFactor:         1,
+			maximalPass:       10,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -148,9 +150,11 @@ func BenchmarkSearch_randomSelectorAnd100Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: randomSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
+			selectorType:      randomSelector,
+			ucbFactor:         1,
+			maximalPass:       100,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -170,9 +174,11 @@ func BenchmarkSearch_winRateSelectorAnd10Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: winRateSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
+			selectorType:      winRateSelector,
+			ucbFactor:         1,
+			maximalPass:       10,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -192,9 +198,11 @@ func BenchmarkSearch_winRateSelectorAnd100Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: winRateSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
+			selectorType:      winRateSelector,
+			ucbFactor:         1,
+			maximalPass:       100,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -214,9 +222,11 @@ func BenchmarkSearch_ucbSelectorAnd10Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       10,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -236,9 +246,11 @@ func BenchmarkSearch_ucbSelectorAnd100Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       100,
+			reuseTree:         false,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -258,10 +270,11 @@ func BenchmarkSearch_ucbSelectorReusedTreeAnd10Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
-			reuseTree:    true,
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       10,
+			reuseTree:         true,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
@@ -281,10 +294,11 @@ func BenchmarkSearch_ucbSelectorReusedTreeAnd100Passes(
 ) {
 	searcher, _ := newIntegratedSearcher(
 		searchingSettings{
-			selectorType: ucbSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
-			reuseTree:    true,
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       100,
+			reuseTree:         true,
+			parallelSimulator: false,
 		},
 	)
 	board := models.NewBoard(
