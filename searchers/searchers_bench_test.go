@@ -2,6 +2,7 @@ package searchers_test
 
 import (
 	"errors"
+	"runtime"
 	"testing"
 
 	models "github.com/thewizardplusplus/go-atari-models"
@@ -23,10 +24,11 @@ const (
 )
 
 type searchingSettings struct {
-	selectorType selectorType
-	ucbFactor    float64
-	maximalPass  int
-	reuseTree    bool
+	selectorType      selectorType
+	ucbFactor         float64
+	maximalPass       int
+	reuseTree         bool
+	parallelSimulator bool
 }
 
 type integratedSearcher struct {
@@ -58,13 +60,21 @@ func newIntegratedSearcher(
 			errors.New("unknown selector type")
 	}
 
-	randomSelector :=
-		selectors.RandomSelector{}
-	simulator := simulators.RolloutSimulator{
+	var simulator simulators.Simulator
+	simulator = simulators.RolloutSimulator{
 		MoveSelector: selectors.MoveSelector{
-			NodeSelector: randomSelector,
+			NodeSelector: selectors.
+				RandomSelector{},
 		},
 	}
+	if settings.parallelSimulator {
+		simulator =
+			simulators.ParallelSimulator{
+				Simulator:   simulator,
+				Concurrency: runtime.NumCPU(),
+			}
+	}
+
 	terminator :=
 		terminators.NewPassTerminator(
 			settings.maximalPass,
@@ -243,99 +253,7 @@ func BenchmarkSearch_ucbSelectorAnd100Passes(
 	}
 }
 
-func BenchmarkSearch_randomSelectorAnd10PassesAndReusedTree(
-	benchmark *testing.B,
-) {
-	searcher, _ := newIntegratedSearcher(
-		searchingSettings{
-			selectorType: randomSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
-			reuseTree:    true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_randomSelectorAnd100PassesAndReusedTree(
-	benchmark *testing.B,
-) {
-	searcher, _ := newIntegratedSearcher(
-		searchingSettings{
-			selectorType: randomSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
-			reuseTree:    true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_winRateSelectorAnd10PassesAndReusedTree(
-	benchmark *testing.B,
-) {
-	searcher, _ := newIntegratedSearcher(
-		searchingSettings{
-			selectorType: winRateSelector,
-			ucbFactor:    1,
-			maximalPass:  10,
-			reuseTree:    true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_winRateSelectorAnd100PassesAndReusedTree(
-	benchmark *testing.B,
-) {
-	searcher, _ := newIntegratedSearcher(
-		searchingSettings{
-			selectorType: winRateSelector,
-			ucbFactor:    1,
-			maximalPass:  100,
-			reuseTree:    true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_ucbSelectorAnd10PassesAndReusedTree(
+func BenchmarkSearch_ucbSelectorReusedTreeAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher, _ := newIntegratedSearcher(
@@ -358,7 +276,7 @@ func BenchmarkSearch_ucbSelectorAnd10PassesAndReusedTree(
 	}
 }
 
-func BenchmarkSearch_ucbSelectorAnd100PassesAndReusedTree(
+func BenchmarkSearch_ucbSelectorReusedTreeAnd100Passes(
 	benchmark *testing.B,
 ) {
 	searcher, _ := newIntegratedSearcher(
@@ -367,6 +285,54 @@ func BenchmarkSearch_ucbSelectorAnd100PassesAndReusedTree(
 			ucbFactor:    1,
 			maximalPass:  100,
 			reuseTree:    true,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeParallelSimulatorAnd10Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       10,
+			reuseTree:         true,
+			parallelSimulator: true,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeParallelSimulatorAnd100Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:      ucbSelector,
+			ucbFactor:         1,
+			maximalPass:       100,
+			reuseTree:         true,
+			parallelSimulator: true,
 		},
 	)
 	board := models.NewBoard(
