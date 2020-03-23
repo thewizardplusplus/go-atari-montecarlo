@@ -1,10 +1,9 @@
-package simulators
+package bulky
 
 import (
 	"reflect"
 	"testing"
 
-	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -24,7 +23,7 @@ func (simulator MockSimulator) Simulate(
 	return simulator.simulate(root)
 }
 
-func TestParallelSimulatorSimulate(
+func TestFirstNodeSimulatorSimulate(
 	test *testing.T,
 ) {
 	innerSimulator := MockSimulator{
@@ -32,15 +31,10 @@ func TestParallelSimulatorSimulate(
 			root *tree.Node,
 		) tree.NodeState {
 			expectedRoot := &tree.Node{
-				Move: models.Move{
-					Color: models.White,
+				State: tree.NodeState{
+					GameCount: 2,
+					WinCount:  1,
 				},
-				Board: models.NewBoard(
-					models.Size{
-						Width:  3,
-						Height: 3,
-					},
-				),
 			}
 			if !reflect.DeepEqual(
 				root,
@@ -50,30 +44,34 @@ func TestParallelSimulatorSimulate(
 			}
 
 			return tree.NodeState{
-				GameCount: 3,
-				WinCount:  2,
+				GameCount: 6,
+				WinCount:  5,
 			}
 		},
 	}
-	simulator := ParallelSimulator{
-		Simulator:   innerSimulator,
-		Concurrency: 10,
+	simulator := FirstNodeSimulator{
+		Simulator: innerSimulator,
 	}
-	gotState := simulator.Simulate(&tree.Node{
-		Move: models.Move{
-			Color: models.White,
-		},
-		Board: models.NewBoard(
-			models.Size{
-				Width:  3,
-				Height: 3,
+	gotState := simulator.Simulate(
+		tree.NodeGroup{
+			&tree.Node{
+				State: tree.NodeState{
+					GameCount: 2,
+					WinCount:  1,
+				},
 			},
-		),
-	})
+			&tree.Node{
+				State: tree.NodeState{
+					GameCount: 4,
+					WinCount:  3,
+				},
+			},
+		},
+	)
 
 	wantState := tree.NodeState{
-		GameCount: 30,
-		WinCount:  20,
+		GameCount: 6,
+		WinCount:  5,
 	}
 	if !reflect.DeepEqual(
 		gotState,
