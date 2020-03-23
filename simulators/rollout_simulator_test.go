@@ -31,8 +31,7 @@ func TestRolloutSimulatorSimulate(
 		moveSelector MoveSelector
 	}
 	type args struct {
-		board models.Board
-		color models.Color
+		root *tree.Node
 	}
 	type data struct {
 		fields    fields
@@ -95,30 +94,34 @@ func TestRolloutSimulatorSimulate(
 				},
 			},
 			args: args{
-				board: func() models.Board {
-					board := models.NewBoard(
-						models.Size{
-							Width:  3,
-							Height: 3,
-						},
-					)
-
-					moves := []models.Move{
-						models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 0,
-								Row:    0,
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.Black,
+					},
+					Board: func() models.Board {
+						board := models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
 							},
-						},
-					}
-					for _, move := range moves {
-						board = board.ApplyMove(move)
-					}
+						)
 
-					return board
-				}(),
-				color: models.White,
+						moves := []models.Move{
+							models.Move{
+								Color: models.Black,
+								Point: models.Point{
+									Column: 0,
+									Row:    0,
+								},
+							},
+						}
+						for _, move := range moves {
+							board = board.ApplyMove(move)
+						}
+
+						return board
+					}(),
+				},
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
@@ -177,15 +180,19 @@ func TestRolloutSimulatorSimulate(
 				},
 			},
 			args: args{
-				board: func() models.Board {
-					return models.NewBoard(
-						models.Size{
-							Width:  3,
-							Height: 3,
-						},
-					)
-				}(),
-				color: models.White,
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.Black,
+					},
+					Board: func() models.Board {
+						return models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
+					}(),
+				},
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
@@ -204,26 +211,30 @@ func TestRolloutSimulatorSimulate(
 				},
 			},
 			args: args{
-				board: func() models.Board {
-					board := models.NewBoard(
-						models.Size{
-							Width:  3,
-							Height: 3,
-						},
-					)
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.Black,
+					},
+					Board: func() models.Board {
+						board := models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
 
-					points := board.Size().Points()
-					for _, point := range points {
-						move := models.Move{
-							Color: models.White,
-							Point: point,
+						points := board.Size().Points()
+						for _, point := range points {
+							move := models.Move{
+								Color: models.White,
+								Point: point,
+							}
+							board = board.ApplyMove(move)
 						}
-						board = board.ApplyMove(move)
-					}
 
-					return board
-				}(),
-				color: models.White,
+						return board
+					}(),
+				},
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
@@ -249,44 +260,48 @@ func TestRolloutSimulatorSimulate(
 				},
 			},
 			args: args{
-				board: func() models.Board {
-					board := models.NewBoard(
-						models.Size{
-							Width:  3,
-							Height: 3,
-						},
-					)
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.Black,
+					},
+					Board: func() models.Board {
+						board := models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
 
-					moves := []models.Move{
-						models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 0,
-								Row:    0,
+						moves := []models.Move{
+							models.Move{
+								Color: models.Black,
+								Point: models.Point{
+									Column: 0,
+									Row:    0,
+								},
 							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 1,
-								Row:    0,
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    0,
+								},
 							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 0,
-								Row:    1,
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    1,
+								},
 							},
-						},
-					}
-					for _, move := range moves {
-						board = board.ApplyMove(move)
-					}
+						}
+						for _, move := range moves {
+							board = board.ApplyMove(move)
+						}
 
-					return board
-				}(),
-				color: models.White,
+						return board
+					}(),
+				},
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
@@ -312,44 +327,48 @@ func TestRolloutSimulatorSimulate(
 				},
 			},
 			args: args{
-				board: func() models.Board {
-					board := models.NewBoard(
-						models.Size{
-							Width:  3,
-							Height: 3,
-						},
-					)
+				root: &tree.Node{
+					Move: models.Move{
+						Color: models.White,
+					},
+					Board: func() models.Board {
+						board := models.NewBoard(
+							models.Size{
+								Width:  3,
+								Height: 3,
+							},
+						)
 
-					moves := []models.Move{
-						models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 0,
-								Row:    0,
+						moves := []models.Move{
+							models.Move{
+								Color: models.Black,
+								Point: models.Point{
+									Column: 0,
+									Row:    0,
+								},
 							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 1,
-								Row:    0,
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    0,
+								},
 							},
-						},
-						models.Move{
-							Color: models.White,
-							Point: models.Point{
-								Column: 0,
-								Row:    1,
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    1,
+								},
 							},
-						},
-					}
-					for _, move := range moves {
-						board = board.ApplyMove(move)
-					}
+						}
+						for _, move := range moves {
+							board = board.ApplyMove(move)
+						}
 
-					return board
-				}(),
-				color: models.Black,
+						return board
+					}(),
+				},
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
@@ -364,10 +383,8 @@ func TestRolloutSimulatorSimulate(
 			MoveSelector: data.fields.
 				moveSelector,
 		}
-		gotState := simulator.Simulate(
-			data.args.board,
-			data.args.color,
-		)
+		gotState :=
+			simulator.Simulate(data.args.root)
 
 		if !reflect.DeepEqual(
 			gotState,

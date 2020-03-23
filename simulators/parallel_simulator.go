@@ -9,10 +9,7 @@ import (
 
 // Simulator ...
 type Simulator interface {
-	Simulate(
-		board models.Board,
-		color models.Color,
-	) tree.NodeState
+	Simulate(root *tree.Node) tree.NodeState
 }
 
 // ParallelSimulator ...
@@ -23,8 +20,7 @@ type ParallelSimulator struct {
 
 // Simulate ...
 func (simulator ParallelSimulator) Simulate(
-	board models.Board,
-	color models.Color,
+	root *tree.Node,
 ) tree.NodeState {
 	var waiter sync.WaitGroup
 	waiter.Add(simulator.Concurrency)
@@ -39,7 +35,7 @@ func (simulator ParallelSimulator) Simulate(
 			defer waiter.Done()
 
 			states <- simulator.Simulator.
-				Simulate(board, color)
+				Simulate(root)
 		}()
 	}
 
