@@ -15,29 +15,28 @@ type AllNodesSimulator struct {
 // Simulate ...
 func (simulator AllNodesSimulator) Simulate(
 	nodes tree.NodeGroup,
-) tree.NodeState {
+) []tree.NodeState {
 	var waiter sync.WaitGroup
 	waiter.Add(len(nodes))
 
-	states :=
+	stateBuffer :=
 		make(chan tree.NodeState, len(nodes))
 	for _, node := range nodes {
-		node := node
-		go func() {
+		go func(node *tree.Node) {
 			defer waiter.Done()
 
-			states <- simulator.Simulator.
+			stateBuffer <- simulator.Simulator.
 				Simulate(node)
-		}()
+		}(node)
 	}
 
 	waiter.Wait()
-	close(states)
+	close(stateBuffer)
 
-	var generalState tree.NodeState
-	for state := range states {
-		generalState.Update(state)
+	var states []tree.NodeState
+	for state := range stateBuffer {
+		states = append(states, state)
 	}
 
-	return generalState
+	return states
 }
