@@ -52,7 +52,7 @@ func TestFirstNodeSimulatorSimulate(
 	simulator := FirstNodeSimulator{
 		Simulator: innerSimulator,
 	}
-	gotState := simulator.Simulate(
+	gotStates := simulator.Simulate(
 		tree.NodeGroup{
 			&tree.Node{
 				State: tree.NodeState{
@@ -69,13 +69,15 @@ func TestFirstNodeSimulatorSimulate(
 		},
 	)
 
-	wantState := tree.NodeState{
-		GameCount: 6,
-		WinCount:  5,
+	wantStates := []tree.NodeState{
+		tree.NodeState{
+			GameCount: 6,
+			WinCount:  5,
+		},
 	}
 	if !reflect.DeepEqual(
-		gotState,
-		wantState,
+		gotStates,
+		wantStates,
 	) {
 		test.Fail()
 	}

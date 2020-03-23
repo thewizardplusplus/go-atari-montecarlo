@@ -13,7 +13,8 @@ type FirstNodeSimulator struct {
 // Simulate ...
 func (simulator FirstNodeSimulator) Simulate(
 	nodes tree.NodeGroup,
-) tree.NodeState {
-	return simulator.Simulator.
+) []tree.NodeState {
+	state := simulator.Simulator.
 		Simulate(nodes[0])
+	return []tree.NodeState{state}
 }
