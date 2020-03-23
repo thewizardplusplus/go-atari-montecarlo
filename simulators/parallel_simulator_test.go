@@ -10,20 +10,18 @@ import (
 
 type MockSimulator struct {
 	simulate func(
-		board models.Board,
-		color models.Color,
+		root *tree.Node,
 	) tree.NodeState
 }
 
 func (simulator MockSimulator) Simulate(
-	board models.Board,
-	color models.Color,
+	root *tree.Node,
 ) tree.NodeState {
 	if simulator.simulate == nil {
 		panic("not implemented")
 	}
 
-	return simulator.simulate(board, color)
+	return simulator.simulate(root)
 }
 
 func TestParallelSimulatorSimulate(
@@ -37,9 +35,12 @@ func TestParallelSimulatorSimulate(
 	)
 	innerSimulator := MockSimulator{
 		simulate: func(
-			board models.Board,
-			color models.Color,
+			root *tree.Node,
 		) tree.NodeState {
+			if root.Move.Color != models.White {
+				test.Fail()
+			}
+
 			expectedBoard := models.NewBoard(
 				models.Size{
 					Width:  3,
@@ -47,13 +48,9 @@ func TestParallelSimulatorSimulate(
 				},
 			)
 			if !reflect.DeepEqual(
-				board,
+				root.Board,
 				expectedBoard,
 			) {
-				test.Fail()
-			}
-
-			if color != models.White {
 				test.Fail()
 			}
 
@@ -67,8 +64,12 @@ func TestParallelSimulatorSimulate(
 		Simulator:   innerSimulator,
 		Concurrency: 10,
 	}
-	gotState :=
-		simulator.Simulate(board, models.White)
+	gotState := simulator.Simulate(&tree.Node{
+		Move: models.Move{
+			Color: models.White,
+		},
+		Board: board,
+	})
 
 	wantState := tree.NodeState{
 		GameCount: 30,

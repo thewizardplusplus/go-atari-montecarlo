@@ -3,7 +3,6 @@ package simulators
 import (
 	"sync"
 
-	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
