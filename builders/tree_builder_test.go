@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	models "github.com/thewizardplusplus/go-atari-models"
-	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -25,26 +24,28 @@ func (selector MockNodeSelector) SelectNode(
 	return selector.selectNode(nodes)
 }
 
-type MockSimulator struct {
+type MockBulkySimulator struct {
 	simulate func(
-		root *tree.Node,
-	) tree.NodeState
+		nodes tree.NodeGroup,
+	) []tree.NodeState
 }
 
-func (simulator MockSimulator) Simulate(
-	root *tree.Node,
-) tree.NodeState {
+func (
+	simulator MockBulkySimulator,
+) Simulate(
+	nodes tree.NodeGroup,
+) []tree.NodeState {
 	if simulator.simulate == nil {
 		panic("not implemented")
 	}
 
-	return simulator.simulate(root)
+	return simulator.simulate(nodes)
 }
 
 func TestTreeBuilderPass(test *testing.T) {
 	type fields struct {
 		nodeSelector tree.NodeSelector
-		simulator    simulators.Simulator
+		simulator    BulkySimulator
 	}
 	type args struct {
 		root *tree.Node
@@ -65,13 +66,19 @@ func TestTreeBuilderPass(test *testing.T) {
 						return nodes[0]
 					},
 				},
-				simulator: MockSimulator{
+				simulator: MockBulkySimulator{
 					simulate: func(
-						root *tree.Node,
-					) tree.NodeState {
-						return tree.NodeState{
-							GameCount: 1,
-							WinCount:  1,
+						nodes tree.NodeGroup,
+					) []tree.NodeState {
+						return []tree.NodeState{
+							tree.NodeState{
+								GameCount: 5,
+								WinCount:  4,
+							},
+							tree.NodeState{
+								GameCount: 7,
+								WinCount:  6,
+							},
 						}
 					},
 				},
@@ -215,8 +222,8 @@ func TestTreeBuilderPass(test *testing.T) {
 						return board
 					}(),
 					State: tree.NodeState{
-						GameCount: 6,
-						WinCount:  2,
+						GameCount: 17,
+						WinCount:  4,
 					},
 				}
 
@@ -238,8 +245,8 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					}),
 					State: tree.NodeState{
-						GameCount: 3,
-						WinCount:  2,
+						GameCount: 14,
+						WinCount:  11,
 					},
 				}
 				childTwo := &tree.Node{
@@ -283,7 +290,8 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					}),
 					State: tree.NodeState{
-						GameCount: 1,
+						GameCount: 5,
+						WinCount:  1,
 					},
 				}
 				childOneTwo := &tree.Node{
@@ -303,6 +311,10 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    1,
 						},
 					}),
+					State: tree.NodeState{
+						GameCount: 7,
+						WinCount:  1,
+					},
 				}
 				childOneThree := &tree.Node{
 					Parent: childOne,
