@@ -72,11 +72,39 @@ func NewNodeGroup(
 }
 
 // TotalGameCount ...
-func (nodes NodeGroup) TotalGameCount() int {
+func (
+	nodes NodeGroup,
+) TotalGameCount() int {
 	var count int
 	for _, node := range nodes {
 		count += node.State.GameCount
 	}
 
 	return count
+}
+
+// Merge ...
+//
+// If the argument is nil,
+// then this function does nothing.
+//
+// If the argument doesn't contain any move,
+// then the latter isn't updated.
+//
+// If the argument contains
+// any additional move, then the latter
+// is ignored.
+func (nodes NodeGroup) Merge(
+	another NodeGroup,
+) {
+	anotherStates :=
+		make(map[models.Move]NodeState)
+	for _, node := range another {
+		anotherStates[node.Move] = node.State
+	}
+
+	for _, node := range nodes {
+		anotherState := anotherStates[node.Move]
+		node.UpdateState(anotherState)
+	}
 }
