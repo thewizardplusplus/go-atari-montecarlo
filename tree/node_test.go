@@ -65,6 +65,124 @@ func TestNewPreliminaryNode(
 	}
 }
 
+func TestNodeShallowCopy(test *testing.T) {
+	node := &Node{
+		Parent: &Node{
+			State: NodeState{
+				GameCount: 2,
+				WinCount:  1,
+			},
+		},
+		Move: models.Move{
+			Color: models.White,
+			Point: models.Point{
+				Column: 2,
+				Row:    2,
+			},
+		},
+		Board: func() models.Board {
+			board := models.NewBoard(
+				models.Size{
+					Width:  3,
+					Height: 3,
+				},
+			)
+
+			moves := []models.Move{
+				models.Move{
+					Color: models.Black,
+					Point: models.Point{
+						Column: 0,
+						Row:    0,
+					},
+				},
+				models.Move{
+					Color: models.White,
+					Point: models.Point{
+						Column: 2,
+						Row:    2,
+					},
+				},
+			}
+			for _, move := range moves {
+				board = board.ApplyMove(move)
+			}
+
+			return board
+		}(),
+		State: NodeState{
+			GameCount: 4,
+			WinCount:  3,
+		},
+		Children: NodeGroup{
+			&Node{
+				State: NodeState{
+					GameCount: 6,
+					WinCount:  5,
+				},
+			},
+			&Node{
+				State: NodeState{
+					GameCount: 8,
+					WinCount:  7,
+				},
+			},
+		},
+	}
+	got := node.ShallowCopy()
+
+	nodePointer :=
+		reflect.ValueOf(node).Pointer()
+	gotPointer :=
+		reflect.ValueOf(got).Pointer()
+	if gotPointer == nodePointer {
+		test.Fail()
+	}
+
+	want := &Node{
+		Move: models.Move{
+			Color: models.White,
+			Point: models.Point{
+				Column: 2,
+				Row:    2,
+			},
+		},
+		Board: func() models.Board {
+			board := models.NewBoard(
+				models.Size{
+					Width:  3,
+					Height: 3,
+				},
+			)
+
+			moves := []models.Move{
+				models.Move{
+					Color: models.Black,
+					Point: models.Point{
+						Column: 0,
+						Row:    0,
+					},
+				},
+				models.Move{
+					Color: models.White,
+					Point: models.Point{
+						Column: 2,
+						Row:    2,
+					},
+				},
+			}
+			for _, move := range moves {
+				board = board.ApplyMove(move)
+			}
+
+			return board
+		}(),
+	}
+	if !reflect.DeepEqual(got, want) {
+		test.Fail()
+	}
+}
+
 func TestNodeUpdateState(test *testing.T) {
 	type fields struct {
 		parent *Node

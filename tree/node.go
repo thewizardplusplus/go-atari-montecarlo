@@ -33,6 +33,16 @@ func NewPreliminaryNode(
 	}
 }
 
+// ShallowCopy ...
+//
+// It copies only the move and the board.
+func (node *Node) ShallowCopy() *Node {
+	return &Node{
+		Move:  node.Move,
+		Board: node.Board,
+	}
+}
+
 // UpdateState ...
 func (node *Node) UpdateState(
 	state NodeState,
