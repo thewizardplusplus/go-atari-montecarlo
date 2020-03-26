@@ -85,8 +85,10 @@ func (
 
 // Merge ...
 //
+// It merges only states of nodes.
+//
 // If the argument is nil,
-// then this function does nothing.
+// then this method does nothing.
 //
 // If the argument doesn't contain any move,
 // then the latter isn't updated.

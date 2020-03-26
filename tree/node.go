@@ -54,6 +54,36 @@ func (node *Node) UpdateState(
 	}
 }
 
+// MergeChildren ...
+//
+// It merges only states of children.
+//
+// If the argument hasn't children,
+// then this method does nothing.
+//
+// If argument children don't contain
+// any node, then the latter isn't updated.
+//
+// If argument children contain
+// any additional node, then the latter
+// is ignored.
+//
+// If this node hasn't children, it borrows
+// argument children.
+func (node *Node) MergeChildren(
+	another *Node,
+) {
+	if len(node.Children) != 0 {
+		node.Children.Merge(another.Children)
+		return
+	}
+
+	node.Children = another.Children
+	for _, child := range node.Children {
+		child.Parent = node
+	}
+}
+
 // SelectLeaf ...
 func (node *Node) SelectLeaf(
 	selector NodeSelector,

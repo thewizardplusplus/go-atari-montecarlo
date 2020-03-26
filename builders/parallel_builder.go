@@ -43,8 +43,7 @@ func (builder ParallelBuilder) Pass(
 	waiter.Wait()
 	close(roots)
 
-	root.Children = (<-roots).Children
 	for rootCopy := range roots {
-		root.Children.Merge(rootCopy.Children)
+		root.MergeChildren(rootCopy)
 	}
 }
