@@ -78,6 +78,8 @@ func (node *Node) MergeChildren(
 		return
 	}
 
+	// node hasn't children;
+	// borrow argument children
 	node.Children = another.Children
 	for _, child := range node.Children {
 		child.Parent = node
@@ -89,7 +91,8 @@ func (node *Node) SelectLeaf(
 	selector NodeSelector,
 ) *Node {
 	for len(node.Children) > 0 {
-		node = selector.SelectNode(node.Children)
+		node =
+			selector.SelectNode(node.Children)
 	}
 
 	return node
@@ -102,8 +105,8 @@ func (node *Node) ExpandLeaf() NodeGroup {
 	}
 
 	nextColor := node.Move.Color.Negative()
-	moves, err := node.Board.
-		LegalMoves(nextColor)
+	moves, err :=
+		node.Board.LegalMoves(nextColor)
 	if err != nil {
 		// no moves or an already finished game
 		return NodeGroup{node}

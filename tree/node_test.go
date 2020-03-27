@@ -282,6 +282,38 @@ func TestNodeUpdateState(test *testing.T) {
 	}
 }
 
+func TestNodeMergeChildren(
+	test *testing.T,
+) {
+	type fields struct {
+		state    NodeState
+		children NodeGroup
+	}
+	type args struct {
+		another *Node
+	}
+	type data struct {
+		fields   fields
+		args     args
+		wantNode *Node
+	}
+
+	for _, data := range []data{} {
+		node := &Node{
+			State:    data.fields.state,
+			Children: data.fields.children,
+		}
+		node.MergeChildren(data.args.another)
+
+		if !reflect.DeepEqual(
+			node,
+			data.wantNode,
+		) {
+			test.Fail()
+		}
+	}
+}
+
 func TestNodeSelectLeaf(test *testing.T) {
 	type fields struct {
 		state    NodeState
