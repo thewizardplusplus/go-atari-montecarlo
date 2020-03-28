@@ -286,6 +286,7 @@ func TestNodeMergeChildren(
 	test *testing.T,
 ) {
 	type fields struct {
+		state    NodeState
 		children NodeGroup
 	}
 	type args struct {
@@ -392,8 +393,94 @@ func TestNodeMergeChildren(
 				},
 			},
 		},
+		data{
+			fields: fields{
+				state: NodeState{
+					GameCount: 2,
+					WinCount:  1,
+				},
+				children: nil,
+			},
+			args: args{
+				another: &Node{
+					State: NodeState{
+						GameCount: 10,
+						WinCount:  2,
+					},
+					Children: NodeGroup{
+						&Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    0,
+								},
+							},
+							State: NodeState{
+								GameCount: 4,
+								WinCount:  3,
+							},
+						},
+						&Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    2,
+								},
+							},
+							State: NodeState{
+								GameCount: 6,
+								WinCount:  5,
+							},
+						},
+					},
+				},
+			},
+			wantNode: func() *Node {
+				node := &Node{
+					State: NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				}
+				node.Children = NodeGroup{
+					&Node{
+						Parent: node,
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    0,
+							},
+						},
+						State: NodeState{
+							GameCount: 4,
+							WinCount:  3,
+						},
+					},
+					&Node{
+						Parent: node,
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 2,
+								Row:    2,
+							},
+						},
+						State: NodeState{
+							GameCount: 6,
+							WinCount:  5,
+						},
+					},
+				}
+
+				return node
+			}(),
+		},
 	} {
 		node := &Node{
+			State:    data.fields.state,
 			Children: data.fields.children,
 		}
 		node.MergeChildren(data.args.another)
