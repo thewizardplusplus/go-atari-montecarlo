@@ -286,7 +286,6 @@ func TestNodeMergeChildren(
 	test *testing.T,
 ) {
 	type fields struct {
-		state    NodeState
 		children NodeGroup
 	}
 	type args struct {
@@ -298,9 +297,103 @@ func TestNodeMergeChildren(
 		wantNode *Node
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			fields: fields{
+				children: NodeGroup{
+					&Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    0,
+							},
+						},
+						State: NodeState{
+							GameCount: 2,
+							WinCount:  1,
+						},
+					},
+					&Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 2,
+								Row:    2,
+							},
+						},
+						State: NodeState{
+							GameCount: 4,
+							WinCount:  3,
+						},
+					},
+				},
+			},
+			args: args{
+				another: &Node{
+					Children: NodeGroup{
+						&Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    0,
+								},
+							},
+							State: NodeState{
+								GameCount: 6,
+								WinCount:  5,
+							},
+						},
+						&Node{
+							Move: models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    2,
+								},
+							},
+							State: NodeState{
+								GameCount: 8,
+								WinCount:  7,
+							},
+						},
+					},
+				},
+			},
+			wantNode: &Node{
+				Children: NodeGroup{
+					&Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 0,
+								Row:    0,
+							},
+						},
+						State: NodeState{
+							GameCount: 8,
+							WinCount:  6,
+						},
+					},
+					&Node{
+						Move: models.Move{
+							Color: models.White,
+							Point: models.Point{
+								Column: 2,
+								Row:    2,
+							},
+						},
+						State: NodeState{
+							GameCount: 12,
+							WinCount:  10,
+						},
+					},
+				},
+			},
+		},
+	} {
 		node := &Node{
-			State:    data.fields.state,
 			Children: data.fields.children,
 		}
 		node.MergeChildren(data.args.another)
