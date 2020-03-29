@@ -6,13 +6,10 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-// BuilderFactory ...
-type BuilderFactory func() Builder
-
 // ParallelBuilder ...
 type ParallelBuilder struct {
-	BuilderFactory BuilderFactory
-	Concurrency    int
+	Builder     Builder
+	Concurrency int
 }
 
 // Pass ...
@@ -32,9 +29,7 @@ func (builder ParallelBuilder) Pass(
 			defer waiter.Done()
 
 			rootCopy := root.ShallowCopy()
-			innerBuilder :=
-				builder.BuilderFactory()
-			innerBuilder.Pass(rootCopy)
+			builder.Builder.Pass(rootCopy)
 
 			roots <- rootCopy
 		}()
