@@ -31,6 +31,7 @@ type searchingSettings struct {
 	reuseTree              bool
 	parallelSimulator      bool
 	parallelBulkySimulator bool
+	parallelBuilder        bool
 }
 
 type integratedSearcher struct {
@@ -90,17 +91,25 @@ func newIntegratedSearcher(
 			}
 	}
 
+	var builder builders.Builder
 	terminator :=
 		terminators.NewPassTerminator(
 			settings.maximalPass,
 		)
-	builder := builders.IterativeBuilder{
+	builder = builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
 			NodeSelector: generalSelector,
 			Simulator:    bulkySimulator,
 		},
 		Terminator: terminator,
 	}
+	if settings.parallelBuilder {
+		builder = builders.ParallelBuilder{
+			Builder:     builder,
+			Concurrency: runtime.NumCPU(),
+		}
+	}
+
 	baseSearcher := searchers.MoveSearcher{
 		Builder:      builder,
 		NodeSelector: generalSelector,
@@ -147,6 +156,7 @@ func BenchmarkSearch_randomSelectorAnd10Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -172,6 +182,7 @@ func BenchmarkSearch_randomSelectorAnd100Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -197,6 +208,7 @@ func BenchmarkSearch_winRateSelectorAnd10Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -222,6 +234,7 @@ func BenchmarkSearch_winRateSelectorAnd100Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -247,6 +260,7 @@ func BenchmarkSearch_ucbSelectorAnd10Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -272,6 +286,7 @@ func BenchmarkSearch_ucbSelectorAnd100Passes(
 			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -297,6 +312,7 @@ func BenchmarkSearch_ucbSelectorReusedTreeAnd10Passes(
 			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -322,6 +338,7 @@ func BenchmarkSearch_ucbSelectorReusedTreeAnd100Passes(
 			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -347,6 +364,7 @@ func BenchmarkSearch_ucbSelectorReusedTreeParallelSimulatorAnd10Passes(
 			reuseTree:              true,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -372,6 +390,7 @@ func BenchmarkSearch_ucbSelectorReusedTreeParallelSimulatorAnd100Passes(
 			reuseTree:              true,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -397,6 +416,7 @@ func BenchmarkSearch_ucbSelectorReusedTreeParallelBulkySimulatorAnd10Passes(
 			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
+			parallelBuilder:        false,
 		},
 	)
 	board := models.NewBoard(
@@ -422,6 +442,111 @@ func BenchmarkSearch_ucbSelectorReusedTreeParallelBulkySimulatorAnd100Passes(
 			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
+			parallelBuilder:        false,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeParallelBuilderAnd10Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:           ucbSelector,
+			ucbFactor:              1,
+			maximalPass:            10,
+			reuseTree:              true,
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        true,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeParallelBuilderAnd100Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:           ucbSelector,
+			ucbFactor:              1,
+			maximalPass:            100,
+			reuseTree:              true,
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        true,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeAllParallelAnd10Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:           ucbSelector,
+			ucbFactor:              1,
+			maximalPass:            10,
+			reuseTree:              true,
+			parallelSimulator:      true,
+			parallelBulkySimulator: true,
+			parallelBuilder:        true,
+		},
+	)
+	board := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+
+	for i := 0; i < benchmark.N; i++ {
+		searcher.search(board, models.Black)
+	}
+}
+
+func BenchmarkSearch_ucbSelectorReusedTreeAllParallelAnd100Passes(
+	benchmark *testing.B,
+) {
+	searcher, _ := newIntegratedSearcher(
+		searchingSettings{
+			selectorType:           ucbSelector,
+			ucbFactor:              1,
+			maximalPass:            100,
+			reuseTree:              true,
+			parallelSimulator:      true,
+			parallelBulkySimulator: true,
+			parallelBuilder:        true,
 		},
 	)
 	board := models.NewBoard(
