@@ -36,7 +36,6 @@ var (
 		firstSearcher: searchingSettings{
 			ucbFactor:              0.1,
 			maximalDuration:        defaultDuration,
-			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -44,17 +43,15 @@ var (
 		secondSearcher: searchingSettings{
 			ucbFactor:              10,
 			maximalDuration:        defaultDuration,
-			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
 		},
 	}
-	uniqueVsReusedTreeSettings = gameSettings{
+	usualVsParallelSimulatorSettings = gameSettings{
 		firstSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -62,35 +59,15 @@ var (
 		secondSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              true,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	}
-	reusedTreeVsParallelSimulatorSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			reuseTree:              true,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			reuseTree:              true,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
 		},
 	}
-	reusedTreeVsParallelBulkySimulatorSettings = gameSettings{
+	usualVsParallelBulkySimulatorSettings = gameSettings{
 		firstSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -98,17 +75,15 @@ var (
 		secondSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
 			parallelBuilder:        false,
 		},
 	}
-	reusedTreeVsParallelBuilderSettings = gameSettings{
+	usualVsParallelBuilderSettings = gameSettings{
 		firstSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -116,27 +91,8 @@ var (
 		secondSearcher: searchingSettings{
 			ucbFactor:              defaultUCBFactor,
 			maximalDuration:        defaultDuration,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
-			parallelBuilder:        true,
-		},
-	}
-	reusedTreeVsAllParallelSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			reuseTree:              true,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			reuseTree:              true,
-			parallelSimulator:      true,
-			parallelBulkySimulator: true,
 			parallelBuilder:        true,
 		},
 	}
@@ -145,7 +101,6 @@ var (
 type searchingSettings struct {
 	ucbFactor              float64
 	maximalDuration        time.Duration
-	reuseTree              bool
 	parallelSimulator      bool
 	parallelBulkySimulator bool
 	parallelBuilder        bool
@@ -153,7 +108,7 @@ type searchingSettings struct {
 
 type integratedSearcher struct {
 	terminator terminators.BuildingTerminator
-	searcher   searchers.Searcher
+	searcher   searchers.MoveSearcher
 }
 
 func newIntegratedSearcher(
@@ -218,22 +173,10 @@ func newIntegratedSearcher(
 		Builder:      builder,
 		NodeSelector: generalSelector,
 	}
-
-	searcher := integratedSearcher{
+	return integratedSearcher{
 		terminator: terminator,
+		searcher:   baseSearcher,
 	}
-	if !settings.reuseTree {
-		searcher.searcher = baseSearcher
-	} else {
-		searcher.searcher =
-			searchers.FallbackSearcher{
-				PrimarySearcher: searchers.
-					NewReusedSearcher(baseSearcher),
-				FallbackSearcher: baseSearcher,
-			}
-	}
-
-	return searcher
 }
 
 func (searcher integratedSearcher) search(
@@ -367,11 +310,9 @@ func markWinner(
 
 func main() {
 	//settings := lowVsHighUCBSettings
-	//settings := uniqueVsReusedTreeSettings
-	//settings := reusedTreeVsParallelSimulatorSettings
-	//settings := reusedTreeVsParallelBulkySimulatorSettings
-	settings := reusedTreeVsParallelBuilderSettings
-	//settings := reusedTreeVsAllParallelSettings
+	//settings := usualVsParallelSimulatorSettings
+	//settings := usualVsParallelBulkySimulatorSettings
+	settings := usualVsParallelBuilderSettings
 
 	history, errColor, err := game(
 		startBoard,

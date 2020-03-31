@@ -48,7 +48,6 @@ func TestSearch(test *testing.T) {
 				settings: searchingSettings{
 					ucbFactor:              1,
 					maximalPass:            2,
-					reuseTree:              false,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
 					parallelBuilder:        false,
@@ -86,7 +85,6 @@ func TestSearch(test *testing.T) {
 				settings: searchingSettings{
 					ucbFactor:              1,
 					maximalPass:            1,
-					reuseTree:              false,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
 					parallelBuilder:        false,
@@ -124,7 +122,6 @@ func TestSearch(test *testing.T) {
 				settings: searchingSettings{
 					ucbFactor:              1,
 					maximalPass:            2,
-					reuseTree:              false,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
 					parallelBuilder:        false,
@@ -174,7 +171,6 @@ func TestSearch(test *testing.T) {
 				settings: searchingSettings{
 					ucbFactor:              1,
 					maximalPass:            1000,
-					reuseTree:              false,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
 					parallelBuilder:        false,
@@ -255,7 +251,6 @@ func TestSearch(test *testing.T) {
 				settings: searchingSettings{
 					ucbFactor:              1,
 					maximalPass:            1000,
-					reuseTree:              false,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
 					parallelBuilder:        false,

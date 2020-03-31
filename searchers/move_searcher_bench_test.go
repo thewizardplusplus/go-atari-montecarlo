@@ -18,19 +18,20 @@ import (
 type searchingSettings struct {
 	ucbFactor              float64
 	maximalPass            int
-	reuseTree              bool
 	parallelSimulator      bool
 	parallelBulkySimulator bool
 	parallelBuilder        bool
 }
 
 type integratedSearcher struct {
-	searcher searchers.Searcher
+	searcher searchers.MoveSearcher
 }
 
 func newIntegratedSearcher(
 	settings searchingSettings,
 ) integratedSearcher {
+	randomSelector :=
+		selectors.RandomSelector{}
 	generalSelector :=
 		selectors.MaximalSelector{
 			NodeScorer: scorers.UCBScorer{
@@ -41,8 +42,7 @@ func newIntegratedSearcher(
 	var simulator simulators.Simulator
 	simulator = simulators.RolloutSimulator{
 		MoveSelector: selectors.MoveSelector{
-			NodeSelector: selectors.
-				RandomSelector{},
+			NodeSelector: randomSelector,
 		},
 	}
 	if settings.parallelSimulator {
@@ -89,20 +89,7 @@ func newIntegratedSearcher(
 		Builder:      builder,
 		NodeSelector: generalSelector,
 	}
-
-	var searcher integratedSearcher
-	if !settings.reuseTree {
-		searcher.searcher = baseSearcher
-	} else {
-		searcher.searcher =
-			searchers.FallbackSearcher{
-				PrimarySearcher: searchers.
-					NewReusedSearcher(baseSearcher),
-				FallbackSearcher: baseSearcher,
-			}
-	}
-
-	return searcher
+	return integratedSearcher{baseSearcher}
 }
 
 func (searcher integratedSearcher) search(
@@ -127,7 +114,6 @@ func BenchmarkSearch_10Passes(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            10,
-			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -152,7 +138,6 @@ func BenchmarkSearch_100Passes(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            100,
-			reuseTree:              false,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -170,64 +155,13 @@ func BenchmarkSearch_100Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeAnd10Passes(
+func BenchmarkSearch_parallelSimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            10,
-			reuseTree:              true,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_reusedTreeAnd100Passes(
-	benchmark *testing.B,
-) {
-	searcher := newIntegratedSearcher(
-		searchingSettings{
-			ucbFactor:              1,
-			maximalPass:            100,
-			reuseTree:              true,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_reusedTreeParallelSimulatorAnd10Passes(
-	benchmark *testing.B,
-) {
-	searcher := newIntegratedSearcher(
-		searchingSettings{
-			ucbFactor:              1,
-			maximalPass:            10,
-			reuseTree:              true,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -245,14 +179,13 @@ func BenchmarkSearch_reusedTreeParallelSimulatorAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeParallelSimulatorAnd100Passes(
+func BenchmarkSearch_parallelSimulatorAnd100Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            100,
-			reuseTree:              true,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
@@ -270,14 +203,13 @@ func BenchmarkSearch_reusedTreeParallelSimulatorAnd100Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeParallelBulkySimulatorAnd10Passes(
+func BenchmarkSearch_parallelBulkySimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            10,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
 			parallelBuilder:        false,
@@ -295,14 +227,13 @@ func BenchmarkSearch_reusedTreeParallelBulkySimulatorAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeParallelBulkySimulatorAnd100Passes(
+func BenchmarkSearch_parallelBulkySimulatorAnd100Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            100,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
 			parallelBuilder:        false,
@@ -320,14 +251,13 @@ func BenchmarkSearch_reusedTreeParallelBulkySimulatorAnd100Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeParallelBuilderAnd10Passes(
+func BenchmarkSearch_parallelBuilderAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            10,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        true,
@@ -345,66 +275,15 @@ func BenchmarkSearch_reusedTreeParallelBuilderAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_reusedTreeParallelBuilderAnd100Passes(
+func BenchmarkSearch_parallelBuilderAnd100Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			ucbFactor:              1,
 			maximalPass:            100,
-			reuseTree:              true,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
-			parallelBuilder:        true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_reusedTreeAllParallelAnd10Passes(
-	benchmark *testing.B,
-) {
-	searcher := newIntegratedSearcher(
-		searchingSettings{
-			ucbFactor:              1,
-			maximalPass:            10,
-			reuseTree:              true,
-			parallelSimulator:      true,
-			parallelBulkySimulator: true,
-			parallelBuilder:        true,
-		},
-	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
-	}
-}
-
-func BenchmarkSearch_reusedTreeAllParallelAnd100Passes(
-	benchmark *testing.B,
-) {
-	searcher := newIntegratedSearcher(
-		searchingSettings{
-			ucbFactor:              1,
-			maximalPass:            100,
-			reuseTree:              true,
-			parallelSimulator:      true,
-			parallelBulkySimulator: true,
 			parallelBuilder:        true,
 		},
 	)
