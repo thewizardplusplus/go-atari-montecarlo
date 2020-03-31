@@ -46,10 +46,12 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					selectorType: ucbSelector,
-					ucbFactor:    1,
-					maximalPass:  2,
-					reuseTree:    false,
+					ucbFactor:              1,
+					maximalPass:            2,
+					reuseTree:              false,
+					parallelSimulator:      false,
+					parallelBulkySimulator: false,
+					parallelBuilder:        false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -82,10 +84,12 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					selectorType: ucbSelector,
-					ucbFactor:    1,
-					maximalPass:  1,
-					reuseTree:    false,
+					ucbFactor:              1,
+					maximalPass:            1,
+					reuseTree:              false,
+					parallelSimulator:      false,
+					parallelBulkySimulator: false,
+					parallelBuilder:        false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -118,10 +122,12 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					selectorType: ucbSelector,
-					ucbFactor:    1,
-					maximalPass:  2,
-					reuseTree:    false,
+					ucbFactor:              1,
+					maximalPass:            2,
+					reuseTree:              false,
+					parallelSimulator:      false,
+					parallelBulkySimulator: false,
+					parallelBuilder:        false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -166,10 +172,12 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					selectorType: ucbSelector,
-					ucbFactor:    1,
-					maximalPass:  1000,
-					reuseTree:    false,
+					ucbFactor:              1,
+					maximalPass:            1000,
+					reuseTree:              false,
+					parallelSimulator:      false,
+					parallelBulkySimulator: false,
+					parallelBuilder:        false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -245,10 +253,12 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					selectorType: ucbSelector,
-					ucbFactor:    1,
-					maximalPass:  1000,
-					reuseTree:    false,
+					ucbFactor:              1,
+					maximalPass:            1000,
+					reuseTree:              false,
+					parallelSimulator:      false,
+					parallelBulkySimulator: false,
+					parallelBuilder:        false,
 				},
 			},
 			wantMoves: []models.Move{
@@ -277,14 +287,9 @@ func TestSearch(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		searcher, err := newIntegratedSearcher(
+		searcher := newIntegratedSearcher(
 			data.args.settings,
 		)
-		if err != nil {
-			test.Fail()
-			continue
-		}
-
 		gotMove, gotErr := searcher.search(
 			data.args.board,
 			data.args.color,
