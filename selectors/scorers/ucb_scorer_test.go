@@ -30,19 +30,9 @@ func TestUCBScorerScoreNode(
 			args: args{
 				node: &tree.Node{
 					Parent: &tree.Node{
-						Children: tree.NodeGroup{
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 4,
-									WinCount:  2,
-								},
-							},
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 5,
-									WinCount:  3,
-								},
-							},
+						State: tree.NodeState{
+							GameCount: 9,
+							WinCount:  5,
 						},
 					},
 					State: tree.NodeState{
@@ -60,19 +50,9 @@ func TestUCBScorerScoreNode(
 			args: args{
 				node: &tree.Node{
 					Parent: &tree.Node{
-						Children: tree.NodeGroup{
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 0,
-									WinCount:  0,
-								},
-							},
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 5,
-									WinCount:  3,
-								},
-							},
+						State: tree.NodeState{
+							GameCount: 5,
+							WinCount:  3,
 						},
 					},
 					State: tree.NodeState{
@@ -90,19 +70,9 @@ func TestUCBScorerScoreNode(
 			args: args{
 				node: &tree.Node{
 					Parent: &tree.Node{
-						Children: tree.NodeGroup{
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 0,
-									WinCount:  0,
-								},
-							},
-							&tree.Node{
-								State: tree.NodeState{
-									GameCount: 0,
-									WinCount:  0,
-								},
-							},
+						State: tree.NodeState{
+							GameCount: 0,
+							WinCount:  0,
 						},
 					},
 					State: tree.NodeState{

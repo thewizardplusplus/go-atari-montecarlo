@@ -23,7 +23,7 @@ func (scorer UCBScorer) ScoreNode(
 		return x
 	}
 
-	n := node.Parent.Children.TotalGameCount()
+	n := node.Parent.State.GameCount
 	shift := scorer.Factor * math.Sqrt(
 		math.Log(float64(n))/
 			float64(node.State.GameCount),

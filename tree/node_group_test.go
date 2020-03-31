@@ -280,30 +280,6 @@ func TestNewNodeGroup(test *testing.T) {
 	}
 }
 
-func TestNodeGroupTotalGameCount(
-	test *testing.T,
-) {
-	nodes := NodeGroup{
-		&Node{
-			State: NodeState{
-				GameCount: 10,
-				WinCount:  1,
-			},
-		},
-		&Node{
-			State: NodeState{
-				GameCount: 10,
-				WinCount:  2,
-			},
-		},
-	}
-	count := nodes.TotalGameCount()
-
-	if count != 20 {
-		test.Fail()
-	}
-}
-
 func TestNodeGroupMerge(test *testing.T) {
 	type args struct {
 		another NodeGroup
