@@ -103,7 +103,7 @@ func TestMoveSearcherSearchMove(
 				},
 			},
 			wantNode: nil,
-			wantErr:  models.ErrAlreadyLoss,
+			wantErr:  models.ErrAlreadyWin,
 		},
 		data{
 			fields: fields{
