@@ -11,7 +11,9 @@ type MockNodeSelector struct {
 	selectNode func(nodes NodeGroup) *Node
 }
 
-func (selector MockNodeSelector) SelectNode(
+func (
+	selector MockNodeSelector,
+) SelectNode(
 	nodes NodeGroup,
 ) *Node {
 	if selector.selectNode == nil {
@@ -19,50 +21,6 @@ func (selector MockNodeSelector) SelectNode(
 	}
 
 	return selector.selectNode(nodes)
-}
-
-func TestNewPreliminaryNode(
-	test *testing.T,
-) {
-	board := models.NewBoard(
-		models.Size{
-			Width:  3,
-			Height: 3,
-		},
-	)
-
-	moves := []models.Move{
-		models.Move{
-			Color: models.Black,
-			Point: models.Point{
-				Column: 0,
-				Row:    0,
-			},
-		},
-		models.Move{
-			Color: models.White,
-			Point: models.Point{
-				Column: 2,
-				Row:    2,
-			},
-		},
-	}
-	for _, move := range moves {
-		board = board.ApplyMove(move)
-	}
-
-	got :=
-		NewPreliminaryNode(board, models.Black)
-
-	want := &Node{
-		Move: models.Move{
-			Color: models.White,
-		},
-		Board: board,
-	}
-	if !reflect.DeepEqual(got, want) {
-		test.Fail()
-	}
 }
 
 func TestNodeShallowCopy(test *testing.T) {

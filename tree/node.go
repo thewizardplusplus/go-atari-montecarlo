@@ -18,21 +18,6 @@ type Node struct {
 	Children NodeGroup
 }
 
-// NewPreliminaryNode ...
-//
-// It creates the node
-// from only the passed board and
-// the negated passed color.
-func NewPreliminaryNode(
-	board models.Board,
-	color models.Color,
-) *Node {
-	return &Node{
-		Move:  models.NewPreliminaryMove(color),
-		Board: board,
-	}
-}
-
 // ShallowCopy ...
 //
 // It copies only the move and the board.
@@ -104,9 +89,8 @@ func (node *Node) ExpandLeaf() NodeGroup {
 		return NodeGroup{node}
 	}
 
-	nextColor := node.Move.Color.Negative()
 	moves, err :=
-		node.Board.LegalMoves(nextColor)
+		node.Board.LegalMoves(node.Move)
 	if err != nil {
 		// no moves or an already finished game
 		return NodeGroup{node}
