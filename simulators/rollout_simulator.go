@@ -19,15 +19,15 @@ type RolloutSimulator struct {
 func (simulator RolloutSimulator) Simulate(
 	root *tree.Node,
 ) tree.NodeState {
-	board := root.Board
-	nextColor := root.Move.Color.Negative()
-	startColor := nextColor
+	board, previousMove, startColor :=
+		root.Board, root.Move, root.Move.Color
 	for {
-		moves, err := board.LegalMoves(nextColor)
+		moves, err :=
+			board.LegalMoves(previousMove)
 		if err != nil {
 			// no moves or an already finished game
 			result := tree.NewGameResult(err)
-			if nextColor != startColor {
+			if previousMove.Color != startColor {
 				result = result.Invert()
 			}
 
@@ -36,8 +36,7 @@ func (simulator RolloutSimulator) Simulate(
 
 		move := simulator.MoveSelector.
 			SelectMove(moves)
-
-		board = board.ApplyMove(move)
-		nextColor = nextColor.Negative()
+		board, previousMove =
+			board.ApplyMove(move), move
 	}
 }

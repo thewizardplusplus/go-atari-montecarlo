@@ -97,6 +97,10 @@ func TestRolloutSimulatorSimulate(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.Black,
+						Point: models.Point{
+							Column: 0,
+							Row:    0,
+						},
 					},
 					Board: func() models.Board {
 						board := models.NewBoard(
@@ -183,6 +187,7 @@ func TestRolloutSimulatorSimulate(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.Black,
+						Point: models.NilPoint,
 					},
 					Board: func() models.Board {
 						return models.NewBoard(
@@ -213,7 +218,11 @@ func TestRolloutSimulatorSimulate(
 			args: args{
 				root: &tree.Node{
 					Move: models.Move{
-						Color: models.Black,
+						Color: models.White,
+						Point: models.Point{
+							Column: 2,
+							Row:    2,
+						},
 					},
 					Board: func() models.Board {
 						board := models.NewBoard(
@@ -238,7 +247,7 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantState: tree.NodeState{
 				GameCount: 1,
-				WinCount:  0,
+				WinCount:  1,
 			},
 			wantCount: 0,
 		},
@@ -263,6 +272,10 @@ func TestRolloutSimulatorSimulate(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.Black,
+						Point: models.Point{
+							Column: 0,
+							Row:    0,
+						},
 					},
 					Board: func() models.Board {
 						board := models.NewBoard(
@@ -330,6 +343,10 @@ func TestRolloutSimulatorSimulate(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.White,
+						Point: models.Point{
+							Column: 0,
+							Row:    1,
+						},
 					},
 					Board: func() models.Board {
 						board := models.NewBoard(
