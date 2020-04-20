@@ -76,6 +76,10 @@ func TestMoveSearcherSearchMove(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.White,
+						Point: models.Point{
+							Column: 2,
+							Row:    2,
+						},
 					},
 					Board: func() models.Board {
 						board := models.NewBoard(
@@ -112,6 +116,7 @@ func TestMoveSearcherSearchMove(
 						expectedRoot := &tree.Node{
 							Move: models.Move{
 								Color: models.White,
+								Point: models.NilPoint,
 							},
 							Board: func() models.Board {
 								return models.NewBoard(
@@ -148,6 +153,7 @@ func TestMoveSearcherSearchMove(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.White,
+						Point: models.NilPoint,
 					},
 					Board: func() models.Board {
 						return models.NewBoard(
@@ -173,6 +179,7 @@ func TestMoveSearcherSearchMove(
 						expectedRoot := &tree.Node{
 							Move: models.Move{
 								Color: models.White,
+								Point: models.NilPoint,
 							},
 							Board: func() models.Board {
 								return models.NewBoard(
@@ -245,6 +252,7 @@ func TestMoveSearcherSearchMove(
 				root: &tree.Node{
 					Move: models.Move{
 						Color: models.White,
+						Point: models.NilPoint,
 					},
 					Board: func() models.Board {
 						return models.NewBoard(
