@@ -9,8 +9,8 @@ import (
 
 func TestNewNodeGroup(test *testing.T) {
 	type args struct {
-		moves   []models.Move
-		options []NodeGroupOption
+		parent *Node
+		moves  []models.Move
 	}
 	type data struct {
 		args args
@@ -20,125 +20,8 @@ func TestNewNodeGroup(test *testing.T) {
 	for _, data := range []data{
 		data{
 			args: args{
-				moves: []models.Move{
-					models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					},
-					models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					},
-				},
-				options: []NodeGroupOption{},
-			},
-			want: NodeGroup{
-				&Node{
-					Move: models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					},
-				},
-				&Node{
-					Move: models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					},
-				},
-			},
-		},
-		data{
-			args: args{
-				moves: []models.Move{
-					models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					},
-					models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					},
-				},
-				options: []NodeGroupOption{
-					WithParent(&Node{
-						State: NodeState{
-							GameCount: 2,
-							WinCount:  1,
-						},
-					}),
-				},
-			},
-			want: NodeGroup{
-				&Node{
-					Parent: &Node{
-						State: NodeState{
-							GameCount: 2,
-							WinCount:  1,
-						},
-					},
-					Move: models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					},
-				},
-				&Node{
-					Parent: &Node{
-						State: NodeState{
-							GameCount: 2,
-							WinCount:  1,
-						},
-					},
-					Move: models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					},
-				},
-			},
-		},
-		data{
-			args: args{
-				moves: []models.Move{
-					models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					},
-					models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					},
-				},
-				options: []NodeGroupOption{
-					WithBoard(func() models.Board {
+				parent: &Node{
+					Board: func() models.Board {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -167,11 +50,68 @@ func TestNewNodeGroup(test *testing.T) {
 						}
 
 						return board
-					}()),
+					}(),
+					State: NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				},
+				moves: []models.Move{
+					models.Move{
+						Color: models.Black,
+						Point: models.Point{
+							Column: 2,
+							Row:    0,
+						},
+					},
+					models.Move{
+						Color: models.White,
+						Point: models.Point{
+							Column: 0,
+							Row:    2,
+						},
+					},
 				},
 			},
 			want: NodeGroup{
 				&Node{
+					Parent: &Node{
+						Board: func() models.Board {
+							board := models.NewBoard(
+								models.Size{
+									Width:  3,
+									Height: 3,
+								},
+							)
+
+							moves := []models.Move{
+								models.Move{
+									Color: models.Black,
+									Point: models.Point{
+										Column: 0,
+										Row:    0,
+									},
+								},
+								models.Move{
+									Color: models.White,
+									Point: models.Point{
+										Column: 2,
+										Row:    2,
+									},
+								},
+							}
+							for _, move := range moves {
+								board =
+									board.ApplyMove(move)
+							}
+
+							return board
+						}(),
+						State: NodeState{
+							GameCount: 2,
+							WinCount:  1,
+						},
+					},
 					Move: models.Move{
 						Color: models.Black,
 						Point: models.Point{
@@ -218,6 +158,43 @@ func TestNewNodeGroup(test *testing.T) {
 					}(),
 				},
 				&Node{
+					Parent: &Node{
+						Board: func() models.Board {
+							board := models.NewBoard(
+								models.Size{
+									Width:  3,
+									Height: 3,
+								},
+							)
+
+							moves := []models.Move{
+								models.Move{
+									Color: models.Black,
+									Point: models.Point{
+										Column: 0,
+										Row:    0,
+									},
+								},
+								models.Move{
+									Color: models.White,
+									Point: models.Point{
+										Column: 2,
+										Row:    2,
+									},
+								},
+							}
+							for _, move := range moves {
+								board =
+									board.ApplyMove(move)
+							}
+
+							return board
+						}(),
+						State: NodeState{
+							GameCount: 2,
+							WinCount:  1,
+						},
+					},
 					Move: models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -267,8 +244,8 @@ func TestNewNodeGroup(test *testing.T) {
 		},
 	} {
 		got := NewNodeGroup(
+			data.args.parent,
 			data.args.moves,
-			data.args.options...,
 		)
 
 		if !reflect.DeepEqual(

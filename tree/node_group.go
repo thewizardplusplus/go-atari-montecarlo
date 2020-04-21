@@ -4,67 +4,22 @@ import (
 	models "github.com/thewizardplusplus/go-atari-models"
 )
 
-// NodeGroupConfiguration ...
-type NodeGroupConfiguration struct {
-	parent   *Node
-	useBoard bool
-	board    models.Board
-}
-
-// NodeGroupOption ...
-type NodeGroupOption func(
-	configuration *NodeGroupConfiguration,
-)
-
-// WithParent ...
-func WithParent(
-	parent *Node,
-) NodeGroupOption {
-	return func(
-		configuration *NodeGroupConfiguration,
-	) {
-		configuration.parent = parent
-	}
-}
-
-// WithBoard ...
-func WithBoard(
-	board models.Board,
-) NodeGroupOption {
-	return func(
-		configuration *NodeGroupConfiguration,
-	) {
-		configuration.useBoard = true
-		configuration.board = board
-	}
-}
-
 // NodeGroup ...
 type NodeGroup []*Node
 
 // NewNodeGroup ...
 func NewNodeGroup(
+	parent *Node,
 	moves []models.Move,
-	options ...NodeGroupOption,
 ) NodeGroup {
-	var configuration NodeGroupConfiguration
-	for _, option := range options {
-		option(&configuration)
-	}
-
 	var nodes NodeGroup
 	for _, move := range moves {
+		nextBoard := parent.Board.ApplyMove(move)
 		node := &Node{
-			Parent: configuration.parent,
+			Parent: parent,
 			Move:   move,
+			Board:  nextBoard,
 		}
-
-		if configuration.useBoard {
-			nextBoard :=
-				configuration.board.ApplyMove(move)
-			node.Board = nextBoard
-		}
-
 		nodes = append(nodes, node)
 	}
 

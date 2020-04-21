@@ -96,11 +96,6 @@ func (node *Node) ExpandLeaf() NodeGroup {
 		return NodeGroup{node}
 	}
 
-	node.Children = NewNodeGroup(
-		moves,
-		WithParent(node),
-		WithBoard(node.Board),
-	)
-
+	node.Children = NewNodeGroup(node, moves)
 	return node.Children
 }
