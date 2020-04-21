@@ -119,8 +119,10 @@ type integratedSearcher struct {
 func newIntegratedSearcher(
 	settings searchingSettings,
 ) integratedSearcher {
+	randomSelector :=
+		selectors.RandomMoveSelector{}
 	generalSelector :=
-		selectors.MaximalSelector{
+		selectors.MaximalNodeSelector{
 			NodeScorer: scorers.UCBScorer{
 				Factor: settings.ucbFactor,
 			},
@@ -128,10 +130,7 @@ func newIntegratedSearcher(
 
 	var simulator simulators.Simulator
 	simulator = simulators.RolloutSimulator{
-		MoveSelector: selectors.MoveSelector{
-			NodeSelector: selectors.
-				RandomSelector{},
-		},
+		MoveSelector: randomSelector,
 	}
 	if settings.parallelSimulator {
 		simulator =

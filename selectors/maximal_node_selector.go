@@ -11,13 +11,15 @@ type NodeScorer interface {
 	ScoreNode(node *tree.Node) float64
 }
 
-// MaximalSelector ...
-type MaximalSelector struct {
+// MaximalNodeSelector ...
+type MaximalNodeSelector struct {
 	NodeScorer NodeScorer
 }
 
 // SelectNode ...
-func (selector MaximalSelector) SelectNode(
+func (
+	selector MaximalNodeSelector,
+) SelectNode(
 	nodes tree.NodeGroup,
 ) *tree.Node {
 	var maximum *tree.Node

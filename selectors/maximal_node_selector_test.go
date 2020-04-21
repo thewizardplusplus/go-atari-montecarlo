@@ -16,7 +16,7 @@ func (scorer MockNodeScorer) ScoreNode(
 	return node.State.WinRate()
 }
 
-func TestMaximalSelectorSelectNode(
+func TestMaximalNodeSelectorSelectNode(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -276,7 +276,7 @@ func TestMaximalSelectorSelectNode(
 			},
 		},
 	} {
-		selector := MaximalSelector{
+		selector := MaximalNodeSelector{
 			NodeScorer: data.fields.nodeScorer,
 		}
 		got :=
