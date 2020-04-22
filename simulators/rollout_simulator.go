@@ -26,12 +26,12 @@ func (simulator RolloutSimulator) Simulate(
 			board.LegalMoves(previousMove)
 		if err != nil {
 			// no moves or an already finished game
-			result := tree.NewGameResult(err)
+			state := tree.NewNodeState(err)
 			if previousMove.Color != startColor {
-				result = result.Invert()
+				state = state.Invert()
 			}
 
-			return tree.NewNodeState(result)
+			return state
 		}
 
 		move := simulator.MoveSelector.

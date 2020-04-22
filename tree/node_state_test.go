@@ -1,42 +1,69 @@
 package tree
 
 import (
+	"errors"
 	"math"
 	"reflect"
 	"testing"
+
+	models "github.com/thewizardplusplus/go-atari-models"
 )
 
 func TestNewNodeState(test *testing.T) {
 	type args struct {
-		result GameResult
+		err error
 	}
 	type data struct {
-		args args
-		want NodeState
+		args      args
+		wantState NodeState
+		wantPanic bool
 	}
 
 	for _, data := range []data{
 		data{
-			args: args{Loss},
-			want: NodeState{
+			args: args{
+				err: models.ErrAlreadyLoss,
+			},
+			wantState: NodeState{
 				GameCount: 1,
 				WinCount:  0,
 			},
+			wantPanic: false,
 		},
 		data{
-			args: args{Win},
-			want: NodeState{
+			args: args{
+				err: models.ErrAlreadyWin,
+			},
+			wantState: NodeState{
 				GameCount: 1,
 				WinCount:  1,
 			},
+			wantPanic: false,
+		},
+		data{
+			args: args{
+				err: errors.New("dummy"),
+			},
+			wantState: NodeState{},
+			wantPanic: true,
 		},
 	} {
-		got := NewNodeState(data.args.result)
+		var gotState NodeState
+		var hasPanic bool
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					hasPanic = true
+				}
+			}()
 
-		if !reflect.DeepEqual(
-			got,
-			data.want,
-		) {
+			gotState = NewNodeState(data.args.err)
+		}()
+
+		if gotState != data.wantState {
+			test.Fail()
+		}
+		if hasPanic != data.wantPanic {
 			test.Fail()
 		}
 	}

@@ -2,6 +2,8 @@ package tree
 
 import (
 	"math"
+
+	models "github.com/thewizardplusplus/go-atari-models"
 )
 
 // NodeState ...
@@ -11,14 +13,24 @@ type NodeState struct {
 }
 
 // NewNodeState ...
-func NewNodeState(
-	result GameResult,
-) NodeState {
+//
+// Passed error should be
+// models.ErrAlreadyLoss or
+// models.ErrAlreadyWin only.
+//
+// Otherwize the function will panic.
+func NewNodeState(err error) NodeState {
 	state := NodeState{
 		GameCount: 1,
 	}
-	if result == Win {
+	switch err {
+	case models.ErrAlreadyLoss:
+	case models.ErrAlreadyWin:
 		state.WinCount = 1
+	default:
+		panic(
+			"tree.NewNodeState: unsupported error",
+		)
 	}
 
 	return state
