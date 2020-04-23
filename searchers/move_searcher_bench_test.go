@@ -1,6 +1,7 @@
 package searchers_test
 
 import (
+	"math"
 	"runtime"
 	"testing"
 
@@ -15,8 +16,11 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
+const (
+	ucbFactor = math.Sqrt2
+)
+
 type searchingSettings struct {
-	ucbFactor              float64
 	maximalPass            int
 	parallelSimulator      bool
 	parallelBulkySimulator bool
@@ -35,7 +39,7 @@ func newIntegratedSearcher(
 	generalSelector :=
 		selectors.MaximalNodeSelector{
 			NodeScorer: scorers.UCBScorer{
-				Factor: settings.ucbFactor,
+				Factor: ucbFactor,
 			},
 		}
 
@@ -112,7 +116,6 @@ func BenchmarkSearch_with5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            5,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -136,7 +139,6 @@ func BenchmarkSearch_with10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            10,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -160,7 +162,6 @@ func BenchmarkSearch_with15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            15,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -184,7 +185,6 @@ func BenchmarkSearch_with20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            20,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -208,7 +208,6 @@ func BenchmarkSearch_withParallelSimulatorAnd5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            5,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
@@ -232,7 +231,6 @@ func BenchmarkSearch_withParallelSimulatorAnd10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            10,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
@@ -256,7 +254,6 @@ func BenchmarkSearch_withParallelSimulatorAnd15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            15,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
@@ -280,7 +277,6 @@ func BenchmarkSearch_withParallelSimulatorAnd20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            20,
 			parallelSimulator:      true,
 			parallelBulkySimulator: false,
@@ -304,7 +300,6 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            5,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
@@ -328,7 +323,6 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            10,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
@@ -352,7 +346,6 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            15,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
@@ -376,7 +369,6 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            20,
 			parallelSimulator:      false,
 			parallelBulkySimulator: true,
@@ -400,7 +392,6 @@ func BenchmarkSearch_withParallelBuilderAnd5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            5,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -424,7 +415,6 @@ func BenchmarkSearch_withParallelBuilderAnd10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            10,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -448,7 +438,6 @@ func BenchmarkSearch_withParallelBuilderAnd15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            15,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
@@ -472,7 +461,6 @@ func BenchmarkSearch_withParallelBuilderAnd20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			ucbFactor:              1,
 			maximalPass:            20,
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,

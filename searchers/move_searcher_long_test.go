@@ -46,7 +46,6 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					ucbFactor:              1,
 					maximalPass:            2,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
@@ -83,7 +82,6 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					ucbFactor:              1,
 					maximalPass:            1,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
@@ -120,7 +118,6 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					ucbFactor:              1,
 					maximalPass:            2,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
@@ -169,7 +166,6 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					ucbFactor:              1,
 					maximalPass:            1000,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
@@ -249,7 +245,6 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					ucbFactor:              1,
 					maximalPass:            1000,
 					parallelSimulator:      false,
 					parallelBulkySimulator: false,
