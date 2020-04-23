@@ -21,91 +21,15 @@ import (
 )
 
 const (
-	defaultUCBFactor = 1
-	defaultDuration  = 10 * time.Second
-	gameCount        = 10
-	startColor       = models.Black
-)
-
-var (
-	startBoard = models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	lowVsHighUCBSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              0.1,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              10,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelSimulatorSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelBulkySimulatorSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: true,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelBuilderSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
-		},
-	}
+	gameCount       = 10
+	initialColor    = models.Black
+	ucbFactor       = math.Sqrt2
+	maximalDuration = 10 * time.Second
 )
 
 type taskInbox chan func()
 
 type searchingSettings struct {
-	ucbFactor              float64
-	maximalDuration        time.Duration
 	parallelSimulator      bool
 	parallelBulkySimulator bool
 	parallelBuilder        bool
@@ -124,7 +48,7 @@ func newIntegratedSearcher(
 	generalSelector :=
 		selectors.MaximalNodeSelector{
 			NodeScorer: scorers.UCBScorer{
-				Factor: settings.ucbFactor,
+				Factor: ucbFactor,
 			},
 		}
 
@@ -157,7 +81,7 @@ func newIntegratedSearcher(
 	terminator :=
 		terminators.NewTimeTerminator(
 			time.Now,
-			settings.maximalDuration,
+			maximalDuration,
 		)
 	builder = builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
@@ -250,7 +174,7 @@ func (scores *scores) addGame(
 		return
 	}
 
-	if errColor == startColor {
+	if errColor == initialColor {
 		scores.firstSearcher.win()
 	} else {
 		scores.secondSearcher.win()
@@ -349,7 +273,7 @@ func markWinner(
 		return
 	}
 
-	if errColor == startColor {
+	if errColor == initialColor {
 		fmt.Print("F")
 	} else {
 		fmt.Print("S")
@@ -357,18 +281,32 @@ func markWinner(
 }
 
 func main() {
-	//settings := lowVsHighUCBSettings
-	//settings := usualVsParallelSimulatorSettings
-	//settings := usualVsParallelBulkySimulatorSettings
-	settings := usualVsParallelBuilderSettings
+	initialBoard := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+	settings := gameSettings{
+		firstSearcher: searchingSettings{
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        false,
+		},
+		secondSearcher: searchingSettings{
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        true,
+		},
+	}
 
 	var scores scores
 	tasks, wait := pool()
 	for i := 0; i < gameCount; i++ {
 		tasks <- func() {
 			errColor, err := game(
-				startBoard,
-				startColor,
+				initialBoard,
+				initialColor,
 				settings,
 			)
 			scores.addGame(errColor, err)
