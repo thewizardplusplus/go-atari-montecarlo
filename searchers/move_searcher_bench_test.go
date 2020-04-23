@@ -17,7 +17,17 @@ import (
 )
 
 const (
-	ucbFactor = math.Sqrt2
+	initialColor = models.Black
+	ucbFactor    = math.Sqrt2
+)
+
+var (
+	initialBoard = models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
 )
 
 type searchingSettings struct {
@@ -116,21 +126,12 @@ func BenchmarkSearch_with5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            5,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass: 5,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -139,21 +140,12 @@ func BenchmarkSearch_with10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            10,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass: 10,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -162,21 +154,12 @@ func BenchmarkSearch_with15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            15,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass: 15,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -185,21 +168,12 @@ func BenchmarkSearch_with20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            20,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass: 20,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -208,21 +182,13 @@ func BenchmarkSearch_withParallelSimulatorAnd5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            5,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass:       5,
+			parallelSimulator: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -231,21 +197,13 @@ func BenchmarkSearch_withParallelSimulatorAnd10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            10,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass:       10,
+			parallelSimulator: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -254,21 +212,13 @@ func BenchmarkSearch_withParallelSimulatorAnd15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            15,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass:       15,
+			parallelSimulator: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -277,21 +227,13 @@ func BenchmarkSearch_withParallelSimulatorAnd20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            20,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
+			maximalPass:       20,
+			parallelSimulator: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -301,20 +243,12 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			maximalPass:            5,
-			parallelSimulator:      false,
 			parallelBulkySimulator: true,
-			parallelBuilder:        false,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -324,20 +258,12 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			maximalPass:            10,
-			parallelSimulator:      false,
 			parallelBulkySimulator: true,
-			parallelBuilder:        false,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -347,20 +273,12 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			maximalPass:            15,
-			parallelSimulator:      false,
 			parallelBulkySimulator: true,
-			parallelBuilder:        false,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -370,20 +288,12 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
 	searcher := newIntegratedSearcher(
 		searchingSettings{
 			maximalPass:            20,
-			parallelSimulator:      false,
 			parallelBulkySimulator: true,
-			parallelBuilder:        false,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -392,21 +302,13 @@ func BenchmarkSearch_withParallelBuilderAnd5Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            5,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
+			maximalPass:     5,
+			parallelBuilder: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -415,21 +317,13 @@ func BenchmarkSearch_withParallelBuilderAnd10Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            10,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
+			maximalPass:     10,
+			parallelBuilder: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -438,21 +332,13 @@ func BenchmarkSearch_withParallelBuilderAnd15Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            15,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
+			maximalPass:     15,
+			parallelBuilder: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }
 
@@ -461,20 +347,12 @@ func BenchmarkSearch_withParallelBuilderAnd20Passes(
 ) {
 	searcher := newIntegratedSearcher(
 		searchingSettings{
-			maximalPass:            20,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
+			maximalPass:     20,
+			parallelBuilder: true,
 		},
 	)
-	board := models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
 	for i := 0; i < benchmark.N; i++ {
-		searcher.search(board, models.Black)
+		searcher.
+			search(initialBoard, initialColor)
 	}
 }

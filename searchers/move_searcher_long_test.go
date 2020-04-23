@@ -46,10 +46,7 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					maximalPass:            2,
-					parallelSimulator:      false,
-					parallelBulkySimulator: false,
-					parallelBuilder:        false,
+					maximalPass: 2,
 				},
 			},
 			wantMoves: []models.Move{
@@ -82,10 +79,7 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					maximalPass:            1,
-					parallelSimulator:      false,
-					parallelBulkySimulator: false,
-					parallelBuilder:        false,
+					maximalPass: 1,
 				},
 			},
 			wantMoves: []models.Move{
@@ -118,10 +112,7 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					maximalPass:            2,
-					parallelSimulator:      false,
-					parallelBulkySimulator: false,
-					parallelBuilder:        false,
+					maximalPass: 2,
 				},
 			},
 			wantMoves: []models.Move{
@@ -166,10 +157,7 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					maximalPass:            1000,
-					parallelSimulator:      false,
-					parallelBulkySimulator: false,
-					parallelBuilder:        false,
+					maximalPass: 1000,
 				},
 			},
 			wantMoves: []models.Move{
@@ -245,10 +233,7 @@ func TestSearch(test *testing.T) {
 				}(),
 				color: models.Black,
 				settings: searchingSettings{
-					maximalPass:            1000,
-					parallelSimulator:      false,
-					parallelBulkySimulator: false,
-					parallelBuilder:        false,
+					maximalPass: 1000,
 				},
 			},
 			wantMoves: []models.Move{
