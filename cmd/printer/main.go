@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"runtime"
 	"strings"
 	"time"
@@ -19,88 +20,12 @@ import (
 )
 
 const (
-	defaultUCBFactor = 1
-	defaultDuration  = 10 * time.Second
-	startColor       = models.Black
-)
-
-var (
-	startBoard = models.NewBoard(
-		models.Size{
-			Width:  5,
-			Height: 5,
-		},
-	)
-
-	lowVsHighUCBSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              0.1,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              10,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelSimulatorSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      true,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelBulkySimulatorSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: true,
-			parallelBuilder:        false,
-		},
-	}
-	usualVsParallelBuilderSettings = gameSettings{
-		firstSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        false,
-		},
-		secondSearcher: searchingSettings{
-			ucbFactor:              defaultUCBFactor,
-			maximalDuration:        defaultDuration,
-			parallelSimulator:      false,
-			parallelBulkySimulator: false,
-			parallelBuilder:        true,
-		},
-	}
+	initialColor    = models.Black
+	ucbFactor       = math.Sqrt2
+	maximalDuration = 10 * time.Second
 )
 
 type searchingSettings struct {
-	ucbFactor              float64
-	maximalDuration        time.Duration
 	parallelSimulator      bool
 	parallelBulkySimulator bool
 	parallelBuilder        bool
@@ -119,7 +44,7 @@ func newIntegratedSearcher(
 	generalSelector :=
 		selectors.MaximalNodeSelector{
 			NodeScorer: scorers.UCBScorer{
-				Factor: settings.ucbFactor,
+				Factor: ucbFactor,
 			},
 		}
 
@@ -152,7 +77,7 @@ func newIntegratedSearcher(
 	terminator :=
 		terminators.NewTimeTerminator(
 			time.Now,
-			settings.maximalDuration,
+			maximalDuration,
 		)
 	builder = builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
@@ -300,7 +225,7 @@ func markWinner(
 		return
 	}
 
-	if errColor == startColor {
+	if errColor == initialColor {
 		fmt.Println("F")
 	} else {
 		fmt.Println("S")
@@ -308,14 +233,28 @@ func markWinner(
 }
 
 func main() {
-	//settings := lowVsHighUCBSettings
-	//settings := usualVsParallelSimulatorSettings
-	//settings := usualVsParallelBulkySimulatorSettings
-	settings := usualVsParallelBuilderSettings
+	initialBoard := models.NewBoard(
+		models.Size{
+			Width:  5,
+			Height: 5,
+		},
+	)
+	settings := gameSettings{
+		firstSearcher: searchingSettings{
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        false,
+		},
+		secondSearcher: searchingSettings{
+			parallelSimulator:      false,
+			parallelBulkySimulator: false,
+			parallelBuilder:        true,
+		},
+	}
 
 	history, errColor, err := game(
-		startBoard,
-		startColor,
+		initialBoard,
+		initialColor,
 		settings,
 	)
 	markWinner(errColor, err)
