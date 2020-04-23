@@ -52,7 +52,7 @@ func TestSearch(test *testing.T) {
 			wantMoves: []models.Move{
 				models.Move{},
 			},
-			wantErr: models.ErrAlreadyLoss,
+			wantErr: models.ErrAlreadyWin,
 		},
 		data{
 			args: args{
