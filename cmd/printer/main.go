@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
 	"runtime"
+	"runtime/pprof"
 	"strings"
 	"time"
 
@@ -233,6 +235,33 @@ func markWinner(
 }
 
 func main() {
+	cpuProf, err := os.Create("cpu.prof")
+	if err != nil {
+		log.Fatal(
+			"unable to create a CPU profile: ",
+			err,
+		)
+	}
+	defer cpuProf.Close()
+
+	memProf, err := os.Create("mem.prof")
+	if err != nil {
+		log.Fatal(
+			"unable to create a memory profile: ",
+			err,
+		)
+	}
+	defer memProf.Close()
+
+	err = pprof.StartCPUProfile(cpuProf)
+	if err != nil {
+		log.Fatal(
+			"unable to start CPU profiling: ",
+			err,
+		)
+	}
+	defer pprof.StopCPUProfile()
+
 	initialBoard := models.NewBoard(
 		models.Size{
 			Width:  5,
@@ -259,4 +288,14 @@ func main() {
 	)
 	markWinner(errColor, err)
 	fmt.Println(history)
+
+	runtime.GC() // get up-to-date statistics
+
+	err = pprof.WriteHeapProfile(memProf)
+	if err != nil {
+		log.Fatal(
+			"unable to write a memory profile: ",
+			err,
+		)
+	}
 }
