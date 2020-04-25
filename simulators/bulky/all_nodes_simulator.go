@@ -1,8 +1,7 @@
 package bulky
 
 import (
-	"sync"
-
+	"github.com/thewizardplusplus/go-atari-montecarlo/parallel"
 	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
@@ -16,21 +15,22 @@ type AllNodesSimulator struct {
 func (simulator AllNodesSimulator) Simulate(
 	nodes tree.NodeGroup,
 ) []tree.NodeState {
+	packedStates := parallel.Run(
+		len(nodes),
+		func(index int) (result interface{}) {
+			return simulator.Simulator.
+				Simulate(nodes[index])
+		},
+	)
+
 	states :=
-		make([]tree.NodeState, len(nodes))
-
-	var waiter sync.WaitGroup
-	for index, node := range nodes {
-		waiter.Add(1)
-
-		go func(index int, node *tree.Node) {
-			defer waiter.Done()
-
-			states[index] = simulator.Simulator.
-				Simulate(node)
-		}(index, node)
+		make([]tree.NodeState, 0, len(nodes))
+	for _, packedState := range packedStates {
+		states = append(
+			states,
+			packedState.(tree.NodeState),
+		)
 	}
-	waiter.Wait()
 
 	return states
 }

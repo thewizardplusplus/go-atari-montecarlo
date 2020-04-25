@@ -1,8 +1,7 @@
 package builders
 
 import (
-	"sync"
-
+	"github.com/thewizardplusplus/go-atari-montecarlo/parallel"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -16,25 +15,17 @@ type ParallelBuilder struct {
 func (builder ParallelBuilder) Pass(
 	root *tree.Node,
 ) {
-	roots := make(
-		tree.NodeGroup,
+	roots := parallel.Run(
 		builder.Concurrency,
+		func(index int) (result interface{}) {
+			rootCopy := root.ShallowCopy()
+			builder.Builder.Pass(rootCopy)
+
+			return rootCopy
+		},
 	)
 
-	var waiter sync.WaitGroup
-	for i := 0; i < len(roots); i++ {
-		waiter.Add(1)
-
-		go func(i int) {
-			defer waiter.Done()
-
-			roots[i] = root.ShallowCopy()
-			builder.Builder.Pass(roots[i])
-		}(i)
-	}
-	waiter.Wait()
-
 	for _, rootCopy := range roots {
-		root.MergeChildren(rootCopy)
+		root.MergeChildren(rootCopy.(*tree.Node))
 	}
 }
