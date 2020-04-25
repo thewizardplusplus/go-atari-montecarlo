@@ -16,29 +16,25 @@ type ParallelBuilder struct {
 func (builder ParallelBuilder) Pass(
 	root *tree.Node,
 ) {
-	var waiter sync.WaitGroup
-	waiter.Add(builder.Concurrency)
-
 	roots := make(
-		chan *tree.Node,
+		tree.NodeGroup,
 		builder.Concurrency,
 	)
-	concurrency := builder.Concurrency
-	for i := 0; i < concurrency; i++ {
-		go func() {
+
+	var waiter sync.WaitGroup
+	for i := 0; i < len(roots); i++ {
+		waiter.Add(1)
+
+		go func(i int) {
 			defer waiter.Done()
 
-			rootCopy := root.ShallowCopy()
-			builder.Builder.Pass(rootCopy)
-
-			roots <- rootCopy
-		}()
+			roots[i] = root.ShallowCopy()
+			builder.Builder.Pass(roots[i])
+		}(i)
 	}
-
 	waiter.Wait()
-	close(roots)
 
-	for rootCopy := range roots {
+	for _, rootCopy := range roots {
 		root.MergeChildren(rootCopy)
 	}
 }
