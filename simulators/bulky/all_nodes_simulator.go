@@ -1,8 +1,8 @@
 package bulky
 
 import (
-	"github.com/thewizardplusplus/go-atari-montecarlo/parallel"
 	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
+	"github.com/thewizardplusplus/go-atari-montecarlo/syncutils"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -15,7 +15,7 @@ type AllNodesSimulator struct {
 func (simulator AllNodesSimulator) Simulate(
 	nodes tree.NodeGroup,
 ) []tree.NodeState {
-	packedStates := parallel.Run(
+	packedStates := syncutils.ParallelRun(
 		len(nodes),
 		func(index int) (result interface{}) {
 			return simulator.Simulator.

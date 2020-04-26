@@ -1,7 +1,7 @@
 package simulators
 
 import (
-	"github.com/thewizardplusplus/go-atari-montecarlo/parallel"
+	"github.com/thewizardplusplus/go-atari-montecarlo/syncutils"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -20,7 +20,7 @@ type ParallelSimulator struct {
 func (simulator ParallelSimulator) Simulate(
 	root *tree.Node,
 ) tree.NodeState {
-	states := parallel.Run(
+	states := syncutils.ParallelRun(
 		simulator.Concurrency,
 		func(index int) (result interface{}) {
 			return simulator.Simulator.

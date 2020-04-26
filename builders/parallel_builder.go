@@ -1,7 +1,7 @@
 package builders
 
 import (
-	"github.com/thewizardplusplus/go-atari-montecarlo/parallel"
+	"github.com/thewizardplusplus/go-atari-montecarlo/syncutils"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -15,7 +15,7 @@ type ParallelBuilder struct {
 func (builder ParallelBuilder) Pass(
 	root *tree.Node,
 ) {
-	roots := parallel.Run(
+	roots := syncutils.ParallelRun(
 		builder.Concurrency,
 		func(index int) (result interface{}) {
 			rootCopy := root.ShallowCopy()

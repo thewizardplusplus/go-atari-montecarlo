@@ -1,4 +1,4 @@
-package parallel
+package syncutils
 
 import (
 	"sync"
@@ -9,8 +9,8 @@ type Task func(
 	index int,
 ) (result interface{})
 
-// Run ...
-func Run(
+// ParallelRun ...
+func ParallelRun(
 	concurrency int,
 	task Task,
 ) (results []interface{}) {
