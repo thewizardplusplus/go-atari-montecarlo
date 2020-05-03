@@ -30,7 +30,7 @@ var (
 	)
 )
 
-type searchingSettings struct {
+type searchSettings struct {
 	maximalPass            int
 	parallelSimulator      bool
 	parallelBulkySimulator bool
@@ -42,7 +42,7 @@ type integratedSearcher struct {
 }
 
 func newIntegratedSearcher(
-	settings searchingSettings,
+	settings searchSettings,
 ) integratedSearcher {
 	randomSelector :=
 		selectors.RandomMoveSelector{}
@@ -125,7 +125,7 @@ func BenchmarkSearch_with5Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass: 5,
 		},
 	)
@@ -139,7 +139,7 @@ func BenchmarkSearch_with10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass: 10,
 		},
 	)
@@ -153,7 +153,7 @@ func BenchmarkSearch_with15Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass: 15,
 		},
 	)
@@ -167,7 +167,7 @@ func BenchmarkSearch_with20Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass: 20,
 		},
 	)
@@ -181,7 +181,7 @@ func BenchmarkSearch_withParallelSimulatorAnd5Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:       5,
 			parallelSimulator: true,
 		},
@@ -196,7 +196,7 @@ func BenchmarkSearch_withParallelSimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:       10,
 			parallelSimulator: true,
 		},
@@ -211,7 +211,7 @@ func BenchmarkSearch_withParallelSimulatorAnd15Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:       15,
 			parallelSimulator: true,
 		},
@@ -226,7 +226,7 @@ func BenchmarkSearch_withParallelSimulatorAnd20Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:       20,
 			parallelSimulator: true,
 		},
@@ -241,7 +241,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:            5,
 			parallelBulkySimulator: true,
 		},
@@ -256,7 +256,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:            10,
 			parallelBulkySimulator: true,
 		},
@@ -271,7 +271,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:            15,
 			parallelBulkySimulator: true,
 		},
@@ -286,7 +286,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:            20,
 			parallelBulkySimulator: true,
 		},
@@ -301,7 +301,7 @@ func BenchmarkSearch_withParallelBuilderAnd5Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:     5,
 			parallelBuilder: true,
 		},
@@ -316,7 +316,7 @@ func BenchmarkSearch_withParallelBuilderAnd10Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:     10,
 			parallelBuilder: true,
 		},
@@ -331,7 +331,7 @@ func BenchmarkSearch_withParallelBuilderAnd15Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:     15,
 			parallelBuilder: true,
 		},
@@ -346,7 +346,7 @@ func BenchmarkSearch_withParallelBuilderAnd20Passes(
 	benchmark *testing.B,
 ) {
 	searcher := newIntegratedSearcher(
-		searchingSettings{
+		searchSettings{
 			maximalPass:     20,
 			parallelBuilder: true,
 		},

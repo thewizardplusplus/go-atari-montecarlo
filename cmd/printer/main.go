@@ -27,7 +27,7 @@ const (
 	maximalDuration = 10 * time.Second
 )
 
-type searchingSettings struct {
+type searchSettings struct {
 	parallelSimulator      bool
 	parallelBulkySimulator bool
 	parallelBuilder        bool
@@ -39,7 +39,7 @@ type integratedSearcher struct {
 }
 
 func newIntegratedSearcher(
-	settings searchingSettings,
+	settings searchSettings,
 ) integratedSearcher {
 	randomSelector :=
 		selectors.RandomMoveSelector{}
@@ -125,8 +125,8 @@ func (searcher integratedSearcher) search(
 }
 
 type gameSettings struct {
-	firstSearcher  searchingSettings
-	secondSearcher searchingSettings
+	firstSearcher  searchSettings
+	secondSearcher searchSettings
 }
 
 type history []models.Move
@@ -269,12 +269,12 @@ func main() {
 		},
 	)
 	settings := gameSettings{
-		firstSearcher: searchingSettings{
+		firstSearcher: searchSettings{
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        false,
 		},
-		secondSearcher: searchingSettings{
+		secondSearcher: searchSettings{
 			parallelSimulator:      false,
 			parallelBulkySimulator: false,
 			parallelBuilder:        true,

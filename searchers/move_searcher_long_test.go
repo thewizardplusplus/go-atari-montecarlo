@@ -22,15 +22,15 @@ func TestSearch(test *testing.T) {
 		wantErr   error
 	}
 
-	settingGroup := []searchingSettings{
-		searchingSettings{},
-		searchingSettings{
+	settingGroup := []searchSettings{
+		searchSettings{},
+		searchSettings{
 			parallelSimulator: true,
 		},
-		searchingSettings{
+		searchSettings{
 			parallelBulkySimulator: true,
 		},
-		searchingSettings{
+		searchSettings{
 			parallelBuilder: true,
 		},
 	}
