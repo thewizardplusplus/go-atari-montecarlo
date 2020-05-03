@@ -22,9 +22,10 @@ import (
 )
 
 const (
-	initialColor    = models.Black
 	ucbFactor       = math.Sqrt2
 	maximalDuration = 10 * time.Second
+	minimalAxisCode = 97
+	initialColor    = models.Black
 )
 
 type searchSettings struct {
@@ -33,14 +34,11 @@ type searchSettings struct {
 	parallelBuilder        bool
 }
 
-type integratedSearcher struct {
-	terminator terminators.BuildingTerminator
-	searcher   searchers.MoveSearcher
-}
-
-func newIntegratedSearcher(
+func search(
+	board models.Board,
+	previousMove models.Move,
 	settings searchSettings,
-) integratedSearcher {
+) (models.Move, error) {
 	randomSelector :=
 		selectors.RandomMoveSelector{}
 	generalSelector :=
@@ -95,28 +93,15 @@ func newIntegratedSearcher(
 		}
 	}
 
-	baseSearcher := searchers.MoveSearcher{
-		Builder:      builder,
-		NodeSelector: generalSelector,
-	}
-	return integratedSearcher{
-		terminator: terminator,
-		searcher:   baseSearcher,
-	}
-}
-
-func (searcher integratedSearcher) search(
-	board models.Board,
-	previousMove models.Move,
-) (models.Move, error) {
-	searcher.terminator.Reset()
-
 	root := &tree.Node{
 		Move:  previousMove,
 		Board: board,
 	}
-	node, err :=
-		searcher.searcher.SearchMove(root)
+	searcher := searchers.MoveSearcher{
+		Builder:      builder,
+		NodeSelector: generalSelector,
+	}
+	node, err := searcher.SearchMove(root)
 	if err != nil {
 		return models.Move{}, err
 	}
@@ -166,7 +151,7 @@ func newMoveCommand(
 }
 
 func convertPointAxis(axis int) string {
-	return string(axis + 97)
+	return string(axis + minimalAxisCode)
 }
 
 func game(
@@ -174,13 +159,6 @@ func game(
 	color models.Color,
 	settings gameSettings,
 ) (history, models.Color, error) {
-	firstSearcher := newIntegratedSearcher(
-		settings.firstSearcher,
-	)
-	secondSearcher := newIntegratedSearcher(
-		settings.secondSearcher,
-	)
-
 	var history history
 	previousMove :=
 		models.NewPreliminaryMove(color)
@@ -192,14 +170,16 @@ func game(
 		var move models.Move
 		var err error
 		if ply%2 == 0 {
-			move, err = firstSearcher.search(
+			move, err = search(
 				board,
 				previousMove,
+				settings.firstSearcher,
 			)
 		} else {
-			move, err = secondSearcher.search(
+			move, err = search(
 				board,
 				previousMove,
+				settings.secondSearcher,
 			)
 		}
 		if err != nil {

@@ -21,10 +21,10 @@ import (
 )
 
 const (
-	gameCount       = 10
 	initialColor    = models.Black
 	ucbFactor       = math.Sqrt2
 	maximalDuration = 10 * time.Second
+	gameCount       = 10
 )
 
 type score struct {
