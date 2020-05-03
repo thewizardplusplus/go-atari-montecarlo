@@ -37,13 +37,11 @@ type searchSettings struct {
 	parallelBuilder        bool
 }
 
-type integratedSearcher struct {
-	searcher searchers.MoveSearcher
-}
-
-func newIntegratedSearcher(
+func search(
+	board models.Board,
+	color models.Color,
 	settings searchSettings,
-) integratedSearcher {
+) (models.Move, error) {
 	randomSelector :=
 		selectors.RandomMoveSelector{}
 	generalSelector :=
@@ -97,23 +95,15 @@ func newIntegratedSearcher(
 		}
 	}
 
-	baseSearcher := searchers.MoveSearcher{
-		Builder:      builder,
-		NodeSelector: generalSelector,
-	}
-	return integratedSearcher{baseSearcher}
-}
-
-func (searcher integratedSearcher) search(
-	board models.Board,
-	color models.Color,
-) (models.Move, error) {
 	root := &tree.Node{
 		Move:  models.NewPreliminaryMove(color),
 		Board: board,
 	}
-	node, err :=
-		searcher.searcher.SearchMove(root)
+	searcher := searchers.MoveSearcher{
+		Builder:      builder,
+		NodeSelector: generalSelector,
+	}
+	node, err := searcher.SearchMove(root)
 	if err != nil {
 		return models.Move{}, err
 	}
@@ -124,235 +114,235 @@ func (searcher integratedSearcher) search(
 func BenchmarkSearch_with5Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass: 5,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass: 5,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_with10Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass: 10,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass: 10,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_with15Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass: 15,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass: 15,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_with20Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass: 20,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass: 20,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelSimulatorAnd5Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:       5,
-			parallelSimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:       5,
+				parallelSimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelSimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:       10,
-			parallelSimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:       10,
+				parallelSimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelSimulatorAnd15Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:       15,
-			parallelSimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:       15,
+				parallelSimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelSimulatorAnd20Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:       20,
-			parallelSimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:       20,
+				parallelSimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:            5,
-			parallelBulkySimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:            5,
+				parallelBulkySimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:            10,
-			parallelBulkySimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:            10,
+				parallelBulkySimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:            15,
-			parallelBulkySimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:            15,
+				parallelBulkySimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:            20,
-			parallelBulkySimulator: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:            20,
+				parallelBulkySimulator: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBuilderAnd5Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:     5,
-			parallelBuilder: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:     5,
+				parallelBuilder: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBuilderAnd10Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:     10,
-			parallelBuilder: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:     10,
+				parallelBuilder: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBuilderAnd15Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:     15,
-			parallelBuilder: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:     15,
+				parallelBuilder: true,
+			},
+		)
 	}
 }
 
 func BenchmarkSearch_withParallelBuilderAnd20Passes(
 	benchmark *testing.B,
 ) {
-	searcher := newIntegratedSearcher(
-		searchSettings{
-			maximalPass:     20,
-			parallelBuilder: true,
-		},
-	)
 	for i := 0; i < benchmark.N; i++ {
-		searcher.
-			search(initialBoard, initialColor)
+		search(
+			initialBoard,
+			initialColor,
+			searchSettings{
+				maximalPass:     20,
+				parallelBuilder: true,
+			},
+		)
 	}
 }

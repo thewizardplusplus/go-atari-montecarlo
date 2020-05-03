@@ -271,11 +271,10 @@ func TestSearch(test *testing.T) {
 			settings.maximalPass =
 				data.args.maximalPass
 
-			searcher :=
-				newIntegratedSearcher(settings)
-			gotMove, gotErr := searcher.search(
+			gotMove, gotErr := search(
 				data.args.board,
 				data.args.color,
+				settings,
 			)
 
 			var hasMatch bool
