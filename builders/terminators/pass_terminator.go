@@ -18,6 +18,3 @@ func (
 ) IsBuildingTerminated(pass int) bool {
 	return pass >= terminator.maximalPass
 }
-
-// Reset ...
-func (terminator PassTerminator) Reset() {}

@@ -3,7 +3,6 @@ package terminators
 // BuildingTerminator ...
 type BuildingTerminator interface {
 	IsBuildingTerminated(pass int) bool
-	Reset()
 }
 
 // GroupTerminator ...
@@ -31,12 +30,4 @@ func (
 	}
 
 	return false
-}
-
-// Reset ...
-func (group GroupTerminator) Reset() {
-	terminators := group.terminators
-	for _, terminator := range terminators {
-		terminator.Reset()
-	}
 }

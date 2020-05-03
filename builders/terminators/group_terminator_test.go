@@ -7,7 +7,6 @@ import (
 
 type MockBuildingTerminator struct {
 	isBuildingTerminated func(pass int) bool
-	reset                func()
 }
 
 func (
@@ -20,16 +19,6 @@ func (
 
 	return terminator.
 		isBuildingTerminated(pass)
-}
-
-func (
-	terminator MockBuildingTerminator,
-) Reset() {
-	if terminator.reset == nil {
-		panic("not implemented")
-	}
-
-	terminator.reset()
 }
 
 func TestNewGroupTerminator(
@@ -166,67 +155,6 @@ func TestGroupTerminatorIsBuildingTerminated(
 		)
 
 		if got != data.want {
-			test.Fail()
-		}
-	}
-}
-
-func TestGroupTerminatorReset(
-	test *testing.T,
-) {
-	type fields struct {
-		terminators []BuildingTerminator
-	}
-	type data struct {
-		fields    fields
-		wantMarks []string
-	}
-
-	var marks []string
-	for _, data := range []data{
-		data{
-			fields:    fields{nil},
-			wantMarks: nil,
-		},
-		data{
-			fields: fields{
-				terminators: []BuildingTerminator{
-					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
-							panic("not implemented")
-						},
-						reset: func() {
-							marks = append(marks, "one")
-						},
-					},
-					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
-							panic("not implemented")
-						},
-						reset: func() {
-							marks = append(marks, "two")
-						},
-					},
-				},
-			},
-			wantMarks: []string{"one", "two"},
-		},
-	} {
-		marks = nil
-
-		group := GroupTerminator{
-			terminators: data.fields.terminators,
-		}
-		group.Reset()
-
-		if !reflect.DeepEqual(
-			marks,
-			data.wantMarks,
-		) {
 			test.Fail()
 		}
 	}

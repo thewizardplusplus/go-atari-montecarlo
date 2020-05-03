@@ -36,8 +36,3 @@ func (
 	return elapsedTime >=
 		terminator.maximalDuration
 }
-
-// Reset ...
-func (terminator *TimeTerminator) Reset() {
-	terminator.startTime = terminator.clock()
-}
