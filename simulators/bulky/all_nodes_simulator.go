@@ -2,7 +2,7 @@ package bulky
 
 import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/simulators"
-	"github.com/thewizardplusplus/go-atari-montecarlo/syncutils"
+	syncutils "github.com/thewizardplusplus/go-atari-montecarlo/sync-utils"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 

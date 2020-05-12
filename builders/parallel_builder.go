@@ -1,7 +1,7 @@
 package builders
 
 import (
-	"github.com/thewizardplusplus/go-atari-montecarlo/syncutils"
+	syncutils "github.com/thewizardplusplus/go-atari-montecarlo/sync-utils"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
