@@ -612,8 +612,12 @@ func TestNodeExpandLeaf(test *testing.T) {
 		state    NodeState
 		children NodeGroup
 	}
+	type args struct {
+		generator models.Generator
+	}
 	type data struct {
 		fields           fields
+		args             args
 		checkParents     bool
 		wantOriginalNode *Node
 		wantResultNodes  NodeGroup
@@ -676,6 +680,9 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					},
 				},
+			},
+			args: args{
+				generator: models.MoveGenerator{},
 			},
 			checkParents: false,
 			wantOriginalNode: &Node{
@@ -839,6 +846,9 @@ func TestNodeExpandLeaf(test *testing.T) {
 					},
 				},
 			},
+			args: args{
+				generator: models.MoveGenerator{},
+			},
 			checkParents: false,
 			wantOriginalNode: &Node{
 				Move: models.Move{
@@ -989,6 +999,9 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					},
 				},
+			},
+			args: args{
+				generator: models.MoveGenerator{},
 			},
 			checkParents: true,
 			wantOriginalNode: &Node{
@@ -1227,7 +1240,8 @@ func TestNodeExpandLeaf(test *testing.T) {
 			State:    data.fields.state,
 			Children: data.fields.children,
 		}
-		got := node.ExpandLeaf()
+		got :=
+			node.ExpandLeaf(data.args.generator)
 
 		// check and reset parents
 		if data.checkParents {

@@ -84,13 +84,17 @@ func (node *Node) SelectLeaf(
 }
 
 // ExpandLeaf ...
-func (node *Node) ExpandLeaf() NodeGroup {
+func (node *Node) ExpandLeaf(
+	generator models.Generator,
+) NodeGroup {
 	if node.State.GameCount == 0 {
 		return NodeGroup{node}
 	}
 
-	moves, err :=
-		node.Board.LegalMoves(node.Move)
+	moves, err := generator.LegalMoves(
+		node.Board,
+		node.Move,
+	)
 	if err != nil {
 		// no moves or an already finished game
 		return NodeGroup{node}
