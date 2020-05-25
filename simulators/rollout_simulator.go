@@ -12,7 +12,8 @@ type MoveSelector interface {
 
 // RolloutSimulator ...
 type RolloutSimulator struct {
-	MoveSelector MoveSelector
+	MoveGenerator models.Generator
+	MoveSelector  MoveSelector
 }
 
 // Simulate ...
@@ -22,8 +23,8 @@ func (simulator RolloutSimulator) Simulate(
 	board, previousMove, startColor :=
 		root.Board, root.Move, root.Move.Color
 	for {
-		moves, err :=
-			board.LegalMoves(previousMove)
+		moves, err := simulator.MoveGenerator.
+			LegalMoves(board, previousMove)
 		if err != nil {
 			// no moves or an already finished game
 			state := tree.NewNodeState(err)

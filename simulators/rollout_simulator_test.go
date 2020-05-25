@@ -28,7 +28,8 @@ func TestRolloutSimulatorSimulate(
 	test *testing.T,
 ) {
 	type fields struct {
-		moveSelector MoveSelector
+		moveGenerator models.Generator
+		moveSelector  MoveSelector
 	}
 	type args struct {
 		root *tree.Node
@@ -44,6 +45,8 @@ func TestRolloutSimulatorSimulate(
 	for _, data := range []data{
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				// +--+--+--+
 				// |B0|W1|B2|
 				// +--+--+--+
@@ -135,6 +138,8 @@ func TestRolloutSimulatorSimulate(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				// +--+--+--+
 				// |W1|B2|W3|
 				// +--+--+--+
@@ -207,6 +212,8 @@ func TestRolloutSimulatorSimulate(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				moveSelector: MockMoveSelector{
 					selectMove: func(
 						moves []models.Move,
@@ -253,6 +260,8 @@ func TestRolloutSimulatorSimulate(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				// +--+--+--+
 				// |B0|W0|  |
 				// +--+--+--+
@@ -324,6 +333,8 @@ func TestRolloutSimulatorSimulate(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				// +--+--+--+
 				// |B0|W0|  |
 				// +--+--+--+
@@ -397,6 +408,8 @@ func TestRolloutSimulatorSimulate(
 		iterationCount = 0
 
 		simulator := RolloutSimulator{
+			MoveGenerator: data.fields.
+				moveGenerator,
 			MoveSelector: data.fields.
 				moveSelector,
 		}
