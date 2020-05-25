@@ -44,8 +44,9 @@ func (
 
 func TestTreeBuilderPass(test *testing.T) {
 	type fields struct {
-		nodeSelector tree.NodeSelector
-		simulator    BulkySimulator
+		nodeSelector  tree.NodeSelector
+		moveGenerator models.Generator
+		simulator     BulkySimulator
 	}
 	type args struct {
 		root *tree.Node
@@ -66,6 +67,8 @@ func TestTreeBuilderPass(test *testing.T) {
 						return nodes[0]
 					},
 				},
+				moveGenerator: models.
+					MoveGenerator{},
 				simulator: MockBulkySimulator{
 					simulate: func(
 						nodes tree.NodeGroup,
@@ -409,6 +412,8 @@ func TestTreeBuilderPass(test *testing.T) {
 		builder := TreeBuilder{
 			NodeSelector: data.fields.
 				nodeSelector,
+			MoveGenerator: data.fields.
+				moveGenerator,
 			Simulator: data.fields.simulator,
 		}
 		builder.Pass(data.args.root)

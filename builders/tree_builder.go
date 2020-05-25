@@ -1,6 +1,7 @@
 package builders
 
 import (
+	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
@@ -14,8 +15,9 @@ type BulkySimulator interface {
 
 // TreeBuilder ...
 type TreeBuilder struct {
-	NodeSelector tree.NodeSelector
-	Simulator    BulkySimulator
+	NodeSelector  tree.NodeSelector
+	MoveGenerator models.Generator
+	Simulator     BulkySimulator
 }
 
 // Pass ...
@@ -24,7 +26,7 @@ func (builder TreeBuilder) Pass(
 ) {
 	leaves := root.
 		SelectLeaf(builder.NodeSelector).
-		ExpandLeaf()
+		ExpandLeaf(builder.MoveGenerator)
 	states :=
 		builder.Simulator.Simulate(leaves)
 	for index, state := range states {
