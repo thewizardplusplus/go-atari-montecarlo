@@ -39,6 +39,7 @@ func search(
 	previousMove models.Move,
 	settings searchSettings,
 ) (models.Move, error) {
+	generator := models.MoveGenerator{}
 	randomSelector :=
 		selectors.RandomMoveSelector{}
 	generalSelector :=
@@ -50,7 +51,8 @@ func search(
 
 	var simulator simulators.Simulator
 	simulator = simulators.RolloutSimulator{
-		MoveSelector: randomSelector,
+		MoveGenerator: generator,
+		MoveSelector:  randomSelector,
 	}
 	if settings.parallelSimulator {
 		simulator =
@@ -81,8 +83,9 @@ func search(
 		)
 	builder = builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
-			NodeSelector: generalSelector,
-			Simulator:    bulkySimulator,
+			NodeSelector:  generalSelector,
+			MoveGenerator: generator,
+			Simulator:     bulkySimulator,
 		},
 		Terminator: terminator,
 	}
