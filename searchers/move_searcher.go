@@ -3,6 +3,7 @@ package searchers
 import (
 	"errors"
 
+	models "github.com/thewizardplusplus/go-atari-models"
 	"github.com/thewizardplusplus/go-atari-montecarlo/builders"
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
@@ -16,8 +17,9 @@ var (
 
 // MoveSearcher ...
 type MoveSearcher struct {
-	Builder      builders.Builder
-	NodeSelector tree.NodeSelector
+	MoveGenerator models.Generator
+	Builder       builders.Builder
+	NodeSelector  tree.NodeSelector
 }
 
 // SearchMove ...
@@ -29,7 +31,8 @@ type MoveSearcher struct {
 func (searcher MoveSearcher) SearchMove(
 	root *tree.Node,
 ) (*tree.Node, error) {
-	_, err := root.Board.LegalMoves(root.Move)
+	_, err := searcher.MoveGenerator.
+		LegalMoves(root.Board, root.Move)
 	if err != nil {
 		return nil, err
 	}

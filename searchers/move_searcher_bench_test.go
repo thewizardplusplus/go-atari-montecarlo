@@ -103,8 +103,9 @@ func search(
 		Board: board,
 	}
 	searcher := searchers.MoveSearcher{
-		Builder:      builder,
-		NodeSelector: generalSelector,
+		MoveGenerator: generator,
+		Builder:       builder,
+		NodeSelector:  generalSelector,
 	}
 	node, err := searcher.SearchMove(root)
 	if err != nil {

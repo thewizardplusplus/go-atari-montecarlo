@@ -43,8 +43,9 @@ func TestMoveSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		builder      builders.Builder
-		nodeSelector tree.NodeSelector
+		moveGenerator models.Generator
+		builder       builders.Builder
+		nodeSelector  tree.NodeSelector
 	}
 	type args struct {
 		root *tree.Node
@@ -59,6 +60,8 @@ func TestMoveSearcherSearchMove(
 	for _, data := range []data{
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						panic("not implemented")
@@ -111,6 +114,8 @@ func TestMoveSearcherSearchMove(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
@@ -174,6 +179,8 @@ func TestMoveSearcherSearchMove(
 		},
 		data{
 			fields: fields{
+				moveGenerator: models.
+					MoveGenerator{},
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
@@ -278,6 +285,8 @@ func TestMoveSearcherSearchMove(
 		},
 	} {
 		searcher := MoveSearcher{
+			MoveGenerator: data.fields.
+				moveGenerator,
 			Builder: data.fields.builder,
 			NodeSelector: data.fields.
 				nodeSelector,
