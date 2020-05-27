@@ -14,11 +14,12 @@ func NewNodeGroup(
 ) NodeGroup {
 	var nodes NodeGroup
 	for _, move := range moves {
-		nextBoard := parent.Board.ApplyMove(move)
+		nextStorage :=
+			parent.Storage.ApplyMove(move)
 		node := &Node{
-			Parent: parent,
-			Move:   move,
-			Board:  nextBoard,
+			Parent:  parent,
+			Move:    move,
+			Storage: nextStorage,
 		}
 		nodes = append(nodes, node)
 	}

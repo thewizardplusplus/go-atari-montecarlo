@@ -13,7 +13,7 @@ type NodeSelector interface {
 type Node struct {
 	Parent   *Node
 	Move     models.Move
-	Board    models.Board
+	Storage  models.StoneStorage
 	State    NodeState
 	Children NodeGroup
 }
@@ -23,8 +23,8 @@ type Node struct {
 // It copies only the move and the board.
 func (node *Node) ShallowCopy() *Node {
 	return &Node{
-		Move:  node.Move,
-		Board: node.Board,
+		Move:    node.Move,
+		Storage: node.Storage,
 	}
 }
 
@@ -92,7 +92,7 @@ func (node *Node) ExpandLeaf(
 	}
 
 	moves, err := generator.LegalMoves(
-		node.Board,
+		node.Storage,
 		node.Move,
 	)
 	if err != nil {
