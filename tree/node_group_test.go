@@ -21,7 +21,7 @@ func TestNewNodeGroup(test *testing.T) {
 		data{
 			args: args{
 				parent: &Node{
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -76,7 +76,7 @@ func TestNewNodeGroup(test *testing.T) {
 			want: NodeGroup{
 				&Node{
 					Parent: &Node{
-						Board: func() models.Board {
+						Storage: func() models.StoneStorage {
 							board := models.NewBoard(
 								models.Size{
 									Width:  3,
@@ -119,7 +119,7 @@ func TestNewNodeGroup(test *testing.T) {
 							Row:    0,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -159,7 +159,7 @@ func TestNewNodeGroup(test *testing.T) {
 				},
 				&Node{
 					Parent: &Node{
-						Board: func() models.Board {
+						Storage: func() models.StoneStorage {
 							board := models.NewBoard(
 								models.Size{
 									Width:  3,
@@ -202,7 +202,7 @@ func TestNewNodeGroup(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,

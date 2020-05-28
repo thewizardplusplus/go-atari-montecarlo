@@ -38,7 +38,7 @@ func TestNodeShallowCopy(test *testing.T) {
 				Row:    2,
 			},
 		},
-		Board: func() models.Board {
+		Storage: func() models.StoneStorage {
 			board := models.NewBoard(
 				models.Size{
 					Width:  3,
@@ -105,7 +105,7 @@ func TestNodeShallowCopy(test *testing.T) {
 				Row:    2,
 			},
 		},
-		Board: func() models.Board {
+		Storage: func() models.StoneStorage {
 			board := models.NewBoard(
 				models.Size{
 					Width:  3,
@@ -608,7 +608,7 @@ func TestNodeSelectLeaf(test *testing.T) {
 func TestNodeExpandLeaf(test *testing.T) {
 	type fields struct {
 		move     models.Move
-		board    models.Board
+		storage  models.StoneStorage
 		state    NodeState
 		children NodeGroup
 	}
@@ -633,7 +633,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				board: func() models.Board {
+				storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -693,7 +693,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				Board: func() models.Board {
+				Storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -750,7 +750,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -809,7 +809,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				board: func() models.Board {
+				storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -858,7 +858,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				Board: func() models.Board {
+				Storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -904,7 +904,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -952,7 +952,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				board: func() models.Board {
+				storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -1012,7 +1012,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Row:    2,
 					},
 				},
-				Board: func() models.Board {
+				Storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -1127,8 +1127,8 @@ func TestNodeExpandLeaf(test *testing.T) {
 					for _, move := range moves {
 						board := board.ApplyMove(move)
 						child := &Node{
-							Move:  move,
-							Board: board,
+							Move:    move,
+							Storage: board,
 						}
 						children = append(
 							children,
@@ -1221,8 +1221,8 @@ func TestNodeExpandLeaf(test *testing.T) {
 				for _, move := range moves {
 					board := board.ApplyMove(move)
 					child := &Node{
-						Move:  move,
-						Board: board,
+						Move:    move,
+						Storage: board,
 					}
 					children = append(
 						children,
@@ -1236,7 +1236,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 	} {
 		node := &Node{
 			Move:     data.fields.move,
-			Board:    data.fields.board,
+			Storage:  data.fields.storage,
 			State:    data.fields.state,
 			Children: data.fields.children,
 		}
