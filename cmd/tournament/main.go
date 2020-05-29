@@ -122,7 +122,7 @@ type searchSettings struct {
 }
 
 func search(
-	board models.Board,
+	storage models.StoneStorage,
 	previousMove models.Move,
 	settings searchSettings,
 ) (models.Move, error) {
@@ -184,8 +184,8 @@ func search(
 	}
 
 	root := &tree.Node{
-		Move:  previousMove,
-		Board: board,
+		Move:    previousMove,
+		Storage: storage,
 	}
 	searcher := searchers.MoveSearcher{
 		MoveGenerator: generator,
@@ -206,7 +206,7 @@ type gameSettings struct {
 }
 
 func game(
-	board models.Board,
+	storage models.StoneStorage,
 	color models.Color,
 	settings gameSettings,
 ) (models.Color, error) {
@@ -221,13 +221,13 @@ func game(
 		var err error
 		if ply%2 == 0 {
 			move, err = search(
-				board,
+				storage,
 				previousMove,
 				settings.firstSearcher,
 			)
 		} else {
 			move, err = search(
-				board,
+				storage,
 				previousMove,
 				settings.secondSearcher,
 			)
@@ -238,7 +238,7 @@ func game(
 			return errColor, err
 		}
 
-		board = board.ApplyMove(move)
+		storage = storage.ApplyMove(move)
 		previousMove = move
 	}
 }
