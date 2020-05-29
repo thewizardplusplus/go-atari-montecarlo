@@ -38,7 +38,7 @@ type searchSettings struct {
 }
 
 func search(
-	board models.Board,
+	storage models.StoneStorage,
 	color models.Color,
 	settings searchSettings,
 ) (models.Move, error) {
@@ -99,8 +99,9 @@ func search(
 	}
 
 	root := &tree.Node{
-		Move:  models.NewPreliminaryMove(color),
-		Board: board,
+		Move: models.
+			NewPreliminaryMove(color),
+		Storage: storage,
 	}
 	searcher := searchers.MoveSearcher{
 		MoveGenerator: generator,

@@ -32,7 +32,7 @@ func (searcher MoveSearcher) SearchMove(
 	root *tree.Node,
 ) (*tree.Node, error) {
 	_, err := searcher.MoveGenerator.
-		LegalMoves(root.Board, root.Move)
+		LegalMoves(root.Storage, root.Move)
 	if err != nil {
 		return nil, err
 	}

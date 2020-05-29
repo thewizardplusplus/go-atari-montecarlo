@@ -12,7 +12,7 @@ import (
 
 func TestSearch(test *testing.T) {
 	type args struct {
-		board       models.Board
+		storage     models.StoneStorage
 		color       models.Color
 		maximalPass int
 	}
@@ -38,7 +38,7 @@ func TestSearch(test *testing.T) {
 		for _, data := range []data{
 			data{
 				args: args{
-					board: func() models.Board {
+					storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -67,7 +67,7 @@ func TestSearch(test *testing.T) {
 			},
 			data{
 				args: args{
-					board: func() models.Board {
+					storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -99,7 +99,7 @@ func TestSearch(test *testing.T) {
 			},
 			data{
 				args: args{
-					board: func() models.Board {
+					storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -136,7 +136,7 @@ func TestSearch(test *testing.T) {
 			},
 			data{
 				args: args{
-					board: func() models.Board {
+					storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -181,7 +181,7 @@ func TestSearch(test *testing.T) {
 			},
 			data{
 				args: args{
-					board: func() models.Board {
+					storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -272,7 +272,7 @@ func TestSearch(test *testing.T) {
 				data.args.maximalPass
 
 			gotMove, gotErr := search(
-				data.args.board,
+				data.args.storage,
 				data.args.color,
 				settings,
 			)
