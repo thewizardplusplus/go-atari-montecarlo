@@ -96,7 +96,7 @@ func TestTreeBuilderPass(test *testing.T) {
 								Row:    2,
 							},
 						},
-						Board: func() models.Board {
+						Storage: func() models.StoneStorage {
 							board := models.NewBoard(
 								models.Size{
 									Width:  3,
@@ -141,7 +141,7 @@ func TestTreeBuilderPass(test *testing.T) {
 								Row:    0,
 							},
 						},
-						Board: root.Board.
+						Storage: root.Storage.
 							ApplyMove(models.Move{
 							Color: models.Black,
 							Point: models.Point{
@@ -163,7 +163,7 @@ func TestTreeBuilderPass(test *testing.T) {
 								Row:    2,
 							},
 						},
-						Board: root.Board.
+						Storage: root.Storage.
 							ApplyMove(models.Move{
 							Color: models.Black,
 							Point: models.Point{
@@ -193,7 +193,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -239,7 +239,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    0,
 						},
 					},
-					Board: root.Board.
+					Storage: root.Storage.
 						ApplyMove(models.Move{
 						Color: models.Black,
 						Point: models.Point{
@@ -261,7 +261,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: root.Board.
+					Storage: root.Storage.
 						ApplyMove(models.Move{
 						Color: models.Black,
 						Point: models.Point{
@@ -284,7 +284,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    0,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -306,7 +306,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    1,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -328,7 +328,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    1,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -346,7 +346,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    1,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -364,7 +364,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{
@@ -382,7 +382,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							Row:    2,
 						},
 					},
-					Board: childOne.Board.
+					Storage: childOne.Storage.
 						ApplyMove(models.Move{
 						Color: models.White,
 						Point: models.Point{

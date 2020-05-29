@@ -19,7 +19,7 @@ func TestParallelBuilderPass(
 				Row:    2,
 			},
 		},
-		Board: func() models.Board {
+		Storage: func() models.StoneStorage {
 			board := models.NewBoard(
 				models.Size{
 					Width:  3,
@@ -88,7 +88,7 @@ func TestParallelBuilderPass(
 						Row:    2,
 					},
 				},
-				Board: func() models.Board {
+				Storage: func() models.StoneStorage {
 					board := models.NewBoard(
 						models.Size{
 							Width:  3,
@@ -170,7 +170,7 @@ func TestParallelBuilderPass(
 				Row:    2,
 			},
 		},
-		Board: func() models.Board {
+		Storage: func() models.StoneStorage {
 			board := models.NewBoard(
 				models.Size{
 					Width:  3,
