@@ -105,7 +105,7 @@ func TestRolloutSimulatorSimulate(
 							Row:    0,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -194,14 +194,12 @@ func TestRolloutSimulatorSimulate(
 						Color: models.Black,
 						Point: models.NilPoint,
 					},
-					Board: func() models.Board {
-						return models.NewBoard(
-							models.Size{
-								Width:  3,
-								Height: 3,
-							},
-						)
-					}(),
+					Storage: models.NewBoard(
+						models.Size{
+							Width:  3,
+							Height: 3,
+						},
+					),
 				},
 			},
 			wantState: tree.NodeState{
@@ -231,7 +229,7 @@ func TestRolloutSimulatorSimulate(
 							Row:    2,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -286,7 +284,7 @@ func TestRolloutSimulatorSimulate(
 							Row:    0,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,
@@ -359,7 +357,7 @@ func TestRolloutSimulatorSimulate(
 							Row:    1,
 						},
 					},
-					Board: func() models.Board {
+					Storage: func() models.StoneStorage {
 						board := models.NewBoard(
 							models.Size{
 								Width:  3,

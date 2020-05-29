@@ -35,7 +35,7 @@ func TestParallelSimulatorSimulate(
 				Move: models.Move{
 					Color: models.White,
 				},
-				Board: models.NewBoard(
+				Storage: models.NewBoard(
 					models.Size{
 						Width:  3,
 						Height: 3,
@@ -63,7 +63,7 @@ func TestParallelSimulatorSimulate(
 		Move: models.Move{
 			Color: models.White,
 		},
-		Board: models.NewBoard(
+		Storage: models.NewBoard(
 			models.Size{
 				Width:  3,
 				Height: 3,
