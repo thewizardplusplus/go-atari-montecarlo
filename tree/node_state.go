@@ -14,11 +14,10 @@ type NodeState struct {
 
 // NewNodeState ...
 //
-// Passed error should be
-// models.ErrAlreadyLoss or
-// models.ErrAlreadyWin only.
+// Passed error should be models.ErrAlreadyLoss or models.ErrAlreadyWin only.
 //
 // Otherwize the function will panic.
+//
 func NewNodeState(err error) NodeState {
 	state := NodeState{
 		GameCount: 1,
@@ -28,9 +27,7 @@ func NewNodeState(err error) NodeState {
 	case models.ErrAlreadyWin:
 		state.WinCount = 1
 	default:
-		panic(
-			"tree.NewNodeState: unsupported error",
-		)
+		panic("tree.NewNodeState: unsupported error")
 	}
 
 	return state
@@ -42,23 +39,19 @@ func (state NodeState) WinRate() float64 {
 		return math.Inf(+1)
 	}
 
-	return float64(state.WinCount) /
-		float64(state.GameCount)
+	return float64(state.WinCount) / float64(state.GameCount)
 }
 
 // Invert ...
 func (state NodeState) Invert() NodeState {
 	return NodeState{
 		GameCount: state.GameCount,
-		WinCount: state.GameCount -
-			state.WinCount,
+		WinCount:  state.GameCount - state.WinCount,
 	}
 }
 
 // Update ...
-func (state *NodeState) Update(
-	another NodeState,
-) {
+func (state *NodeState) Update(another NodeState) {
 	state.GameCount += another.GameCount
 	state.WinCount += another.WinCount
 }

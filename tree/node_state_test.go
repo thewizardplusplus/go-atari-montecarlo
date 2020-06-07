@@ -20,7 +20,7 @@ func TestNewNodeState(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				err: models.ErrAlreadyLoss,
 			},
@@ -30,7 +30,7 @@ func TestNewNodeState(test *testing.T) {
 			},
 			wantPanic: false,
 		},
-		data{
+		{
 			args: args{
 				err: models.ErrAlreadyWin,
 			},
@@ -40,7 +40,7 @@ func TestNewNodeState(test *testing.T) {
 			},
 			wantPanic: false,
 		},
-		data{
+		{
 			args: args{
 				err: errors.New("dummy"),
 			},
@@ -80,14 +80,14 @@ func TestNodeStateWinRate(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				gameCount: 4,
 				winCount:  2,
 			},
 			want: 0.5,
 		},
-		data{
+		{
 			fields: fields{
 				gameCount: 0,
 				winCount:  0,

@@ -20,7 +20,8 @@ type Node struct {
 
 // ShallowCopy ...
 //
-// It copies only the move and the board.
+// It copies only the move and the storage.
+//
 func (node *Node) ShallowCopy() *Node {
 	return &Node{
 		Move:    node.Move,
@@ -29,10 +30,9 @@ func (node *Node) ShallowCopy() *Node {
 }
 
 // UpdateState ...
-func (node *Node) UpdateState(
-	state NodeState,
-) {
+func (node *Node) UpdateState(state NodeState) {
 	node.State.Update(state)
+
 	if node.Parent != nil {
 		parentState := state.Invert()
 		node.Parent.UpdateState(parentState)
@@ -43,28 +43,21 @@ func (node *Node) UpdateState(
 //
 // It merges only states of children.
 //
-// If the argument hasn't children,
-// then this method does nothing.
+// If the argument hasn't children, then this method does nothing.
 //
-// If argument children don't contain
-// any node, then the latter isn't updated.
+// If argument children don't contain any node, then the latter isn't updated.
 //
-// If argument children contain
-// any additional node, then the latter
-// is ignored.
+// If argument children contain any additional node, then the latter is ignored.
 //
-// If this node hasn't children, it borrows
-// argument children.
-func (node *Node) MergeChildren(
-	another *Node,
-) {
+// If this node hasn't children, it borrows argument children.
+//
+func (node *Node) MergeChildren(another *Node) {
 	if len(node.Children) != 0 {
 		node.Children.Merge(another.Children)
 		return
 	}
 
-	// node hasn't children;
-	// borrow argument children
+	// node hasn't children; borrow argument children
 	node.Children = another.Children
 	for _, child := range node.Children {
 		child.Parent = node
@@ -72,29 +65,21 @@ func (node *Node) MergeChildren(
 }
 
 // SelectLeaf ...
-func (node *Node) SelectLeaf(
-	selector NodeSelector,
-) *Node {
+func (node *Node) SelectLeaf(selector NodeSelector) *Node {
 	for len(node.Children) > 0 {
-		node =
-			selector.SelectNode(node.Children)
+		node = selector.SelectNode(node.Children)
 	}
 
 	return node
 }
 
 // ExpandLeaf ...
-func (node *Node) ExpandLeaf(
-	generator models.Generator,
-) NodeGroup {
+func (node *Node) ExpandLeaf(generator models.Generator) NodeGroup {
 	if node.State.GameCount == 0 {
 		return NodeGroup{node}
 	}
 
-	moves, err := generator.LegalMoves(
-		node.Storage,
-		node.Move,
-	)
+	moves, err := generator.LegalMoves(node.Storage, node.Move)
 	if err != nil {
 		// no moves or an already finished game
 		return NodeGroup{node}

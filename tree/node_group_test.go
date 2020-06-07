@@ -18,7 +18,7 @@ func TestNewNodeGroup(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				parent: &Node{
 					Storage: func() models.StoneStorage {
@@ -29,23 +29,22 @@ func TestNewNodeGroup(test *testing.T) {
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
 									Row:    2,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -57,14 +56,14 @@ func TestNewNodeGroup(test *testing.T) {
 					},
 				},
 				moves: []models.Move{
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 2,
 							Row:    0,
 						},
 					},
-					models.Move{
+					{
 						Color: models.White,
 						Point: models.Point{
 							Column: 0,
@@ -84,25 +83,23 @@ func TestNewNodeGroup(test *testing.T) {
 								},
 							)
 
-							moves := []models.Move{
-								models.Move{
+							for _, move := range []models.Move{
+								{
 									Color: models.Black,
 									Point: models.Point{
 										Column: 0,
 										Row:    0,
 									},
 								},
-								models.Move{
+								{
 									Color: models.White,
 									Point: models.Point{
 										Column: 2,
 										Row:    2,
 									},
 								},
-							}
-							for _, move := range moves {
-								board =
-									board.ApplyMove(move)
+							} {
+								board = board.ApplyMove(move)
 							}
 
 							return board
@@ -127,30 +124,29 @@ func TestNewNodeGroup(test *testing.T) {
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 2,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
 									Row:    2,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -167,25 +163,23 @@ func TestNewNodeGroup(test *testing.T) {
 								},
 							)
 
-							moves := []models.Move{
-								models.Move{
+							for _, move := range []models.Move{
+								{
 									Color: models.Black,
 									Point: models.Point{
 										Column: 0,
 										Row:    0,
 									},
 								},
-								models.Move{
+								{
 									Color: models.White,
 									Point: models.Point{
 										Column: 2,
 										Row:    2,
 									},
 								},
-							}
-							for _, move := range moves {
-								board =
-									board.ApplyMove(move)
+							} {
+								board = board.ApplyMove(move)
 							}
 
 							return board
@@ -210,30 +204,29 @@ func TestNewNodeGroup(test *testing.T) {
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 0,
 									Row:    2,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
 									Row:    2,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -243,15 +236,9 @@ func TestNewNodeGroup(test *testing.T) {
 			},
 		},
 	} {
-		got := NewNodeGroup(
-			data.args.parent,
-			data.args.moves,
-		)
+		got := NewNodeGroup(data.args.parent, data.args.moves)
 
-		if !reflect.DeepEqual(
-			got,
-			data.want,
-		) {
+		if !reflect.DeepEqual(got, data.want) {
 			test.Fail()
 		}
 	}
@@ -268,7 +255,7 @@ func TestNodeGroupMerge(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			nodes: NodeGroup{
 				&Node{
 					Move: models.Move{
@@ -356,7 +343,7 @@ func TestNodeGroupMerge(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			nodes: NodeGroup{
 				&Node{
 					Move: models.Move{
@@ -457,7 +444,7 @@ func TestNodeGroupMerge(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			nodes: NodeGroup{
 				&Node{
 					Move: models.Move{
@@ -532,7 +519,7 @@ func TestNodeGroupMerge(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			nodes: NodeGroup{
 				&Node{
 					Move: models.Move{
@@ -596,10 +583,7 @@ func TestNodeGroupMerge(test *testing.T) {
 	} {
 		data.nodes.Merge(data.args.another)
 
-		if !reflect.DeepEqual(
-			data.nodes,
-			data.wantNodes,
-		) {
+		if !reflect.DeepEqual(data.nodes, data.wantNodes) {
 			test.Fail()
 		}
 	}

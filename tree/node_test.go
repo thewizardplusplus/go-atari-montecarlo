@@ -11,11 +11,7 @@ type MockNodeSelector struct {
 	selectNode func(nodes NodeGroup) *Node
 }
 
-func (
-	selector MockNodeSelector,
-) SelectNode(
-	nodes NodeGroup,
-) *Node {
+func (selector MockNodeSelector) SelectNode(nodes NodeGroup) *Node {
 	if selector.selectNode == nil {
 		panic("not implemented")
 	}
@@ -46,23 +42,22 @@ func TestNodeShallowCopy(test *testing.T) {
 				},
 			)
 
-			moves := []models.Move{
-				models.Move{
+			for _, move := range []models.Move{
+				{
 					Color: models.Black,
 					Point: models.Point{
 						Column: 0,
 						Row:    0,
 					},
 				},
-				models.Move{
+				{
 					Color: models.White,
 					Point: models.Point{
 						Column: 2,
 						Row:    2,
 					},
 				},
-			}
-			for _, move := range moves {
+			} {
 				board = board.ApplyMove(move)
 			}
 
@@ -89,10 +84,8 @@ func TestNodeShallowCopy(test *testing.T) {
 	}
 	got := node.ShallowCopy()
 
-	nodePointer :=
-		reflect.ValueOf(node).Pointer()
-	gotPointer :=
-		reflect.ValueOf(got).Pointer()
+	nodePointer := reflect.ValueOf(node).Pointer()
+	gotPointer := reflect.ValueOf(got).Pointer()
 	if gotPointer == nodePointer {
 		test.Fail()
 	}
@@ -113,23 +106,22 @@ func TestNodeShallowCopy(test *testing.T) {
 				},
 			)
 
-			moves := []models.Move{
-				models.Move{
+			for _, move := range []models.Move{
+				{
 					Color: models.Black,
 					Point: models.Point{
 						Column: 0,
 						Row:    0,
 					},
 				},
-				models.Move{
+				{
 					Color: models.White,
 					Point: models.Point{
 						Column: 2,
 						Row:    2,
 					},
 				},
-			}
-			for _, move := range moves {
+			} {
 				board = board.ApplyMove(move)
 			}
 
@@ -156,7 +148,7 @@ func TestNodeUpdateState(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				parent: nil,
 				state: NodeState{
@@ -178,7 +170,7 @@ func TestNodeUpdateState(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
 				parent: &Node{
 					Parent: &Node{
@@ -231,18 +223,13 @@ func TestNodeUpdateState(test *testing.T) {
 		}
 		node.UpdateState(data.args.state)
 
-		if !reflect.DeepEqual(
-			node,
-			data.wantNode,
-		) {
+		if !reflect.DeepEqual(node, data.wantNode) {
 			test.Fail()
 		}
 	}
 }
 
-func TestNodeMergeChildren(
-	test *testing.T,
-) {
+func TestNodeMergeChildren(test *testing.T) {
 	type fields struct {
 		state    NodeState
 		children NodeGroup
@@ -257,7 +244,7 @@ func TestNodeMergeChildren(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				children: NodeGroup{
 					&Node{
@@ -351,7 +338,7 @@ func TestNodeMergeChildren(
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
 				state: NodeState{
 					GameCount: 2,
@@ -443,10 +430,7 @@ func TestNodeMergeChildren(
 		}
 		node.MergeChildren(data.args.another)
 
-		if !reflect.DeepEqual(
-			node,
-			data.wantNode,
-		) {
+		if !reflect.DeepEqual(node, data.wantNode) {
 			test.Fail()
 		}
 	}
@@ -467,7 +451,7 @@ func TestNodeSelectLeaf(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				state: NodeState{
 					GameCount: 1,
@@ -504,9 +488,7 @@ func TestNodeSelectLeaf(test *testing.T) {
 			},
 			args: args{
 				selector: MockNodeSelector{
-					selectNode: func(
-						nodes NodeGroup,
-					) *Node {
+					selectNode: func(nodes NodeGroup) *Node {
 						checkOne := reflect.DeepEqual(
 							nodes,
 							NodeGroup{
@@ -570,7 +552,7 @@ func TestNodeSelectLeaf(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
 				state: NodeState{
 					GameCount: 1,
@@ -593,13 +575,9 @@ func TestNodeSelectLeaf(test *testing.T) {
 			State:    data.fields.state,
 			Children: data.fields.children,
 		}
-		got :=
-			node.SelectLeaf(data.args.selector)
+		got := node.SelectLeaf(data.args.selector)
 
-		if !reflect.DeepEqual(
-			got,
-			data.want,
-		) {
+		if !reflect.DeepEqual(got, data.want) {
 			test.Fail()
 		}
 	}
@@ -624,7 +602,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				move: models.Move{
 					Color: models.White,
@@ -641,23 +619,22 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					moves := []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
+					} {
 						board = board.ApplyMove(move)
 					}
 
@@ -701,23 +678,22 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					moves := []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
+					} {
 						board = board.ApplyMove(move)
 					}
 
@@ -758,23 +734,22 @@ func TestNodeExpandLeaf(test *testing.T) {
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
 									Row:    2,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -800,7 +775,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
 				move: models.Move{
 					Color: models.White,
@@ -817,8 +792,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					points := board.Size().Points()
-					for _, point := range points {
+					for _, point := range board.Size().Points() {
 						move := models.Move{
 							Color: models.White,
 							Point: point,
@@ -866,8 +840,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					points := board.Size().Points()
-					for _, point := range points {
+					for _, point := range board.Size().Points() {
 						move := models.Move{
 							Color: models.White,
 							Point: point,
@@ -912,8 +885,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 							},
 						)
 
-						points := board.Size().Points()
-						for _, point := range points {
+						for _, point := range board.Size().Points() {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -943,7 +915,7 @@ func TestNodeExpandLeaf(test *testing.T) {
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
 				move: models.Move{
 					Color: models.White,
@@ -960,23 +932,22 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					moves := []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
+					} {
 						board = board.ApplyMove(move)
 					}
 
@@ -1020,23 +991,22 @@ func TestNodeExpandLeaf(test *testing.T) {
 						},
 					)
 
-					moves := []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
+					} {
 						board = board.ApplyMove(move)
 					}
 
@@ -1052,88 +1022,83 @@ func TestNodeExpandLeaf(test *testing.T) {
 							Height: 3,
 						},
 					)
-					moves := []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
+					} {
 						board = board.ApplyMove(move)
 					}
 
 					var children NodeGroup
-					moves = []models.Move{
-						models.Move{
+					for _, move := range []models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 1,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 2,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    1,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 1,
 								Row:    1,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 2,
 								Row:    1,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    2,
 							},
 						},
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 1,
 								Row:    2,
 							},
 						},
-					}
-					for _, move := range moves {
-						board := board.ApplyMove(move)
+					} {
+						childBoard := board.ApplyMove(move)
 						child := &Node{
 							Move:    move,
-							Storage: board,
+							Storage: childBoard,
 						}
-						children = append(
-							children,
-							child,
-						)
+						children = append(children, child)
 					}
 
 					return children
@@ -1146,88 +1111,83 @@ func TestNodeExpandLeaf(test *testing.T) {
 						Height: 3,
 					},
 				)
-				moves := []models.Move{
-					models.Move{
+				for _, move := range []models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 0,
 							Row:    0,
 						},
 					},
-					models.Move{
+					{
 						Color: models.White,
 						Point: models.Point{
 							Column: 2,
 							Row:    2,
 						},
 					},
-				}
-				for _, move := range moves {
+				} {
 					board = board.ApplyMove(move)
 				}
 
 				var children NodeGroup
-				moves = []models.Move{
-					models.Move{
+				for _, move := range []models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 1,
 							Row:    0,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 2,
 							Row:    0,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 0,
 							Row:    1,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 1,
 							Row:    1,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 2,
 							Row:    1,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 0,
 							Row:    2,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 1,
 							Row:    2,
 						},
 					},
-				}
-				for _, move := range moves {
-					board := board.ApplyMove(move)
+				} {
+					childBoard := board.ApplyMove(move)
 					child := &Node{
 						Move:    move,
-						Storage: board,
+						Storage: childBoard,
 					}
-					children = append(
-						children,
-						child,
-					)
+					children = append(children, child)
 				}
 
 				return children
@@ -1240,16 +1200,12 @@ func TestNodeExpandLeaf(test *testing.T) {
 			State:    data.fields.state,
 			Children: data.fields.children,
 		}
-		got :=
-			node.ExpandLeaf(data.args.generator)
+		got := node.ExpandLeaf(data.args.generator)
 
 		// check and reset parents
 		if data.checkParents {
 			for _, child := range node.Children {
-				if !reflect.DeepEqual(
-					child.Parent,
-					node,
-				) {
+				if !reflect.DeepEqual(child.Parent, node) {
 					test.Fail()
 				}
 
@@ -1257,16 +1213,10 @@ func TestNodeExpandLeaf(test *testing.T) {
 			}
 		}
 
-		if !reflect.DeepEqual(
-			node,
-			data.wantOriginalNode,
-		) {
+		if !reflect.DeepEqual(node, data.wantOriginalNode) {
 			test.Fail()
 		}
-		if !reflect.DeepEqual(
-			got,
-			data.wantResultNodes,
-		) {
+		if !reflect.DeepEqual(got, data.wantResultNodes) {
 			test.Fail()
 		}
 	}
