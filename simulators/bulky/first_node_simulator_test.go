@@ -8,14 +8,10 @@ import (
 )
 
 type MockSimulator struct {
-	simulate func(
-		root *tree.Node,
-	) tree.NodeState
+	simulate func(root *tree.Node) tree.NodeState
 }
 
-func (simulator MockSimulator) Simulate(
-	root *tree.Node,
-) tree.NodeState {
+func (simulator MockSimulator) Simulate(root *tree.Node) tree.NodeState {
 	if simulator.simulate == nil {
 		panic("not implemented")
 	}
@@ -23,23 +19,16 @@ func (simulator MockSimulator) Simulate(
 	return simulator.simulate(root)
 }
 
-func TestFirstNodeSimulatorSimulate(
-	test *testing.T,
-) {
+func TestFirstNodeSimulatorSimulate(test *testing.T) {
 	innerSimulator := MockSimulator{
-		simulate: func(
-			root *tree.Node,
-		) tree.NodeState {
+		simulate: func(root *tree.Node) tree.NodeState {
 			expectedRoot := &tree.Node{
 				State: tree.NodeState{
 					GameCount: 2,
 					WinCount:  1,
 				},
 			}
-			if !reflect.DeepEqual(
-				root,
-				expectedRoot,
-			) {
+			if !reflect.DeepEqual(root, expectedRoot) {
 				test.Fail()
 			}
 
@@ -52,33 +41,31 @@ func TestFirstNodeSimulatorSimulate(
 	simulator := FirstNodeSimulator{
 		Simulator: innerSimulator,
 	}
-	gotStates := simulator.Simulate(
-		tree.NodeGroup{
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 2,
-					WinCount:  1,
+	gotStates := simulator.
+		Simulate(
+			tree.NodeGroup{
+				&tree.Node{
+					State: tree.NodeState{
+						GameCount: 2,
+						WinCount:  1,
+					},
+				},
+				&tree.Node{
+					State: tree.NodeState{
+						GameCount: 4,
+						WinCount:  3,
+					},
 				},
 			},
-			&tree.Node{
-				State: tree.NodeState{
-					GameCount: 4,
-					WinCount:  3,
-				},
-			},
-		},
-	)
+		)
 
 	wantStates := []tree.NodeState{
-		tree.NodeState{
+		{
 			GameCount: 6,
 			WinCount:  5,
 		},
 	}
-	if !reflect.DeepEqual(
-		gotStates,
-		wantStates,
-	) {
+	if !reflect.DeepEqual(gotStates, wantStates) {
 		test.Fail()
 	}
 }

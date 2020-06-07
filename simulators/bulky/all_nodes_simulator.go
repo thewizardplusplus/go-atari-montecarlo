@@ -18,18 +18,13 @@ func (simulator AllNodesSimulator) Simulate(
 	packedStates := syncutils.ParallelRun(
 		len(nodes),
 		func(index int) (result interface{}) {
-			return simulator.Simulator.
-				Simulate(nodes[index])
+			return simulator.Simulator.Simulate(nodes[index])
 		},
 	)
 
-	states :=
-		make([]tree.NodeState, 0, len(nodes))
+	states := make([]tree.NodeState, 0, len(nodes))
 	for _, packedState := range packedStates {
-		states = append(
-			states,
-			packedState.(tree.NodeState),
-		)
+		states = append(states, packedState.(tree.NodeState))
 	}
 
 	return states
