@@ -8,17 +8,13 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-type MockNodeScorer struct{}
+type WinRateNodeScorer struct{}
 
-func (scorer MockNodeScorer) ScoreNode(
-	node *tree.Node,
-) float64 {
+func (scorer WinRateNodeScorer) ScoreNode(node *tree.Node) float64 {
 	return node.State.WinRate()
 }
 
-func TestMaximalNodeSelectorSelectNode(
-	test *testing.T,
-) {
+func TestMaximalNodeSelectorSelectNode(test *testing.T) {
 	type fields struct {
 		nodeScorer NodeScorer
 	}
@@ -32,9 +28,9 @@ func TestMaximalNodeSelectorSelectNode(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
-				nodeScorer: MockNodeScorer{},
+				nodeScorer: WinRateNodeScorer{},
 			},
 			args: args{
 				nodes: tree.NodeGroup{
@@ -113,9 +109,9 @@ func TestMaximalNodeSelectorSelectNode(
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
-				nodeScorer: MockNodeScorer{},
+				nodeScorer: WinRateNodeScorer{},
 			},
 			args: args{
 				nodes: tree.NodeGroup{
@@ -194,9 +190,9 @@ func TestMaximalNodeSelectorSelectNode(
 				},
 			},
 		},
-		data{
+		{
 			fields: fields{
-				nodeScorer: MockNodeScorer{},
+				nodeScorer: WinRateNodeScorer{},
 			},
 			args: args{
 				nodes: tree.NodeGroup{
@@ -279,8 +275,7 @@ func TestMaximalNodeSelectorSelectNode(
 		selector := MaximalNodeSelector{
 			NodeScorer: data.fields.nodeScorer,
 		}
-		got :=
-			selector.SelectNode(data.args.nodes)
+		got := selector.SelectNode(data.args.nodes)
 
 		if !reflect.DeepEqual(got, data.want) {
 			test.Fail()

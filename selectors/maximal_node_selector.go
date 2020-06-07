@@ -17,21 +17,18 @@ type MaximalNodeSelector struct {
 }
 
 // SelectNode ...
-func (
-	selector MaximalNodeSelector,
-) SelectNode(
+func (selector MaximalNodeSelector) SelectNode(
 	nodes tree.NodeGroup,
 ) *tree.Node {
-	var maximum *tree.Node
-	maximumScore := math.Inf(-1)
+	var maximalNode *tree.Node
+	maximalNodeScore := math.Inf(-1)
 	for _, node := range nodes {
-		nodeScore :=
-			selector.NodeScorer.ScoreNode(node)
-		if nodeScore > maximumScore {
-			maximum = node
-			maximumScore = nodeScore
+		nodeScore := selector.NodeScorer.ScoreNode(node)
+		if nodeScore > maximalNodeScore {
+			maximalNode = node
+			maximalNodeScore = nodeScore
 		}
 	}
 
-	return maximum
+	return maximalNode
 }

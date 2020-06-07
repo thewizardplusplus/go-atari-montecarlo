@@ -10,11 +10,7 @@ import (
 type RandomMoveSelector struct{}
 
 // SelectMove ...
-func (
-	selector RandomMoveSelector,
-) SelectMove(
-	moves []models.Move,
-) models.Move {
+func (selector RandomMoveSelector) SelectMove(moves []models.Move) models.Move {
 	index := rand.Intn(len(moves))
 	return moves[index]
 }
