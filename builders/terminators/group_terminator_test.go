@@ -9,21 +9,15 @@ type MockBuildingTerminator struct {
 	isBuildingTerminated func(pass int) bool
 }
 
-func (
-	terminator MockBuildingTerminator,
-) IsBuildingTerminated(pass int) bool {
-	if terminator.
-		isBuildingTerminated == nil {
+func (terminator MockBuildingTerminator) IsBuildingTerminated(pass int) bool {
+	if terminator.isBuildingTerminated == nil {
 		panic("not implemented")
 	}
 
-	return terminator.
-		isBuildingTerminated(pass)
+	return terminator.isBuildingTerminated(pass)
 }
 
-func TestNewGroupTerminator(
-	test *testing.T,
-) {
+func TestNewGroupTerminator(test *testing.T) {
 	type args struct {
 		terminators []BuildingTerminator
 	}
@@ -32,46 +26,31 @@ func TestNewGroupTerminator(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{nil},
 		},
-		data{
+		{
 			args: args{
 				terminators: []BuildingTerminator{
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
-							panic("not implemented")
-						},
+						isBuildingTerminated: func(pass int) bool { panic("not implemented") },
 					},
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
-							panic("not implemented")
-						},
+						isBuildingTerminated: func(pass int) bool { panic("not implemented") },
 					},
 				},
 			},
 		},
 	} {
-		group := NewGroupTerminator(
-			data.args.terminators...,
-		)
+		group := NewGroupTerminator(data.args.terminators...)
 
-		if !reflect.DeepEqual(
-			group.terminators,
-			data.args.terminators,
-		) {
+		if !reflect.DeepEqual(group.terminators, data.args.terminators) {
 			test.Fail()
 		}
 	}
 }
 
-func TestGroupTerminatorIsBuildingTerminated(
-	test *testing.T,
-) {
+func TestGroupTerminatorIsBuildingTerminated(test *testing.T) {
 	type fields struct {
 		terminators []BuildingTerminator
 	}
@@ -85,18 +64,16 @@ func TestGroupTerminatorIsBuildingTerminated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{nil},
 			args:   args{5},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []BuildingTerminator{
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
+						isBuildingTerminated: func(pass int) bool {
 							if pass != 5 {
 								test.Fail()
 							}
@@ -105,9 +82,7 @@ func TestGroupTerminatorIsBuildingTerminated(
 						},
 					},
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
+						isBuildingTerminated: func(pass int) bool {
 							if pass != 5 {
 								test.Fail()
 							}
@@ -120,13 +95,11 @@ func TestGroupTerminatorIsBuildingTerminated(
 			args: args{5},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []BuildingTerminator{
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
+						isBuildingTerminated: func(pass int) bool {
 							if pass != 5 {
 								test.Fail()
 							}
@@ -135,11 +108,7 @@ func TestGroupTerminatorIsBuildingTerminated(
 						},
 					},
 					MockBuildingTerminator{
-						isBuildingTerminated: func(
-							pass int,
-						) bool {
-							panic("not implemented")
-						},
+						isBuildingTerminated: func(pass int) bool { panic("not implemented") },
 					},
 				},
 			},
@@ -150,9 +119,7 @@ func TestGroupTerminatorIsBuildingTerminated(
 		group := GroupTerminator{
 			terminators: data.fields.terminators,
 		}
-		got := group.IsBuildingTerminated(
-			data.args.pass,
-		)
+		got := group.IsBuildingTerminated(data.args.pass)
 
 		if got != data.want {
 			test.Fail()

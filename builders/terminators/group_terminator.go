@@ -11,20 +11,14 @@ type GroupTerminator struct {
 }
 
 // NewGroupTerminator ...
-func NewGroupTerminator(
-	terminators ...BuildingTerminator,
-) GroupTerminator {
+func NewGroupTerminator(terminators ...BuildingTerminator) GroupTerminator {
 	return GroupTerminator{terminators}
 }
 
 // IsBuildingTerminated ...
-func (
-	group GroupTerminator,
-) IsBuildingTerminated(pass int) bool {
-	terminators := group.terminators
-	for _, terminator := range terminators {
-		if terminator.
-			IsBuildingTerminated(pass) {
+func (group GroupTerminator) IsBuildingTerminated(pass int) bool {
+	for _, terminator := range group.terminators {
+		if terminator.IsBuildingTerminated(pass) {
 			return true
 		}
 	}

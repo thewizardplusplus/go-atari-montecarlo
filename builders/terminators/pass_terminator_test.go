@@ -4,9 +4,7 @@ import (
 	"testing"
 )
 
-func TestNewPassTerminator(
-	test *testing.T,
-) {
+func TestNewPassTerminator(test *testing.T) {
 	terminator := NewPassTerminator(5)
 
 	if terminator.maximalPass != 5 {
@@ -14,9 +12,7 @@ func TestNewPassTerminator(
 	}
 }
 
-func TestPassTerminatorIsBuildingTerminated(
-	test *testing.T,
-) {
+func TestPassTerminatorIsBuildingTerminated(test *testing.T) {
 	type fields struct {
 		maximalPass int
 	}
@@ -30,17 +26,17 @@ func TestPassTerminatorIsBuildingTerminated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{5},
 			args:   args{4},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{5},
 			args:   args{5},
 			want:   true,
 		},
-		data{
+		{
 			fields: fields{5},
 			args:   args{6},
 			want:   true,
@@ -49,9 +45,7 @@ func TestPassTerminatorIsBuildingTerminated(
 		terminator := PassTerminator{
 			maximalPass: data.fields.maximalPass,
 		}
-		got := terminator.IsBuildingTerminated(
-			data.args.pass,
-		)
+		got := terminator.IsBuildingTerminated(data.args.pass)
 
 		if got != data.want {
 			test.Fail()

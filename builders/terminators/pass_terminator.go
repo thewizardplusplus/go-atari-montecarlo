@@ -6,15 +6,11 @@ type PassTerminator struct {
 }
 
 // NewPassTerminator ...
-func NewPassTerminator(
-	maximalPass int,
-) PassTerminator {
+func NewPassTerminator(maximalPass int) PassTerminator {
 	return PassTerminator{maximalPass}
 }
 
 // IsBuildingTerminated ...
-func (
-	terminator PassTerminator,
-) IsBuildingTerminated(pass int) bool {
+func (terminator PassTerminator) IsBuildingTerminated(pass int) bool {
 	return pass >= terminator.maximalPass
 }

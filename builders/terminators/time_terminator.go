@@ -27,12 +27,8 @@ func NewTimeTerminator(
 }
 
 // IsBuildingTerminated ...
-func (
-	terminator TimeTerminator,
-) IsBuildingTerminated(pass int) bool {
+func (terminator TimeTerminator) IsBuildingTerminated(pass int) bool {
 	currentTime := terminator.clock()
-	elapsedTime :=
-		currentTime.Sub(terminator.startTime)
-	return elapsedTime >=
-		terminator.maximalDuration
+	elapsedTime := currentTime.Sub(terminator.startTime)
+	return elapsedTime >= terminator.maximalDuration
 }
