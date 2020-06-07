@@ -7,9 +7,7 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-func TestUCBScorerScoreNode(
-	test *testing.T,
-) {
+func TestUCBScorerScoreNode(test *testing.T) {
 	type fields struct {
 		factor float64
 	}
@@ -23,7 +21,7 @@ func TestUCBScorerScoreNode(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				factor: 2,
 			},
@@ -43,7 +41,7 @@ func TestUCBScorerScoreNode(
 			},
 			want: 1.98,
 		},
-		data{
+		{
 			fields: fields{
 				factor: 2,
 			},
@@ -63,7 +61,7 @@ func TestUCBScorerScoreNode(
 			},
 			want: math.Inf(+1),
 		},
-		data{
+		{
 			fields: fields{
 				factor: 2,
 			},
@@ -88,8 +86,8 @@ func TestUCBScorerScoreNode(
 			Factor: data.fields.factor,
 		}
 		got := scorer.ScoreNode(data.args.node)
-
 		roundedGot := math.Floor(got*100) / 100
+
 		if roundedGot != data.want {
 			test.Fail()
 		}
