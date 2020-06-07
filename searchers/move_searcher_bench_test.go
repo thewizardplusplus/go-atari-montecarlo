@@ -43,14 +43,13 @@ func search(
 	settings searchSettings,
 ) (models.Move, error) {
 	generator := models.MoveGenerator{}
-	randomSelector :=
-		selectors.RandomMoveSelector{}
-	generalSelector :=
-		selectors.MaximalNodeSelector{
-			NodeScorer: scorers.UCBScorer{
-				Factor: ucbFactor,
-			},
-		}
+
+	randomSelector := selectors.RandomMoveSelector{}
+	generalSelector := selectors.MaximalNodeSelector{
+		NodeScorer: scorers.UCBScorer{
+			Factor: ucbFactor,
+		},
+	}
 
 	var simulator simulators.Simulator
 	simulator = simulators.RolloutSimulator{
@@ -58,31 +57,25 @@ func search(
 		MoveSelector:  randomSelector,
 	}
 	if settings.parallelSimulator {
-		simulator =
-			simulators.ParallelSimulator{
-				Simulator:   simulator,
-				Concurrency: runtime.NumCPU(),
-			}
+		simulator = simulators.ParallelSimulator{
+			Simulator:   simulator,
+			Concurrency: runtime.NumCPU(),
+		}
 	}
 
 	var bulkySimulator builders.BulkySimulator
 	if !settings.parallelBulkySimulator {
-		bulkySimulator =
-			bulky.FirstNodeSimulator{
-				Simulator: simulator,
-			}
+		bulkySimulator = bulky.FirstNodeSimulator{
+			Simulator: simulator,
+		}
 	} else {
-		bulkySimulator =
-			bulky.AllNodesSimulator{
-				Simulator: simulator,
-			}
+		bulkySimulator = bulky.AllNodesSimulator{
+			Simulator: simulator,
+		}
 	}
 
 	var builder builders.Builder
-	terminator :=
-		terminators.NewPassTerminator(
-			settings.maximalPass,
-		)
+	terminator := terminators.NewPassTerminator(settings.maximalPass)
 	builder = builders.IterativeBuilder{
 		Builder: builders.TreeBuilder{
 			NodeSelector:  generalSelector,
@@ -99,8 +92,7 @@ func search(
 	}
 
 	root := &tree.Node{
-		Move: models.
-			NewPreliminaryMove(color),
+		Move:    models.NewPreliminaryMove(color),
 		Storage: storage,
 	}
 	searcher := searchers.MoveSearcher{
@@ -116,9 +108,7 @@ func search(
 	return node.Move, nil
 }
 
-func BenchmarkSearch_with5Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_5Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -130,9 +120,7 @@ func BenchmarkSearch_with5Passes(
 	}
 }
 
-func BenchmarkSearch_with10Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_10Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -144,9 +132,7 @@ func BenchmarkSearch_with10Passes(
 	}
 }
 
-func BenchmarkSearch_with15Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_15Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -158,9 +144,7 @@ func BenchmarkSearch_with15Passes(
 	}
 }
 
-func BenchmarkSearch_with20Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_20Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -172,9 +156,7 @@ func BenchmarkSearch_with20Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelSimulatorAnd5Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_5PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -187,9 +169,7 @@ func BenchmarkSearch_withParallelSimulatorAnd5Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelSimulatorAnd10Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_10PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -202,9 +182,7 @@ func BenchmarkSearch_withParallelSimulatorAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelSimulatorAnd15Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_15PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -217,9 +195,7 @@ func BenchmarkSearch_withParallelSimulatorAnd15Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelSimulatorAnd20Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_20PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -232,7 +208,7 @@ func BenchmarkSearch_withParallelSimulatorAnd20Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
+func BenchmarkSearch_5PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
@@ -247,7 +223,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd5Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
+func BenchmarkSearch_10PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
@@ -262,7 +238,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
+func BenchmarkSearch_15PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
@@ -277,7 +253,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd15Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
+func BenchmarkSearch_20PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
@@ -292,9 +268,7 @@ func BenchmarkSearch_withParallelBulkySimulatorAnd20Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBuilderAnd5Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_5PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -307,9 +281,7 @@ func BenchmarkSearch_withParallelBuilderAnd5Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBuilderAnd10Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_10PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -322,9 +294,7 @@ func BenchmarkSearch_withParallelBuilderAnd10Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBuilderAnd15Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_15PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,
@@ -337,9 +307,7 @@ func BenchmarkSearch_withParallelBuilderAnd15Passes(
 	}
 }
 
-func BenchmarkSearch_withParallelBuilderAnd20Passes(
-	benchmark *testing.B,
-) {
+func BenchmarkSearch_20PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		search(
 			initialBoard,

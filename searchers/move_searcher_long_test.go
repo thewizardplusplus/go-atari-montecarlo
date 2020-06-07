@@ -22,21 +22,20 @@ func TestSearch(test *testing.T) {
 		wantErr   error
 	}
 
-	settingGroup := []searchSettings{
-		searchSettings{},
-		searchSettings{
+	for _, settings := range []searchSettings{
+		{},
+		{
 			parallelSimulator: true,
 		},
-		searchSettings{
+		{
 			parallelBulkySimulator: true,
 		},
-		searchSettings{
+		{
 			parallelBuilder: true,
 		},
-	}
-	for _, settings := range settingGroup {
+	} {
 		for _, data := range []data{
-			data{
+			{
 				args: args{
 					storage: func() models.StoneStorage {
 						board := models.NewBoard(
@@ -46,8 +45,7 @@ func TestSearch(test *testing.T) {
 							},
 						)
 
-						points := board.Size().Points()
-						for _, point := range points {
+						for _, point := range board.Size().Points() {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -60,12 +58,10 @@ func TestSearch(test *testing.T) {
 					color:       models.Black,
 					maximalPass: 2,
 				},
-				wantMoves: []models.Move{
-					models.Move{},
-				},
-				wantErr: models.ErrAlreadyWin,
+				wantMoves: []models.Move{{}},
+				wantErr:   models.ErrAlreadyWin,
 			},
-			data{
+			{
 				args: args{
 					storage: func() models.StoneStorage {
 						board := models.NewBoard(
@@ -76,9 +72,7 @@ func TestSearch(test *testing.T) {
 						)
 
 						points := board.Size().Points()
-						points = points[:len(points)-1]
-
-						for _, point := range points {
+						for _, point := range points[:len(points)-1] {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -91,13 +85,10 @@ func TestSearch(test *testing.T) {
 					color:       models.Black,
 					maximalPass: 1,
 				},
-				wantMoves: []models.Move{
-					models.Move{},
-				},
-				wantErr: searchers.
-					ErrFailedBuilding,
+				wantMoves: []models.Move{{}},
+				wantErr:   searchers.ErrFailedBuilding,
 			},
-			data{
+			{
 				args: args{
 					storage: func() models.StoneStorage {
 						board := models.NewBoard(
@@ -108,9 +99,7 @@ func TestSearch(test *testing.T) {
 						)
 
 						points := board.Size().Points()
-						points = points[:len(points)-1]
-
-						for _, point := range points {
+						for _, point := range points[:len(points)-1] {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -124,7 +113,7 @@ func TestSearch(test *testing.T) {
 					maximalPass: 2,
 				},
 				wantMoves: []models.Move{
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 2,
@@ -134,7 +123,7 @@ func TestSearch(test *testing.T) {
 				},
 				wantErr: nil,
 			},
-			data{
+			{
 				args: args{
 					storage: func() models.StoneStorage {
 						board := models.NewBoard(
@@ -146,16 +135,15 @@ func TestSearch(test *testing.T) {
 
 						points := board.Size().Points()
 						opponentIndex := len(points) - 3
-						opponentPoint :=
-							points[opponentIndex]
-						board =
-							board.ApplyMove(models.Move{
-								Color: models.White,
-								Point: opponentPoint,
-							})
+						board = board.
+							ApplyMove(
+								models.Move{
+									Color: models.White,
+									Point: points[opponentIndex],
+								},
+							)
 
-						points = points[:opponentIndex]
-						for _, point := range points {
+						for _, point := range points[:opponentIndex] {
 							move := models.Move{
 								Color: models.Black,
 								Point: point,
@@ -169,7 +157,7 @@ func TestSearch(test *testing.T) {
 					maximalPass: 1000,
 				},
 				wantMoves: []models.Move{
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 1,
@@ -179,7 +167,7 @@ func TestSearch(test *testing.T) {
 				},
 				wantErr: nil,
 			},
-			data{
+			{
 				args: args{
 					storage: func() models.StoneStorage {
 						board := models.NewBoard(
@@ -189,51 +177,50 @@ func TestSearch(test *testing.T) {
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    1,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 1,
 									Row:    1,
 								},
 							},
-							models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 2,
 									Row:    1,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 0,
 									Row:    2,
 								},
 							},
-							models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 1,
 									Row:    2,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
 									Row:    2,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -243,21 +230,21 @@ func TestSearch(test *testing.T) {
 					maximalPass: 1000,
 				},
 				wantMoves: []models.Move{
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 1,
 							Row:    0,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 0,
 							Row:    3,
 						},
 					},
-					models.Move{
+					{
 						Color: models.Black,
 						Point: models.Point{
 							Column: 2,
@@ -268,21 +255,13 @@ func TestSearch(test *testing.T) {
 				wantErr: nil,
 			},
 		} {
-			settings.maximalPass =
-				data.args.maximalPass
+			settings.maximalPass = data.args.maximalPass
 
-			gotMove, gotErr := search(
-				data.args.storage,
-				data.args.color,
-				settings,
-			)
+			gotMove, gotErr := search(data.args.storage, data.args.color, settings)
 
 			var hasMatch bool
 			for _, move := range data.wantMoves {
-				if reflect.DeepEqual(
-					gotMove,
-					move,
-				) {
+				if reflect.DeepEqual(gotMove, move) {
 					hasMatch = true
 					break
 				}

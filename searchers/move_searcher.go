@@ -10,9 +10,7 @@ import (
 
 // ...
 var (
-	ErrFailedBuilding = errors.New(
-		"failed building",
-	)
+	ErrFailedBuilding = errors.New("failed building")
 )
 
 // MoveSearcher ...
@@ -24,15 +22,11 @@ type MoveSearcher struct {
 
 // SearchMove ...
 //
-// Returned error can be
-// models.ErrAlreadyLoss,
-// models.ErrAlreadyWin or
+// Returned error can be models.ErrAlreadyLoss, models.ErrAlreadyWin or
 // ErrFailedBuilding only.
-func (searcher MoveSearcher) SearchMove(
-	root *tree.Node,
-) (*tree.Node, error) {
-	_, err := searcher.MoveGenerator.
-		LegalMoves(root.Storage, root.Move)
+//
+func (searcher MoveSearcher) SearchMove(root *tree.Node) (*tree.Node, error) {
+	_, err := searcher.MoveGenerator.LegalMoves(root.Storage, root.Move)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +36,6 @@ func (searcher MoveSearcher) SearchMove(
 		return nil, ErrFailedBuilding
 	}
 
-	node := searcher.NodeSelector.
-		SelectNode(root.Children)
+	node := searcher.NodeSelector.SelectNode(root.Children)
 	return node, nil
 }

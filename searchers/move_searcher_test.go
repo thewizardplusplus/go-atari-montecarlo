@@ -13,9 +13,7 @@ type MockBuilder struct {
 	pass func(root *tree.Node)
 }
 
-func (builder MockBuilder) Pass(
-	root *tree.Node,
-) {
+func (builder MockBuilder) Pass(root *tree.Node) {
 	if builder.pass == nil {
 		panic("not implemented")
 	}
@@ -24,14 +22,10 @@ func (builder MockBuilder) Pass(
 }
 
 type MockNodeSelector struct {
-	selectNode func(
-		nodes tree.NodeGroup,
-	) *tree.Node
+	selectNode func(nodes tree.NodeGroup) *tree.Node
 }
 
-func (selector MockNodeSelector) SelectNode(
-	nodes tree.NodeGroup,
-) *tree.Node {
+func (selector MockNodeSelector) SelectNode(nodes tree.NodeGroup) *tree.Node {
 	if selector.selectNode == nil {
 		panic("not implemented")
 	}
@@ -39,9 +33,7 @@ func (selector MockNodeSelector) SelectNode(
 	return selector.selectNode(nodes)
 }
 
-func TestMoveSearcherSearchMove(
-	test *testing.T,
-) {
+func TestMoveSearcherSearchMove(test *testing.T) {
 	type fields struct {
 		moveGenerator models.Generator
 		builder       builders.Builder
@@ -58,19 +50,14 @@ func TestMoveSearcherSearchMove(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				builder: MockBuilder{
-					pass: func(root *tree.Node) {
-						panic("not implemented")
-					},
+					pass: func(root *tree.Node) { panic("not implemented") },
 				},
 				nodeSelector: MockNodeSelector{
-					selectNode: func(
-						nodes tree.NodeGroup,
-					) *tree.Node {
+					selectNode: func(nodes tree.NodeGroup) *tree.Node {
 						panic("not implemented")
 					},
 				},
@@ -92,8 +79,7 @@ func TestMoveSearcherSearchMove(
 							},
 						)
 
-						points := board.Size().Points()
-						for _, point := range points {
+						for _, point := range board.Size().Points() {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -112,10 +98,9 @@ func TestMoveSearcherSearchMove(
 			wantNode: nil,
 			wantErr:  models.ErrAlreadyWin,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
@@ -134,10 +119,7 @@ func TestMoveSearcherSearchMove(
 								WinCount:  1,
 							},
 						}
-						if !reflect.DeepEqual(
-							root,
-							expectedRoot,
-						) {
+						if !reflect.DeepEqual(root, expectedRoot) {
 							test.Fail()
 						}
 
@@ -145,9 +127,7 @@ func TestMoveSearcherSearchMove(
 					},
 				},
 				nodeSelector: MockNodeSelector{
-					selectNode: func(
-						nodes tree.NodeGroup,
-					) *tree.Node {
+					selectNode: func(nodes tree.NodeGroup) *tree.Node {
 						panic("not implemented")
 					},
 				},
@@ -173,10 +153,9 @@ func TestMoveSearcherSearchMove(
 			wantNode: nil,
 			wantErr:  ErrFailedBuilding,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
 						expectedRoot := &tree.Node{
@@ -195,15 +174,11 @@ func TestMoveSearcherSearchMove(
 								WinCount:  1,
 							},
 						}
-						if !reflect.DeepEqual(
-							root,
-							expectedRoot,
-						) {
+						if !reflect.DeepEqual(root, expectedRoot) {
 							test.Fail()
 						}
 
-						// add few children
-						// to the passed node
+						// add few children to the passed node
 						root.Children = tree.NodeGroup{
 							&tree.Node{
 								State: tree.NodeState{
@@ -221,9 +196,7 @@ func TestMoveSearcherSearchMove(
 					},
 				},
 				nodeSelector: MockNodeSelector{
-					selectNode: func(
-						nodes tree.NodeGroup,
-					) *tree.Node {
+					selectNode: func(nodes tree.NodeGroup) *tree.Node {
 						expectedNodes := tree.NodeGroup{
 							&tree.Node{
 								State: tree.NodeState{
@@ -238,10 +211,7 @@ func TestMoveSearcherSearchMove(
 								},
 							},
 						}
-						if !reflect.DeepEqual(
-							nodes,
-							expectedNodes,
-						) {
+						if !reflect.DeepEqual(nodes, expectedNodes) {
 							test.Fail()
 						}
 
@@ -277,19 +247,13 @@ func TestMoveSearcherSearchMove(
 		},
 	} {
 		searcher := MoveSearcher{
-			MoveGenerator: data.fields.
-				moveGenerator,
-			Builder: data.fields.builder,
-			NodeSelector: data.fields.
-				nodeSelector,
+			MoveGenerator: data.fields.moveGenerator,
+			Builder:       data.fields.builder,
+			NodeSelector:  data.fields.nodeSelector,
 		}
-		gotNode, gotErr :=
-			searcher.SearchMove(data.args.root)
+		gotNode, gotErr := searcher.SearchMove(data.args.root)
 
-		if !reflect.DeepEqual(
-			gotNode,
-			data.wantNode,
-		) {
+		if !reflect.DeepEqual(gotNode, data.wantNode) {
 			test.Fail()
 		}
 		if gotErr != data.wantErr {
