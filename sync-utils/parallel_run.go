@@ -5,15 +5,10 @@ import (
 )
 
 // Task ...
-type Task func(
-	index int,
-) (result interface{})
+type Task func(index int) (result interface{})
 
 // ParallelRun ...
-func ParallelRun(
-	concurrency int,
-	task Task,
-) (results []interface{}) {
+func ParallelRun(concurrency int, task Task) (results []interface{}) {
 	var waiter sync.WaitGroup
 	waiter.Add(concurrency)
 
