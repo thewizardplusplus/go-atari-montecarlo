@@ -12,9 +12,7 @@ type MockBuilder struct {
 	pass func(root *tree.Node)
 }
 
-func (builder MockBuilder) Pass(
-	root *tree.Node,
-) {
+func (builder MockBuilder) Pass(root *tree.Node) {
 	if builder.pass == nil {
 		panic("not implemented")
 	}
@@ -26,31 +24,18 @@ type MockBuildingTerminator struct {
 	isBuildingTerminated func(pass int) bool
 }
 
-func (
-	terminator MockBuildingTerminator,
-) IsBuildingTerminated(pass int) bool {
-	if terminator.
-		isBuildingTerminated == nil {
+func (terminator MockBuildingTerminator) IsBuildingTerminated(pass int) bool {
+	if terminator.isBuildingTerminated == nil {
 		panic("not implemented")
 	}
 
-	return terminator.
-		isBuildingTerminated(pass)
+	return terminator.isBuildingTerminated(pass)
 }
 
-func (
-	terminator MockBuildingTerminator,
-) Reset() {
-	panic("not implemented")
-}
-
-func TestIterativeBuilderPass(
-	test *testing.T,
-) {
+func TestIterativeBuilderPass(test *testing.T) {
 	type fields struct {
 		builder    Builder
-		terminator terminators.
-				BuildingTerminator
+		terminator terminators.BuildingTerminator
 	}
 	type args struct {
 		root *tree.Node
@@ -63,7 +48,7 @@ func TestIterativeBuilderPass(
 
 	var passCount int
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
@@ -75,18 +60,13 @@ func TestIterativeBuilderPass(
 								WinCount:  1,
 							},
 						}
-						if !reflect.DeepEqual(
-							root,
-							expectedRoot,
-						) {
+						if !reflect.DeepEqual(root, expectedRoot) {
 							test.Fail()
 						}
 					},
 				},
 				terminator: MockBuildingTerminator{
-					isBuildingTerminated: func(
-						pass int,
-					) bool {
+					isBuildingTerminated: func(pass int) bool {
 						if pass != passCount {
 							test.Fail()
 						}
@@ -105,7 +85,7 @@ func TestIterativeBuilderPass(
 			},
 			wantPassCount: 0,
 		},
-		data{
+		{
 			fields: fields{
 				builder: MockBuilder{
 					pass: func(root *tree.Node) {
@@ -117,18 +97,13 @@ func TestIterativeBuilderPass(
 								WinCount:  1,
 							},
 						}
-						if !reflect.DeepEqual(
-							root,
-							expectedRoot,
-						) {
+						if !reflect.DeepEqual(root, expectedRoot) {
 							test.Fail()
 						}
 					},
 				},
 				terminator: MockBuildingTerminator{
-					isBuildingTerminated: func(
-						pass int,
-					) bool {
+					isBuildingTerminated: func(pass int) bool {
 						if pass != passCount {
 							test.Fail()
 						}

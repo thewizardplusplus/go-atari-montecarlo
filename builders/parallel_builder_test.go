@@ -8,9 +8,7 @@ import (
 	"github.com/thewizardplusplus/go-atari-montecarlo/tree"
 )
 
-func TestParallelBuilderPass(
-	test *testing.T,
-) {
+func TestParallelBuilderPass(test *testing.T) {
 	root := &tree.Node{
 		Move: models.Move{
 			Color: models.White,
@@ -28,14 +26,14 @@ func TestParallelBuilderPass(
 			)
 
 			moves := []models.Move{
-				models.Move{
+				{
 					Color: models.Black,
 					Point: models.Point{
 						Column: 0,
 						Row:    0,
 					},
 				},
-				models.Move{
+				{
 					Color: models.White,
 					Point: models.Point{
 						Column: 2,
@@ -97,14 +95,14 @@ func TestParallelBuilderPass(
 					)
 
 					moves := []models.Move{
-						models.Move{
+						{
 							Color: models.Black,
 							Point: models.Point{
 								Column: 0,
 								Row:    0,
 							},
 						},
-						models.Move{
+						{
 							Color: models.White,
 							Point: models.Point{
 								Column: 2,
@@ -119,10 +117,7 @@ func TestParallelBuilderPass(
 					return board
 				}(),
 			}
-			if !reflect.DeepEqual(
-				root,
-				expectedRoot,
-			) {
+			if !reflect.DeepEqual(root, expectedRoot) {
 				test.Fail()
 			}
 
@@ -179,14 +174,14 @@ func TestParallelBuilderPass(
 			)
 
 			moves := []models.Move{
-				models.Move{
+				{
 					Color: models.Black,
 					Point: models.Point{
 						Column: 0,
 						Row:    0,
 					},
 				},
-				models.Move{
+				{
 					Color: models.White,
 					Point: models.Point{
 						Column: 2,
@@ -229,10 +224,7 @@ func TestParallelBuilderPass(
 			},
 		},
 	}
-	if !reflect.DeepEqual(
-		root,
-		wantRoot,
-	) {
+	if !reflect.DeepEqual(root, wantRoot) {
 		test.Fail()
 	}
 }

@@ -9,14 +9,10 @@ import (
 )
 
 type MockNodeSelector struct {
-	selectNode func(
-		nodes tree.NodeGroup,
-	) *tree.Node
+	selectNode func(nodes tree.NodeGroup) *tree.Node
 }
 
-func (selector MockNodeSelector) SelectNode(
-	nodes tree.NodeGroup,
-) *tree.Node {
+func (selector MockNodeSelector) SelectNode(nodes tree.NodeGroup) *tree.Node {
 	if selector.selectNode == nil {
 		panic("not implemented")
 	}
@@ -25,14 +21,10 @@ func (selector MockNodeSelector) SelectNode(
 }
 
 type MockBulkySimulator struct {
-	simulate func(
-		nodes tree.NodeGroup,
-	) []tree.NodeState
+	simulate func(nodes tree.NodeGroup) []tree.NodeState
 }
 
-func (
-	simulator MockBulkySimulator,
-) Simulate(
+func (simulator MockBulkySimulator) Simulate(
 	nodes tree.NodeGroup,
 ) []tree.NodeState {
 	if simulator.simulate == nil {
@@ -58,27 +50,20 @@ func TestTreeBuilderPass(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				nodeSelector: MockNodeSelector{
-					selectNode: func(
-						nodes tree.NodeGroup,
-					) *tree.Node {
-						return nodes[0]
-					},
+					selectNode: func(nodes tree.NodeGroup) *tree.Node { return nodes[0] },
 				},
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				simulator: MockBulkySimulator{
-					simulate: func(
-						nodes tree.NodeGroup,
-					) []tree.NodeState {
+					simulate: func(nodes tree.NodeGroup) []tree.NodeState {
 						return []tree.NodeState{
-							tree.NodeState{
+							{
 								GameCount: 5,
 								WinCount:  4,
 							},
-							tree.NodeState{
+							{
 								GameCount: 7,
 								WinCount:  6,
 							},
@@ -105,14 +90,14 @@ func TestTreeBuilderPass(test *testing.T) {
 							)
 
 							moves := []models.Move{
-								models.Move{
+								{
 									Color: models.Black,
 									Point: models.Point{
 										Column: 0,
 										Row:    0,
 									},
 								},
-								models.Move{
+								{
 									Color: models.White,
 									Point: models.Point{
 										Column: 2,
@@ -121,8 +106,7 @@ func TestTreeBuilderPass(test *testing.T) {
 								},
 							}
 							for _, move := range moves {
-								board =
-									board.ApplyMove(move)
+								board = board.ApplyMove(move)
 							}
 
 							return board
@@ -142,13 +126,15 @@ func TestTreeBuilderPass(test *testing.T) {
 							},
 						},
 						Storage: root.Storage.
-							ApplyMove(models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 1,
-								Row:    0,
-							},
-						}),
+							ApplyMove(
+								models.Move{
+									Color: models.Black,
+									Point: models.Point{
+										Column: 1,
+										Row:    0,
+									},
+								},
+							),
 						State: tree.NodeState{
 							GameCount: 2,
 							WinCount:  1,
@@ -164,13 +150,15 @@ func TestTreeBuilderPass(test *testing.T) {
 							},
 						},
 						Storage: root.Storage.
-							ApplyMove(models.Move{
-							Color: models.Black,
-							Point: models.Point{
-								Column: 1,
-								Row:    2,
-							},
-						}),
+							ApplyMove(
+								models.Move{
+									Color: models.Black,
+									Point: models.Point{
+										Column: 1,
+										Row:    2,
+									},
+								},
+							),
 						State: tree.NodeState{
 							GameCount: 3,
 							WinCount:  2,
@@ -202,14 +190,14 @@ func TestTreeBuilderPass(test *testing.T) {
 						)
 
 						moves := []models.Move{
-							models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 2,
@@ -218,8 +206,7 @@ func TestTreeBuilderPass(test *testing.T) {
 							},
 						}
 						for _, move := range moves {
-							board =
-								board.ApplyMove(move)
+							board = board.ApplyMove(move)
 						}
 
 						return board
@@ -240,13 +227,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: root.Storage.
-						ApplyMove(models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 1,
-							Row:    0,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.Black,
+								Point: models.Point{
+									Column: 1,
+									Row:    0,
+								},
+							},
+						),
 					State: tree.NodeState{
 						GameCount: 14,
 						WinCount:  11,
@@ -262,13 +251,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: root.Storage.
-						ApplyMove(models.Move{
-						Color: models.Black,
-						Point: models.Point{
-							Column: 1,
-							Row:    2,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.Black,
+								Point: models.Point{
+									Column: 1,
+									Row:    2,
+								},
+							},
+						),
 					State: tree.NodeState{
 						GameCount: 3,
 						WinCount:  2,
@@ -285,13 +276,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 2,
-							Row:    0,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    0,
+								},
+							},
+						),
 					State: tree.NodeState{
 						GameCount: 5,
 						WinCount:  1,
@@ -307,13 +300,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    1,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    1,
+								},
+							},
+						),
 					State: tree.NodeState{
 						GameCount: 7,
 						WinCount:  1,
@@ -329,13 +324,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 1,
-							Row:    1,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    1,
+								},
+							},
+						),
 				}
 				childOneFour := &tree.Node{
 					Parent: childOne,
@@ -347,13 +344,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 2,
-							Row:    1,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 2,
+									Row:    1,
+								},
+							},
+						),
 				}
 				childOneFive := &tree.Node{
 					Parent: childOne,
@@ -365,13 +364,15 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 0,
-							Row:    2,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 0,
+									Row:    2,
+								},
+							},
+						),
 				}
 				childOneSix := &tree.Node{
 					Parent: childOne,
@@ -383,19 +384,18 @@ func TestTreeBuilderPass(test *testing.T) {
 						},
 					},
 					Storage: childOne.Storage.
-						ApplyMove(models.Move{
-						Color: models.White,
-						Point: models.Point{
-							Column: 1,
-							Row:    2,
-						},
-					}),
+						ApplyMove(
+							models.Move{
+								Color: models.White,
+								Point: models.Point{
+									Column: 1,
+									Row:    2,
+								},
+							},
+						),
 				}
 
-				root.Children = tree.NodeGroup{
-					childOne,
-					childTwo,
-				}
+				root.Children = tree.NodeGroup{childOne, childTwo}
 				childOne.Children = tree.NodeGroup{
 					childOneOne,
 					childOneTwo,
@@ -410,18 +410,13 @@ func TestTreeBuilderPass(test *testing.T) {
 		},
 	} {
 		builder := TreeBuilder{
-			NodeSelector: data.fields.
-				nodeSelector,
-			MoveGenerator: data.fields.
-				moveGenerator,
-			Simulator: data.fields.simulator,
+			NodeSelector:  data.fields.nodeSelector,
+			MoveGenerator: data.fields.moveGenerator,
+			Simulator:     data.fields.simulator,
 		}
 		builder.Pass(data.args.root)
 
-		if !reflect.DeepEqual(
-			data.args.root,
-			data.wantRoot,
-		) {
+		if !reflect.DeepEqual(data.args.root, data.wantRoot) {
 			test.Fail()
 		}
 	}

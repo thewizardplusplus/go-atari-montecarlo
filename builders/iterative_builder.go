@@ -17,11 +17,9 @@ type IterativeBuilder struct {
 }
 
 // Pass ...
-func (builder IterativeBuilder) Pass(
-	root *tree.Node,
-) {
-	for pass := 0; !builder.Terminator.
-		IsBuildingTerminated(pass); pass++ {
+func (builder IterativeBuilder) Pass(root *tree.Node) {
+	isBuildingTerminated := builder.Terminator.IsBuildingTerminated
+	for pass := 0; !isBuildingTerminated(pass); pass++ {
 		builder.Builder.Pass(root)
 	}
 }

@@ -12,9 +12,7 @@ type ParallelBuilder struct {
 }
 
 // Pass ...
-func (builder ParallelBuilder) Pass(
-	root *tree.Node,
-) {
+func (builder ParallelBuilder) Pass(root *tree.Node) {
 	roots := syncutils.ParallelRun(
 		builder.Concurrency,
 		func(index int) (result interface{}) {
