@@ -51,7 +51,7 @@ func search(
 		},
 	}
 
-	var simulator simulators.Simulator
+	var simulator simulators.Simulator // nolint: staticcheck
 	simulator = simulators.RolloutSimulator{
 		MoveGenerator: generator,
 		MoveSelector:  randomSelector,
@@ -110,6 +110,7 @@ func search(
 
 func BenchmarkSearch_5Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -122,6 +123,7 @@ func BenchmarkSearch_5Passes(benchmark *testing.B) {
 
 func BenchmarkSearch_10Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -134,6 +136,7 @@ func BenchmarkSearch_10Passes(benchmark *testing.B) {
 
 func BenchmarkSearch_15Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -146,6 +149,7 @@ func BenchmarkSearch_15Passes(benchmark *testing.B) {
 
 func BenchmarkSearch_20Passes(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -158,6 +162,7 @@ func BenchmarkSearch_20Passes(benchmark *testing.B) {
 
 func BenchmarkSearch_5PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -171,6 +176,7 @@ func BenchmarkSearch_5PassesAndParallelSimulator(benchmark *testing.B) {
 
 func BenchmarkSearch_10PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -184,6 +190,7 @@ func BenchmarkSearch_10PassesAndParallelSimulator(benchmark *testing.B) {
 
 func BenchmarkSearch_15PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -197,6 +204,7 @@ func BenchmarkSearch_15PassesAndParallelSimulator(benchmark *testing.B) {
 
 func BenchmarkSearch_20PassesAndParallelSimulator(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -212,6 +220,7 @@ func BenchmarkSearch_5PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -227,6 +236,7 @@ func BenchmarkSearch_10PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -242,6 +252,7 @@ func BenchmarkSearch_15PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -257,6 +268,7 @@ func BenchmarkSearch_20PassesAndParallelBulkySimulator(
 	benchmark *testing.B,
 ) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -270,6 +282,7 @@ func BenchmarkSearch_20PassesAndParallelBulkySimulator(
 
 func BenchmarkSearch_5PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -283,6 +296,7 @@ func BenchmarkSearch_5PassesAndParallelBuilder(benchmark *testing.B) {
 
 func BenchmarkSearch_10PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -296,6 +310,7 @@ func BenchmarkSearch_10PassesAndParallelBuilder(benchmark *testing.B) {
 
 func BenchmarkSearch_15PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
@@ -309,6 +324,7 @@ func BenchmarkSearch_15PassesAndParallelBuilder(benchmark *testing.B) {
 
 func BenchmarkSearch_20PassesAndParallelBuilder(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
+		// nolint: errcheck
 		search(
 			initialBoard,
 			initialColor,
