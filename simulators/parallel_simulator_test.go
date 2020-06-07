@@ -9,14 +9,10 @@ import (
 )
 
 type MockSimulator struct {
-	simulate func(
-		root *tree.Node,
-	) tree.NodeState
+	simulate func(root *tree.Node) tree.NodeState
 }
 
-func (simulator MockSimulator) Simulate(
-	root *tree.Node,
-) tree.NodeState {
+func (simulator MockSimulator) Simulate(root *tree.Node) tree.NodeState {
 	if simulator.simulate == nil {
 		panic("not implemented")
 	}
@@ -24,13 +20,9 @@ func (simulator MockSimulator) Simulate(
 	return simulator.simulate(root)
 }
 
-func TestParallelSimulatorSimulate(
-	test *testing.T,
-) {
+func TestParallelSimulatorSimulate(test *testing.T) {
 	innerSimulator := MockSimulator{
-		simulate: func(
-			root *tree.Node,
-		) tree.NodeState {
+		simulate: func(root *tree.Node) tree.NodeState {
 			expectedRoot := &tree.Node{
 				Move: models.Move{
 					Color: models.White,
@@ -42,10 +34,7 @@ func TestParallelSimulatorSimulate(
 					},
 				),
 			}
-			if !reflect.DeepEqual(
-				root,
-				expectedRoot,
-			) {
+			if !reflect.DeepEqual(root, expectedRoot) {
 				test.Fail()
 			}
 
@@ -59,26 +48,26 @@ func TestParallelSimulatorSimulate(
 		Simulator:   innerSimulator,
 		Concurrency: 10,
 	}
-	gotState := simulator.Simulate(&tree.Node{
-		Move: models.Move{
-			Color: models.White,
-		},
-		Storage: models.NewBoard(
-			models.Size{
-				Width:  3,
-				Height: 3,
+	gotState := simulator.
+		Simulate(
+			&tree.Node{
+				Move: models.Move{
+					Color: models.White,
+				},
+				Storage: models.NewBoard(
+					models.Size{
+						Width:  3,
+						Height: 3,
+					},
+				),
 			},
-		),
-	})
+		)
 
 	wantState := tree.NodeState{
 		GameCount: 30,
 		WinCount:  20,
 	}
-	if !reflect.DeepEqual(
-		gotState,
-		wantState,
-	) {
+	if !reflect.DeepEqual(gotState, wantState) {
 		test.Fail()
 	}
 }

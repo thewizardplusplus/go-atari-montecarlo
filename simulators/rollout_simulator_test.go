@@ -9,14 +9,10 @@ import (
 )
 
 type MockMoveSelector struct {
-	selectMove func(
-		moves []models.Move,
-	) models.Move
+	selectMove func(moves []models.Move) models.Move
 }
 
-func (selector MockMoveSelector) SelectMove(
-	moves []models.Move,
-) models.Move {
+func (selector MockMoveSelector) SelectMove(moves []models.Move) models.Move {
 	if selector.selectMove == nil {
 		panic("not implemented")
 	}
@@ -24,9 +20,7 @@ func (selector MockMoveSelector) SelectMove(
 	return selector.selectMove(moves)
 }
 
-func TestRolloutSimulatorSimulate(
-	test *testing.T,
-) {
+func TestRolloutSimulatorSimulate(test *testing.T) {
 	type fields struct {
 		moveGenerator models.Generator
 		moveSelector  MoveSelector
@@ -43,10 +37,9 @@ func TestRolloutSimulatorSimulate(
 
 	var iterationCount int
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				// +--+--+--+
 				// |B0|W1|B2|
 				// +--+--+--+
@@ -55,12 +48,8 @@ func TestRolloutSimulatorSimulate(
 				// |  |  |  |
 				// +--+--+--+
 				moveSelector: MockMoveSelector{
-					selectMove: func(
-						moves []models.Move,
-					) models.Move {
-						defer func() {
-							iterationCount++
-						}()
+					selectMove: func(moves []models.Move) models.Move {
+						defer func() { iterationCount++ }()
 
 						var color models.Color
 						if iterationCount%2 == 0 {
@@ -74,21 +63,14 @@ func TestRolloutSimulatorSimulate(
 							Width:  3,
 							Height: 3,
 						}
-						points := size.Points()
-						points =
-							points[iterationCount+1:]
-						for _, point := range points {
+						for _, point := range size.Points()[iterationCount+1:] {
 							move := models.Move{
 								Color: color,
 								Point: point,
 							}
-							expectedMoves =
-								append(expectedMoves, move)
+							expectedMoves = append(expectedMoves, move)
 						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
+						if !reflect.DeepEqual(moves, expectedMoves) {
 							test.Fail()
 						}
 
@@ -112,19 +94,16 @@ func TestRolloutSimulatorSimulate(
 								Height: 3,
 							},
 						)
-
-						moves := []models.Move{
-							models.Move{
-								Color: models.Black,
-								Point: models.Point{
-									Column: 0,
-									Row:    0,
+						board = board.
+							ApplyMove(
+								models.Move{
+									Color: models.Black,
+									Point: models.Point{
+										Column: 0,
+										Row:    0,
+									},
 								},
-							},
-						}
-						for _, move := range moves {
-							board = board.ApplyMove(move)
-						}
+							)
 
 						return board
 					}(),
@@ -136,10 +115,9 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantCount: 3,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				// +--+--+--+
 				// |W1|B2|W3|
 				// +--+--+--+
@@ -148,12 +126,8 @@ func TestRolloutSimulatorSimulate(
 				// |  |  |  |
 				// +--+--+--+
 				moveSelector: MockMoveSelector{
-					selectMove: func(
-						moves []models.Move,
-					) models.Move {
-						defer func() {
-							iterationCount++
-						}()
+					selectMove: func(moves []models.Move) models.Move {
+						defer func() { iterationCount++ }()
 
 						var color models.Color
 						if iterationCount%2 == 0 {
@@ -167,20 +141,14 @@ func TestRolloutSimulatorSimulate(
 							Width:  3,
 							Height: 3,
 						}
-						points := size.Points()
-						points = points[iterationCount:]
-						for _, point := range points {
+						for _, point := range size.Points()[iterationCount:] {
 							move := models.Move{
 								Color: color,
 								Point: point,
 							}
-							expectedMoves =
-								append(expectedMoves, move)
+							expectedMoves = append(expectedMoves, move)
 						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
+						if !reflect.DeepEqual(moves, expectedMoves) {
 							test.Fail()
 						}
 
@@ -208,14 +176,11 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantCount: 4,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				moveSelector: MockMoveSelector{
-					selectMove: func(
-						moves []models.Move,
-					) models.Move {
+					selectMove: func(moves []models.Move) models.Move {
 						panic("not implemented")
 					},
 				},
@@ -237,8 +202,7 @@ func TestRolloutSimulatorSimulate(
 							},
 						)
 
-						points := board.Size().Points()
-						for _, point := range points {
+						for _, point := range board.Size().Points() {
 							move := models.Move{
 								Color: models.White,
 								Point: point,
@@ -256,10 +220,9 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantCount: 0,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				// +--+--+--+
 				// |B0|W0|  |
 				// +--+--+--+
@@ -268,9 +231,7 @@ func TestRolloutSimulatorSimulate(
 				// |  |  |  |
 				// +--+--+--+
 				moveSelector: MockMoveSelector{
-					selectMove: func(
-						moves []models.Move,
-					) models.Move {
+					selectMove: func(moves []models.Move) models.Move {
 						panic("not implemented")
 					},
 				},
@@ -292,30 +253,29 @@ func TestRolloutSimulatorSimulate(
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 1,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 0,
 									Row:    1,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -329,10 +289,9 @@ func TestRolloutSimulatorSimulate(
 			},
 			wantCount: 0,
 		},
-		data{
+		{
 			fields: fields{
-				moveGenerator: models.
-					MoveGenerator{},
+				moveGenerator: models.MoveGenerator{},
 				// +--+--+--+
 				// |B0|W0|  |
 				// +--+--+--+
@@ -341,9 +300,7 @@ func TestRolloutSimulatorSimulate(
 				// |  |  |  |
 				// +--+--+--+
 				moveSelector: MockMoveSelector{
-					selectMove: func(
-						moves []models.Move,
-					) models.Move {
+					selectMove: func(moves []models.Move) models.Move {
 						panic("not implemented")
 					},
 				},
@@ -365,30 +322,29 @@ func TestRolloutSimulatorSimulate(
 							},
 						)
 
-						moves := []models.Move{
-							models.Move{
+						for _, move := range []models.Move{
+							{
 								Color: models.Black,
 								Point: models.Point{
 									Column: 0,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 1,
 									Row:    0,
 								},
 							},
-							models.Move{
+							{
 								Color: models.White,
 								Point: models.Point{
 									Column: 0,
 									Row:    1,
 								},
 							},
-						}
-						for _, move := range moves {
+						} {
 							board = board.ApplyMove(move)
 						}
 
@@ -406,18 +362,12 @@ func TestRolloutSimulatorSimulate(
 		iterationCount = 0
 
 		simulator := RolloutSimulator{
-			MoveGenerator: data.fields.
-				moveGenerator,
-			MoveSelector: data.fields.
-				moveSelector,
+			MoveGenerator: data.fields.moveGenerator,
+			MoveSelector:  data.fields.moveSelector,
 		}
-		gotState :=
-			simulator.Simulate(data.args.root)
+		gotState := simulator.Simulate(data.args.root)
 
-		if !reflect.DeepEqual(
-			gotState,
-			data.wantState,
-		) {
+		if !reflect.DeepEqual(gotState, data.wantState) {
 			test.Fail()
 		}
 		if iterationCount != data.wantCount {
