@@ -9,6 +9,35 @@ The library that implements an [Atari Go](https://senseis.xmp.net/?AtariGo) engi
 
 _**Disclaimer:** this library was written directly on an Android smartphone with the AnGoIde IDE._
 
+## Features
+
+- move searching via the [Monte Carlo tree search algorithm](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search):
+  - move selectors:
+    - random selecting;
+    - selecting by a maximal node score:
+      - scoring by the [Upper Confidence Bound algorithm](https://en.wikipedia.org/wiki/Multi-armed_bandit);
+  - game simulating by simple random rollout;
+  - tree building:
+    - by a single pass;
+    - by iterative passes:
+      - iteration terminating:
+        - by a pass;
+        - by a time;
+  - move searchers:
+    - searcher that doesn't reuse a built tree;
+- optimization via parallel move searching:
+  - parallel game simulating:
+    - of a single node child;
+    - of all node children;
+  - parallel tree building;
+- easily extensible and composable architecture:
+  - of move selectors:
+    - of node scorers;
+  - of game simulators;
+  - of tree builders:
+    - of iteration terminators;
+  - of move searchers.
+
 ## Installation
 
 ```
@@ -94,7 +123,7 @@ func main() {
 }
 ```
 
-`searchers.MoveSearcher.SearchMove()` with the parallel simulator:
+`searchers.MoveSearcher.SearchMove()` with parallel game simulating of a single node child:
 
 ```go
 package main
@@ -175,7 +204,7 @@ func main() {
 }
 ```
 
-`searchers.MoveSearcher.SearchMove()` with the parallel bulky simulator:
+`searchers.MoveSearcher.SearchMove()` with parallel game simulating of all node children:
 
 ```go
 package main
@@ -252,7 +281,7 @@ func main() {
 }
 ```
 
-`searchers.MoveSearcher.SearchMove()` with the parallel builder:
+`searchers.MoveSearcher.SearchMove()` with parallel tree building:
 
 ```go
 package main
@@ -344,7 +373,7 @@ BenchmarkSearch_15Passes-8                            	     100	  16472837 ns/op
 BenchmarkSearch_20Passes-8                            	     100	  21192349 ns/op
 ```
 
-With the parallel simulator:
+With parallel game simulating of a single node child:
 
 ```
 BenchmarkSearch_5PassesAndParallelSimulator-8         	     100	  11482508 ns/op
@@ -353,7 +382,7 @@ BenchmarkSearch_15PassesAndParallelSimulator-8        	      30	  35422514 ns/op
 BenchmarkSearch_20PassesAndParallelSimulator-8        	      30	  46065076 ns/op
 ```
 
-With the parallel bulky simulator:
+With parallel game simulating of all node children:
 
 ```
 BenchmarkSearch_5PassesAndParallelBulkySimulator-8    	      50	  25558541 ns/op
@@ -362,7 +391,7 @@ BenchmarkSearch_15PassesAndParallelBulkySimulator-8   	      20	  85564306 ns/op
 BenchmarkSearch_20PassesAndParallelBulkySimulator-8   	      10	 186877684 ns/op
 ```
 
-With the parallel builder:
+With parallel tree building:
 
 ```
 BenchmarkSearch_5PassesAndParallelBuilder-8           	     100	  15637022 ns/op
